@@ -1,0 +1,222 @@
+[
+  {
+    "product_id": "P001",
+    "product_name": "核心零件A",
+    "warehouse_id": "W001",
+    "warehouse_name": "广州中心仓",
+    "current_stock": 267,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 180,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P002",
+    "product_name": "核心零件B",
+    "warehouse_id": "W002",
+    "warehouse_name": "上海前置仓",
+    "current_stock": 637,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 185,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P003",
+    "product_name": "核心零件C",
+    "warehouse_id": "W003",
+    "warehouse_name": "北京分仓",
+    "current_stock": 118,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 190,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P004",
+    "product_name": "核心零件D",
+    "warehouse_id": "W001",
+    "warehouse_name": "广州中心仓",
+    "current_stock": 187,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 195,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P005",
+    "product_name": "核心零件E",
+    "warehouse_id": "W002",
+    "warehouse_name": "上海前置仓",
+    "current_stock": 704,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 200,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P001",
+    "product_name": "核心零件A",
+    "warehouse_id": "W003",
+    "warehouse_name": "北京分仓",
+    "current_stock": 540,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 205,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P002",
+    "product_name": "核心零件B",
+    "warehouse_id": "W001",
+    "warehouse_name": "广州中心仓",
+    "current_stock": 533,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 210,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P003",
+    "product_name": "核心零件C",
+    "warehouse_id": "W002",
+    "warehouse_name": "上海前置仓",
+    "current_stock": 1015,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 215,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P004",
+    "product_name": "核心零件D",
+    "warehouse_id": "W003",
+    "warehouse_name": "北京分仓",
+    "current_stock": 1041,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 220,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P005",
+    "product_name": "核心零件E",
+    "warehouse_id": "W001",
+    "warehouse_name": "广州中心仓",
+    "current_stock": 277,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 225,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P001",
+    "product_name": "核心零件A",
+    "warehouse_id": "W002",
+    "warehouse_name": "上海前置仓",
+    "current_stock": 433,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 230,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P002",
+    "product_name": "核心零件B",
+    "warehouse_id": "W003",
+    "warehouse_name": "北京分仓",
+    "current_stock": 967,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 235,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P003",
+    "product_name": "核心零件C",
+    "warehouse_id": "W001",
+    "warehouse_name": "广州中心仓",
+    "current_stock": 649,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 240,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P004",
+    "product_name": "核心零件D",
+    "warehouse_id": "W002",
+    "warehouse_name": "上海前置仓",
+    "current_stock": 1027,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 245,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P005",
+    "product_name": "核心零件E",
+    "warehouse_id": "W003",
+    "warehouse_name": "北京分仓",
+    "current_stock": 566,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 250,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P001",
+    "product_name": "核心零件A",
+    "warehouse_id": "W001",
+    "warehouse_name": "广州中心仓",
+    "current_stock": 381,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 255,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P002",
+    "product_name": "核心零件B",
+    "warehouse_id": "W002",
+    "warehouse_name": "上海前置仓",
+    "current_stock": 979,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 260,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P003",
+    "product_name": "核心零件C",
+    "warehouse_id": "W003",
+    "warehouse_name": "北京分仓",
+    "current_stock": 999,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 265,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P004",
+    "product_name": "核心零件D",
+    "warehouse_id": "W001",
+    "warehouse_name": "广州中心仓",
+    "current_stock": 1000,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 270,
+    "last_update": "2026-04-01 10:00:00"
+  },
+  {
+    "product_id": "P005",
+    "product_name": "核心零件E",
+    "warehouse_id": "W002",
+    "warehouse_name": "上海前置仓",
+    "current_stock": 946,
+    "safety_stock": 300,
+    "max_stock": 1500,
+    "unit_cost": 275,
+    "last_update": "2026-04-01 10:00:00"
+  }
+]

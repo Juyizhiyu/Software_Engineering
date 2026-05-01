@@ -1,0 +1,222 @@
+[
+  {
+    "shipment_id": "L20260401001",
+    "order_id": "O20260401001",
+    "origin": "广州",
+    "destination": "上海",
+    "carrier": "顺达物流",
+    "expected_duration_hours": 34,
+    "actual_duration_hours": 48,
+    "status": "delayed",
+    "transport_cost": 1154
+  },
+  {
+    "shipment_id": "L20260401002",
+    "order_id": "O20260401002",
+    "origin": "深圳",
+    "destination": "北京",
+    "carrier": "快运通",
+    "expected_duration_hours": 34,
+    "actual_duration_hours": 32,
+    "status": "on_time",
+    "transport_cost": 1076
+  },
+  {
+    "shipment_id": "L20260401003",
+    "order_id": "O20260401003",
+    "origin": "上海",
+    "destination": "成都",
+    "carrier": "飞豹运输",
+    "expected_duration_hours": 42,
+    "actual_duration_hours": 39,
+    "status": "on_time",
+    "transport_cost": 1440
+  },
+  {
+    "shipment_id": "L20260401004",
+    "order_id": "O20260401004",
+    "origin": "广州",
+    "destination": "上海",
+    "carrier": "顺达物流",
+    "expected_duration_hours": 71,
+    "actual_duration_hours": 68,
+    "status": "on_time",
+    "transport_cost": 1018
+  },
+  {
+    "shipment_id": "L20260401005",
+    "order_id": "O20260401005",
+    "origin": "深圳",
+    "destination": "北京",
+    "carrier": "快运通",
+    "expected_duration_hours": 28,
+    "actual_duration_hours": 26,
+    "status": "on_time",
+    "transport_cost": 574
+  },
+  {
+    "shipment_id": "L20260401006",
+    "order_id": "O20260401006",
+    "origin": "上海",
+    "destination": "成都",
+    "carrier": "飞豹运输",
+    "expected_duration_hours": 33,
+    "actual_duration_hours": 41,
+    "status": "delayed",
+    "transport_cost": 1200
+  },
+  {
+    "shipment_id": "L20260401007",
+    "order_id": "O20260401007",
+    "origin": "广州",
+    "destination": "上海",
+    "carrier": "顺达物流",
+    "expected_duration_hours": 32,
+    "actual_duration_hours": 29,
+    "status": "on_time",
+    "transport_cost": 537
+  },
+  {
+    "shipment_id": "L20260401008",
+    "order_id": "O20260401008",
+    "origin": "深圳",
+    "destination": "北京",
+    "carrier": "快运通",
+    "expected_duration_hours": 47,
+    "actual_duration_hours": 46,
+    "status": "on_time",
+    "transport_cost": 1293
+  },
+  {
+    "shipment_id": "L20260401009",
+    "order_id": "O20260401009",
+    "origin": "上海",
+    "destination": "成都",
+    "carrier": "飞豹运输",
+    "expected_duration_hours": 24,
+    "actual_duration_hours": 24,
+    "status": "on_time",
+    "transport_cost": 1436
+  },
+  {
+    "shipment_id": "L20260401010",
+    "order_id": "O20260401010",
+    "origin": "广州",
+    "destination": "上海",
+    "carrier": "顺达物流",
+    "expected_duration_hours": 47,
+    "actual_duration_hours": 45,
+    "status": "on_time",
+    "transport_cost": 929
+  },
+  {
+    "shipment_id": "L20260401011",
+    "order_id": "O20260401011",
+    "origin": "深圳",
+    "destination": "北京",
+    "carrier": "快运通",
+    "expected_duration_hours": 28,
+    "actual_duration_hours": 30,
+    "status": "delayed",
+    "transport_cost": 744
+  },
+  {
+    "shipment_id": "L20260401012",
+    "order_id": "O20260401012",
+    "origin": "上海",
+    "destination": "成都",
+    "carrier": "飞豹运输",
+    "expected_duration_hours": 59,
+    "actual_duration_hours": 56,
+    "status": "on_time",
+    "transport_cost": 831
+  },
+  {
+    "shipment_id": "L20260401013",
+    "order_id": "O20260401013",
+    "origin": "广州",
+    "destination": "上海",
+    "carrier": "顺达物流",
+    "expected_duration_hours": 59,
+    "actual_duration_hours": 55,
+    "status": "on_time",
+    "transport_cost": 962
+  },
+  {
+    "shipment_id": "L20260401014",
+    "order_id": "O20260401014",
+    "origin": "深圳",
+    "destination": "北京",
+    "carrier": "快运通",
+    "expected_duration_hours": 53,
+    "actual_duration_hours": 52,
+    "status": "on_time",
+    "transport_cost": 1303
+  },
+  {
+    "shipment_id": "L20260401015",
+    "order_id": "O20260401015",
+    "origin": "上海",
+    "destination": "成都",
+    "carrier": "飞豹运输",
+    "expected_duration_hours": 43,
+    "actual_duration_hours": 43,
+    "status": "on_time",
+    "transport_cost": 1166
+  },
+  {
+    "shipment_id": "L20260401016",
+    "order_id": "O20260401016",
+    "origin": "广州",
+    "destination": "上海",
+    "carrier": "顺达物流",
+    "expected_duration_hours": 45,
+    "actual_duration_hours": 53,
+    "status": "delayed",
+    "transport_cost": 960
+  },
+  {
+    "shipment_id": "L20260401017",
+    "order_id": "O20260401017",
+    "origin": "深圳",
+    "destination": "北京",
+    "carrier": "快运通",
+    "expected_duration_hours": 38,
+    "actual_duration_hours": 38,
+    "status": "on_time",
+    "transport_cost": 1226
+  },
+  {
+    "shipment_id": "L20260401018",
+    "order_id": "O20260401018",
+    "origin": "上海",
+    "destination": "成都",
+    "carrier": "飞豹运输",
+    "expected_duration_hours": 33,
+    "actual_duration_hours": 30,
+    "status": "on_time",
+    "transport_cost": 1063
+  },
+  {
+    "shipment_id": "L20260401019",
+    "order_id": "O20260401019",
+    "origin": "广州",
+    "destination": "上海",
+    "carrier": "顺达物流",
+    "expected_duration_hours": 35,
+    "actual_duration_hours": 33,
+    "status": "on_time",
+    "transport_cost": 967
+  },
+  {
+    "shipment_id": "L20260401020",
+    "order_id": "O20260401020",
+    "origin": "深圳",
+    "destination": "北京",
+    "carrier": "快运通",
+    "expected_duration_hours": 41,
+    "actual_duration_hours": 37,
+    "status": "on_time",
+    "transport_cost": 1338
+  }
+]

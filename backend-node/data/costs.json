@@ -1,0 +1,182 @@
+[
+  {
+    "date": "2026-04-01",
+    "product_id": "P001",
+    "purchase_cost": 18947,
+    "storage_cost": 1345,
+    "transport_cost": 2965,
+    "return_cost": 500,
+    "total_cost": 23757
+  },
+  {
+    "date": "2026-04-02",
+    "product_id": "P002",
+    "purchase_cost": 22082,
+    "storage_cost": 2319,
+    "transport_cost": 3541,
+    "return_cost": 0,
+    "total_cost": 27942
+  },
+  {
+    "date": "2026-04-03",
+    "product_id": "P003",
+    "purchase_cost": 17732,
+    "storage_cost": 1919,
+    "transport_cost": 1638,
+    "return_cost": 0,
+    "total_cost": 21289
+  },
+  {
+    "date": "2026-04-04",
+    "product_id": "P004",
+    "purchase_cost": 24133,
+    "storage_cost": 2584,
+    "transport_cost": 2984,
+    "return_cost": 0,
+    "total_cost": 29701
+  },
+  {
+    "date": "2026-04-05",
+    "product_id": "P005",
+    "purchase_cost": 23030,
+    "storage_cost": 1930,
+    "transport_cost": 2106,
+    "return_cost": 500,
+    "total_cost": 27566
+  },
+  {
+    "date": "2026-04-06",
+    "product_id": "P001",
+    "purchase_cost": 26253,
+    "storage_cost": 2088,
+    "transport_cost": 3733,
+    "return_cost": 0,
+    "total_cost": 32074
+  },
+  {
+    "date": "2026-04-07",
+    "product_id": "P002",
+    "purchase_cost": 25817,
+    "storage_cost": 1190,
+    "transport_cost": 2252,
+    "return_cost": 0,
+    "total_cost": 29259
+  },
+  {
+    "date": "2026-04-08",
+    "product_id": "P003",
+    "purchase_cost": 14798,
+    "storage_cost": 2265,
+    "transport_cost": 3537,
+    "return_cost": 0,
+    "total_cost": 20600
+  },
+  {
+    "date": "2026-04-09",
+    "product_id": "P004",
+    "purchase_cost": 22207,
+    "storage_cost": 1670,
+    "transport_cost": 3162,
+    "return_cost": 500,
+    "total_cost": 27539
+  },
+  {
+    "date": "2026-04-10",
+    "product_id": "P005",
+    "purchase_cost": 15000,
+    "storage_cost": 2812,
+    "transport_cost": 3371,
+    "return_cost": 0,
+    "total_cost": 21183
+  },
+  {
+    "date": "2026-04-11",
+    "product_id": "P001",
+    "purchase_cost": 27633,
+    "storage_cost": 2968,
+    "transport_cost": 3134,
+    "return_cost": 0,
+    "total_cost": 33735
+  },
+  {
+    "date": "2026-04-12",
+    "product_id": "P002",
+    "purchase_cost": 12434,
+    "storage_cost": 2216,
+    "transport_cost": 3015,
+    "return_cost": 0,
+    "total_cost": 17665
+  },
+  {
+    "date": "2026-04-13",
+    "product_id": "P003",
+    "purchase_cost": 24485,
+    "storage_cost": 2855,
+    "transport_cost": 3283,
+    "return_cost": 500,
+    "total_cost": 31123
+  },
+  {
+    "date": "2026-04-14",
+    "product_id": "P004",
+    "purchase_cost": 29817,
+    "storage_cost": 1996,
+    "transport_cost": 4150,
+    "return_cost": 0,
+    "total_cost": 35963
+  },
+  {
+    "date": "2026-04-15",
+    "product_id": "P005",
+    "purchase_cost": 29923,
+    "storage_cost": 1012,
+    "transport_cost": 1968,
+    "return_cost": 0,
+    "total_cost": 32903
+  },
+  {
+    "date": "2026-04-16",
+    "product_id": "P001",
+    "purchase_cost": 13728,
+    "storage_cost": 1449,
+    "transport_cost": 3874,
+    "return_cost": 0,
+    "total_cost": 19051
+  },
+  {
+    "date": "2026-04-17",
+    "product_id": "P002",
+    "purchase_cost": 27334,
+    "storage_cost": 2589,
+    "transport_cost": 3551,
+    "return_cost": 500,
+    "total_cost": 33974
+  },
+  {
+    "date": "2026-04-18",
+    "product_id": "P003",
+    "purchase_cost": 26650,
+    "storage_cost": 2096,
+    "transport_cost": 1885,
+    "return_cost": 0,
+    "total_cost": 30631
+  },
+  {
+    "date": "2026-04-19",
+    "product_id": "P004",
+    "purchase_cost": 10660,
+    "storage_cost": 2298,
+    "transport_cost": 3786,
+    "return_cost": 0,
+    "total_cost": 16744
+  },
+  {
+    "date": "2026-04-20",
+    "product_id": "P005",
+    "purchase_cost": 12889,
+    "storage_cost": 1437,
+    "transport_cost": 2003,
+    "return_cost": 0,
+    "total_cost": 16329
+  }
+]

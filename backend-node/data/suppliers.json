@@ -1,0 +1,202 @@
+[
+  {
+    "supplier_id": "S001",
+    "supplier_name": "供应商1",
+    "region": "广东",
+    "on_time_rate": 0.917643133628869,
+    "quality_rate": 0.9128851797238713,
+    "price_stability": 0.9461859889087727,
+    "response_score": 0.9648516594045806,
+    "cooperation_years": 2
+  },
+  {
+    "supplier_id": "S002",
+    "supplier_name": "供应商2",
+    "region": "江苏",
+    "on_time_rate": 0.8307271914027754,
+    "quality_rate": 0.8598166903717925,
+    "price_stability": 0.9640841784150551,
+    "response_score": 0.8553481579851626,
+    "cooperation_years": 4
+  },
+  {
+    "supplier_id": "S003",
+    "supplier_name": "供应商3",
+    "region": "浙江",
+    "on_time_rate": 0.8556225178441297,
+    "quality_rate": 0.9170536766910722,
+    "price_stability": 0.7816657700967249,
+    "response_score": 0.7867523453180247,
+    "cooperation_years": 10
+  },
+  {
+    "supplier_id": "S004",
+    "supplier_name": "供应商4",
+    "region": "四川",
+    "on_time_rate": 0.9085930176114019,
+    "quality_rate": 0.9008916836774046,
+    "price_stability": 0.9307699357326004,
+    "response_score": 0.7540537293609693,
+    "cooperation_years": 7
+  },
+  {
+    "supplier_id": "S005",
+    "supplier_name": "供应商5",
+    "region": "广东",
+    "on_time_rate": 0.8038552666175149,
+    "quality_rate": 0.9462697069940385,
+    "price_stability": 0.9079088235908452,
+    "response_score": 0.89715950232787,
+    "cooperation_years": 3
+  },
+  {
+    "supplier_id": "S001",
+    "supplier_name": "供应商6",
+    "region": "江苏",
+    "on_time_rate": 0.9510718991971029,
+    "quality_rate": 0.8815476004908481,
+    "price_stability": 0.8406137173240038,
+    "response_score": 0.9190117399246466,
+    "cooperation_years": 8
+  },
+  {
+    "supplier_id": "S002",
+    "supplier_name": "供应商7",
+    "region": "浙江",
+    "on_time_rate": 0.8807426458589693,
+    "quality_rate": 0.8978359457225129,
+    "price_stability": 0.8716272107171914,
+    "response_score": 0.8276786073537401,
+    "cooperation_years": 3
+  },
+  {
+    "supplier_id": "S003",
+    "supplier_name": "供应商8",
+    "region": "四川",
+    "on_time_rate": 0.8421986396519838,
+    "quality_rate": 0.9346319358477623,
+    "price_stability": 0.8991114995823324,
+    "response_score": 0.9078580020274245,
+    "cooperation_years": 6
+  },
+  {
+    "supplier_id": "S004",
+    "supplier_name": "供应商9",
+    "region": "广东",
+    "on_time_rate": 0.8649345981231197,
+    "quality_rate": 0.9101285941972259,
+    "price_stability": 0.8871436476045829,
+    "response_score": 0.896012229456098,
+    "cooperation_years": 8
+  },
+  {
+    "supplier_id": "S005",
+    "supplier_name": "供应商10",
+    "region": "江苏",
+    "on_time_rate": 0.9162402807422407,
+    "quality_rate": 0.9535577584692482,
+    "price_stability": 0.7309059229914654,
+    "response_score": 0.8693040256367006,
+    "cooperation_years": 2
+  },
+  {
+    "supplier_id": "S001",
+    "supplier_name": "供应商11",
+    "region": "浙江",
+    "on_time_rate": 0.8893488689814655,
+    "quality_rate": 0.8627579316787993,
+    "price_stability": 0.9728646478520133,
+    "response_score": 0.8366561426820069,
+    "cooperation_years": 8
+  },
+  {
+    "supplier_id": "S002",
+    "supplier_name": "供应商12",
+    "region": "四川",
+    "on_time_rate": 0.897250975780669,
+    "quality_rate": 0.8592354138123381,
+    "price_stability": 0.8801015346440947,
+    "response_score": 0.7970299318276695,
+    "cooperation_years": 9
+  },
+  {
+    "supplier_id": "S003",
+    "supplier_name": "供应商13",
+    "region": "广东",
+    "on_time_rate": 0.8825589830597168,
+    "quality_rate": 0.9065432533320895,
+    "price_stability": 0.7733843881221579,
+    "response_score": 0.9924789860757705,
+    "cooperation_years": 3
+  },
+  {
+    "supplier_id": "S004",
+    "supplier_name": "供应商14",
+    "region": "江苏",
+    "on_time_rate": 0.8528202656630264,
+    "quality_rate": 0.9447788569931147,
+    "price_stability": 0.7616584362582204,
+    "response_score": 0.7796664400067741,
+    "cooperation_years": 4
+  },
+  {
+    "supplier_id": "S005",
+    "supplier_name": "供应商15",
+    "region": "浙江",
+    "on_time_rate": 0.9346003031774859,
+    "quality_rate": 0.8789766333111748,
+    "price_stability": 0.9663661895005735,
+    "response_score": 0.9228614088181013,
+    "cooperation_years": 9
+  },
+  {
+    "supplier_id": "S001",
+    "supplier_name": "供应商16",
+    "region": "四川",
+    "on_time_rate": 0.9399467202730516,
+    "quality_rate": 0.9778414047655137,
+    "price_stability": 0.9777852481254784,
+    "response_score": 0.9925598743449628,
+    "cooperation_years": 9
+  },
+  {
+    "supplier_id": "S002",
+    "supplier_name": "供应商17",
+    "region": "广东",
+    "on_time_rate": 0.9219615634879594,
+    "quality_rate": 0.9680421689497476,
+    "price_stability": 0.8455919561900771,
+    "response_score": 0.8352445329084762,
+    "cooperation_years": 1
+  },
+  {
+    "supplier_id": "S003",
+    "supplier_name": "供应商18",
+    "region": "江苏",
+    "on_time_rate": 0.9052850903249549,
+    "quality_rate": 0.8524938029907111,
+    "price_stability": 0.7775058180974903,
+    "response_score": 0.8418937605239676,
+    "cooperation_years": 10
+  },
+  {
+    "supplier_id": "S004",
+    "supplier_name": "供应商19",
+    "region": "浙江",
+    "on_time_rate": 0.9034717359710629,
+    "quality_rate": 0.9436842127365681,
+    "price_stability": 0.7197703854131187,
+    "response_score": 0.9263027677904321,
+    "cooperation_years": 2
+  },
+  {
+    "supplier_id": "S005",
+    "supplier_name": "供应商20",
+    "region": "四川",
+    "on_time_rate": 0.8421246204340508,
+    "quality_rate": 0.8742221219982655,
+    "price_stability": 0.9861154523595247,
+    "response_score": 0.7844394145306147,
+    "cooperation_years": 10
+  }
+]

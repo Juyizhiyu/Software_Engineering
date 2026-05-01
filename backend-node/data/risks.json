@@ -1,0 +1,202 @@
+[
+  {
+    "risk_id": "R20260401001",
+    "risk_type": "库存不足",
+    "risk_level": "High",
+    "related_object": "P001",
+    "description": "这是一条自动生成的风险记录 1",
+    "suggestion": "这是处理建议 1",
+    "status": "resolved",
+    "created_at": "2026-04-01 11:00:00"
+  },
+  {
+    "risk_id": "R20260401002",
+    "risk_type": "物流延误",
+    "risk_level": "Medium",
+    "related_object": "P002",
+    "description": "这是一条自动生成的风险记录 2",
+    "suggestion": "这是处理建议 2",
+    "status": "open",
+    "created_at": "2026-04-02 11:00:00"
+  },
+  {
+    "risk_id": "R20260401003",
+    "risk_type": "供应商波动",
+    "risk_level": "Low",
+    "related_object": "P003",
+    "description": "这是一条自动生成的风险记录 3",
+    "suggestion": "这是处理建议 3",
+    "status": "open",
+    "created_at": "2026-04-03 11:00:00"
+  },
+  {
+    "risk_id": "R20260401004",
+    "risk_type": "成本异常",
+    "risk_level": "Critical",
+    "related_object": "P004",
+    "description": "这是一条自动生成的风险记录 4",
+    "suggestion": "这是处理建议 4",
+    "status": "resolved",
+    "created_at": "2026-04-04 11:00:00"
+  },
+  {
+    "risk_id": "R20260401005",
+    "risk_type": "库存不足",
+    "risk_level": "High",
+    "related_object": "P005",
+    "description": "这是一条自动生成的风险记录 5",
+    "suggestion": "这是处理建议 5",
+    "status": "open",
+    "created_at": "2026-04-05 11:00:00"
+  },
+  {
+    "risk_id": "R20260401006",
+    "risk_type": "物流延误",
+    "risk_level": "Medium",
+    "related_object": "P001",
+    "description": "这是一条自动生成的风险记录 6",
+    "suggestion": "这是处理建议 6",
+    "status": "open",
+    "created_at": "2026-04-06 11:00:00"
+  },
+  {
+    "risk_id": "R20260401007",
+    "risk_type": "供应商波动",
+    "risk_level": "Low",
+    "related_object": "P002",
+    "description": "这是一条自动生成的风险记录 7",
+    "suggestion": "这是处理建议 7",
+    "status": "resolved",
+    "created_at": "2026-04-07 11:00:00"
+  },
+  {
+    "risk_id": "R20260401008",
+    "risk_type": "成本异常",
+    "risk_level": "Critical",
+    "related_object": "P003",
+    "description": "这是一条自动生成的风险记录 8",
+    "suggestion": "这是处理建议 8",
+    "status": "open",
+    "created_at": "2026-04-08 11:00:00"
+  },
+  {
+    "risk_id": "R20260401009",
+    "risk_type": "库存不足",
+    "risk_level": "High",
+    "related_object": "P004",
+    "description": "这是一条自动生成的风险记录 9",
+    "suggestion": "这是处理建议 9",
+    "status": "open",
+    "created_at": "2026-04-09 11:00:00"
+  },
+  {
+    "risk_id": "R20260401010",
+    "risk_type": "物流延误",
+    "risk_level": "Medium",
+    "related_object": "P005",
+    "description": "这是一条自动生成的风险记录 10",
+    "suggestion": "这是处理建议 10",
+    "status": "resolved",
+    "created_at": "2026-04-10 11:00:00"
+  },
+  {
+    "risk_id": "R20260401011",
+    "risk_type": "供应商波动",
+    "risk_level": "Low",
+    "related_object": "P001",
+    "description": "这是一条自动生成的风险记录 11",
+    "suggestion": "这是处理建议 11",
+    "status": "open",
+    "created_at": "2026-04-11 11:00:00"
+  },
+  {
+    "risk_id": "R20260401012",
+    "risk_type": "成本异常",
+    "risk_level": "Critical",
+    "related_object": "P002",
+    "description": "这是一条自动生成的风险记录 12",
+    "suggestion": "这是处理建议 12",
+    "status": "open",
+    "created_at": "2026-04-12 11:00:00"
+  },
+  {
+    "risk_id": "R20260401013",
+    "risk_type": "库存不足",
+    "risk_level": "High",
+    "related_object": "P003",
+    "description": "这是一条自动生成的风险记录 13",
+    "suggestion": "这是处理建议 13",
+    "status": "resolved",
+    "created_at": "2026-04-13 11:00:00"
+  },
+  {
+    "risk_id": "R20260401014",
+    "risk_type": "物流延误",
+    "risk_level": "Medium",
+    "related_object": "P004",
+    "description": "这是一条自动生成的风险记录 14",
+    "suggestion": "这是处理建议 14",
+    "status": "open",
+    "created_at": "2026-04-14 11:00:00"
+  },
+  {
+    "risk_id": "R20260401015",
+    "risk_type": "供应商波动",
+    "risk_level": "Low",
+    "related_object": "P005",
+    "description": "这是一条自动生成的风险记录 15",
+    "suggestion": "这是处理建议 15",
+    "status": "open",
+    "created_at": "2026-04-15 11:00:00"
+  },
+  {
+    "risk_id": "R20260401016",
+    "risk_type": "成本异常",
+    "risk_level": "Critical",
+    "related_object": "P001",
+    "description": "这是一条自动生成的风险记录 16",
+    "suggestion": "这是处理建议 16",
+    "status": "resolved",
+    "created_at": "2026-04-16 11:00:00"
+  },
+  {
+    "risk_id": "R20260401017",
+    "risk_type": "库存不足",
+    "risk_level": "High",
+    "related_object": "P002",
+    "description": "这是一条自动生成的风险记录 17",
+    "suggestion": "这是处理建议 17",
+    "status": "open",
+    "created_at": "2026-04-17 11:00:00"
+  },
+  {
+    "risk_id": "R20260401018",
+    "risk_type": "物流延误",
+    "risk_level": "Medium",
+    "related_object": "P003",
+    "description": "这是一条自动生成的风险记录 18",
+    "suggestion": "这是处理建议 18",
+    "status": "open",
+    "created_at": "2026-04-18 11:00:00"
+  },
+  {
+    "risk_id": "R20260401019",
+    "risk_type": "供应商波动",
+    "risk_level": "Low",
+    "related_object": "P004",
+    "description": "这是一条自动生成的风险记录 19",
+    "suggestion": "这是处理建议 19",
+    "status": "resolved",
+    "created_at": "2026-04-19 11:00:00"
+  },
+  {
+    "risk_id": "R20260401020",
+    "risk_type": "成本异常",
+    "risk_level": "Critical",
+    "related_object": "P005",
+    "description": "这是一条自动生成的风险记录 20",
+    "suggestion": "这是处理建议 20",
+    "status": "open",
+    "created_at": "2026-04-20 11:00:00"
+  }
+]
