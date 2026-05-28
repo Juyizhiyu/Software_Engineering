@@ -315,23 +315,45 @@ class DataService {
         return record;
     }
 
-    async getDashboardSummary() {
-        const { orders, inventory, logistics, risks, suppliers, costs } = await this.loadAll();
+    async getDashboardSummary({ region, date, category } = {}) {
+        const rawData = await this.loadAll();
+        
+        let filteredOrders = rawData.orders;
+        
+        if (region) {
+            filteredOrders = filteredOrders.filter(item => item.customerRegion === region);
+        }
+        if (date) {
+            filteredOrders = filteredOrders.filter(item => item.date === date);
+        }
+        if (category) {
+            filteredOrders = filteredOrders.filter(item => item.category === category);
+        }
 
-        const totalSales = orders.reduce((sum, item) => sum + item.amount, 0);
-        const averageOrderAmount = totalSales / Math.max(orders.length, 1);
-        const shortageCount = inventory.filter(item => item.stockStatus === 'shortage').length;
-        const delayedShipments = logistics.filter(item => item.status === 'delayed').length;
-        const openRisks = risks.filter(item => item.status === 'open').length;
-        const totalCost = costs.reduce((sum, item) => sum + item.totalCost, 0);
+        let filteredInventory = rawData.inventory;
+        if (region) {
+            // 简单映射一下：华南看广州中心仓，华东看上海前置仓，华北看北京分仓
+            const regionWarehouseMap = { '华南': 'W001', '华东': 'W002', '华北': 'W003' };
+            const targetWarehouse = regionWarehouseMap[region];
+            if (targetWarehouse) {
+                filteredInventory = filteredInventory.filter(item => item.warehouseId === targetWarehouse);
+            }
+        }
+
+        const totalSales = filteredOrders.reduce((sum, item) => sum + item.amount, 0);
+        const averageOrderAmount = totalSales / Math.max(filteredOrders.length, 1);
+        const shortageCount = filteredInventory.filter(item => item.stockStatus === 'shortage').length;
+        const delayedShipments = rawData.logistics.filter(item => item.status === 'delayed').length;
+        const openRisks = rawData.risks.filter(item => item.status === 'open').length;
+        const totalCost = rawData.costs.reduce((sum, item) => sum + item.totalCost, 0);
         const supplierScoreAvg =
-            suppliers.reduce((sum, item) => sum + item.compositeScore, 0) / Math.max(suppliers.length, 1);
+            rawData.suppliers.reduce((sum, item) => sum + item.compositeScore, 0) / Math.max(rawData.suppliers.length, 1);
 
         return {
-            totalOrders: orders.length,
+            totalOrders: filteredOrders.length, // 变成过滤后的数量
             totalSales,
             averageOrderAmount: round(averageOrderAmount, 0),
-            totalStock: inventory.reduce((sum, item) => sum + item.currentStock, 0),
+            totalStock: filteredInventory.reduce((sum, item) => sum + item.currentStock, 0), // 变成过滤后的库存
             shortageCount,
             delayedShipments,
             openRisks,

@@ -17,6 +17,7 @@ const costsRoutes = require('./routes/costs');
 const assistantRoutes = require('./routes/assistant');
 const dataRoutes = require('./routes/data');
 const operationsRoutes = require('./routes/operations');
+const authRouter = require('./routes/auth');
 
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/inventory', inventoryRoutes);
@@ -27,6 +28,7 @@ app.use('/api/costs', costsRoutes);
 app.use('/api/assistant', assistantRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/operations', operationsRoutes);
+app.use('/api/auth', authRouter);
 
 app.get('/api/health', (req, res) => {
     res.json({
