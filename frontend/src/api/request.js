@@ -2,6 +2,7 @@ import axios from 'axios'
 
 const service = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:3000/api',
+  // 127.0.0.1 instead of localhost avoids IPv6 resolution delays on Windows
   timeout: 8000,
 })
 

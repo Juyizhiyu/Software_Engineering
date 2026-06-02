@@ -34,3 +34,8 @@ logs/
 
 # Build
 coverage/
+
+# Local config (contains API keys, do NOT commit)
+config.json
+**/config.json
+!.gitconfig

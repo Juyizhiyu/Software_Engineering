@@ -4,7 +4,7 @@ const entityDefinitions = {
         idField: 'order_id',
         prefix: 'O',
         required: ['date', 'customer_region', 'product_id', 'product_name', 'quantity', 'unit_price', 'status'],
-        defaults: { status: 'pending', category: '核心零部件' }
+        defaults: { status: 'pending', category: '综合' }
     },
     inventory: {
         label: '库存',
@@ -18,7 +18,8 @@ const entityDefinitions = {
         idField: 'supplier_id',
         prefix: 'S',
         required: ['supplier_name', 'region', 'on_time_rate', 'quality_rate', 'price_stability', 'response_score', 'cooperation_years'],
-        defaults: {}
+        defaults: {},
+        computed: ['total_gmv', 'total_units', 'product_count']
     },
     logistics: {
         label: '物流',
