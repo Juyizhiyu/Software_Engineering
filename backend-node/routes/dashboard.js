@@ -4,7 +4,10 @@ const dataService = require('../services/dataService');
 
 router.get('/summary', async (req, res) => {
     try {
-        const summary = await dataService.getDashboardSummary();
+        const { region, date, category } = req.query;
+        
+        const summary = await dataService.getDashboardSummary({ region, date, category });
+        
         res.json({ success: true, data: summary });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
