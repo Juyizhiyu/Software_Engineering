@@ -1,0 +1,70 @@
+// ============================================
+// SCSS 混合宏 - 常用样式模式封装
+// ============================================
+@use "@/styles/variables" as *;
+
+// 卡片样式
+@mixin card($padding: $spacing-lg) {
+  background: $color-bg-card;
+  border-radius: $border-radius;
+  box-shadow: $shadow-sm;
+  padding: $padding;
+  transition: box-shadow $transition-normal;
+}
+
+// 悬浮卡片
+@mixin card-hover {
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+}
+
+// 文字截断
+@mixin text-ellipsis($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// Flex 居中
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Flex 两端对齐
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// 滚动条样式
+@mixin custom-scrollbar($thumb-color: #c0c4cc) {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $thumb-color;
+    border-radius: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+// 深色模式适配
+@mixin dark-mode {
+  :root.dark & {
+    @content;
+  }
+}

@@ -1,0 +1,27 @@
+// ============================================
+// Element Plus 样式覆盖
+// 修改 Element Plus 组件默认样式在此文件中统一管理
+// ============================================
+
+// 全局圆角
+.el-card {
+  border-radius: $border-radius;
+  border: none;
+  box-shadow: $shadow-sm;
+}
+
+.el-table {
+  --el-table-border-color: #{$color-border-light};
+}
+
+.el-button {
+  border-radius: 6px;
+}
+
+.el-dialog {
+  border-radius: $border-radius;
+}
+
+.el-tabs__item {
+  font-size: $font-size-md;
+}
