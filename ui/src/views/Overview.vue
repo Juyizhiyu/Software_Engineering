@@ -7,6 +7,9 @@ import { formatCurrency, formatNumber, formatLargeNumber } from '@/utils/format'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StatCard from '@/components/common/StatCard.vue'
 import ServiceStatus from '@/components/common/ServiceStatus.vue'
+import InventoryAlertTable from '@/components/overview/InventoryAlertTable.vue'
+import TopSupplierTable from '@/components/overview/TopSupplierTable.vue'
+import RecentOrderTable from '@/components/overview/RecentOrderTable.vue'
 
 const isDark = useDark()
 const loading = ref(true)
@@ -166,88 +169,9 @@ const riskChartOption = computed(() => ({
 
           <!-- 信息列表区域 -->
           <div class="overview__lists">
-            <!-- 库存预警 -->
-            <div class="overview__list-card">
-              <h3 class="overview__list-title">库存预警</h3>
-              <el-table
-                :data="overview?.inventoryAlerts.slice(0, 5)"
-                size="small"
-                stripe
-                :max-height="280"
-              >
-                <el-table-column prop="productName" label="产品" min-width="100" show-overflow-tooltip />
-                <el-table-column prop="warehouseName" label="仓库" width="100" show-overflow-tooltip />
-                <el-table-column prop="currentStock" label="当前库存" width="80" align="right">
-                  <template #default="{ row }">
-                    <span class="mono">{{ row.currentStock }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="stockStatusLabel" label="状态" width="70" align="center">
-                  <template #default="{ row }">
-                    <el-tag
-                      :type="
-                        row.stockStatus === 'shortage'
-                          ? 'danger'
-                          : row.stockStatus === 'warning'
-                            ? 'warning'
-                            : 'info'
-                      "
-                      size="small"
-                    >
-                      {{ row.stockStatusLabel }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-
-            <!-- 优选供应商 -->
-            <div class="overview__list-card">
-              <h3 class="overview__list-title">优选供应商</h3>
-              <el-table
-                :data="overview?.topSuppliers.slice(0, 5)"
-                size="small"
-                stripe
-                :max-height="280"
-              >
-                <el-table-column prop="supplierName" label="供应商" min-width="100" show-overflow-tooltip />
-                <el-table-column prop="region" label="区域" width="70" />
-                <el-table-column prop="compositeScore" label="综合评分" width="80" align="right">
-                  <template #default="{ row }">
-                    <span class="mono">{{ row.compositeScore.toFixed(1) }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="riskLabel" label="风险" width="70" align="center">
-                  <template #default="{ row }">
-                    <el-tag
-                      :type="row.riskLevel === 'low' ? 'success' : row.riskLevel === 'medium' ? 'warning' : 'danger'"
-                      size="small"
-                    >
-                      {{ row.riskLabel }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-
-            <!-- 最近订单 -->
-            <div class="overview__list-card">
-              <h3 class="overview__list-title">最近订单</h3>
-              <el-table
-                :data="overview?.recentOrders.slice(0, 5)"
-                size="small"
-                stripe
-                :max-height="280"
-              >
-                <el-table-column prop="orderId" label="订单号" min-width="80" show-overflow-tooltip />
-                <el-table-column prop="date" label="日期" width="100" />
-                <el-table-column prop="amount" label="金额" width="100" align="right">
-                  <template #default="{ row }">
-                    <span class="mono">{{ formatCurrency(row.amount) }}</span>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
+            <InventoryAlertTable :data="overview?.inventoryAlerts ?? []" />
+            <TopSupplierTable :data="overview?.topSuppliers ?? []" />
+            <RecentOrderTable :data="overview?.recentOrders ?? []" />
           </div>
         </template>
       </el-skeleton>
@@ -297,17 +221,6 @@ const riskChartOption = computed(() => ({
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: $spacing-md;
-  }
-
-  &__list-card {
-    @include card;
-  }
-
-  &__list-title {
-    font-size: $font-size-md;
-    font-weight: 600;
-    color: var(--el-text-color-primary);
-    margin-bottom: $spacing-md;
   }
 }
 </style>

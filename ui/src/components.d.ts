@@ -16,6 +16,7 @@ declare module 'vue' {
     AppSidebar: typeof import('./components/layout/AppSidebar.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCard: typeof import('element-plus/es')['ElCard']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
     ElEmpty: typeof import('element-plus/es')['ElEmpty']
     ElForm: typeof import('element-plus/es')['ElForm']
@@ -35,10 +36,13 @@ declare module 'vue' {
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTag: typeof import('element-plus/es')['ElTag']
     EmptyState: typeof import('./components/common/EmptyState.vue')['default']
+    InventoryAlertTable: typeof import('./components/overview/InventoryAlertTable.vue')['default']
     PageHeader: typeof import('./components/common/PageHeader.vue')['default']
+    RecentOrderTable: typeof import('./components/overview/RecentOrderTable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ServiceStatus: typeof import('./components/common/ServiceStatus.vue')['default']
     StatCard: typeof import('./components/common/StatCard.vue')['default']
+    TopSupplierTable: typeof import('./components/overview/TopSupplierTable.vue')['default']
   }
 }
