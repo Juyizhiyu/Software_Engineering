@@ -9,7 +9,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="stat-card" :style="{ '--stat-color': color || '#409eff' }">
+  <el-card shadow="hover" class="stat-card" :style="{ '--stat-color': color || '#409eff' }">
     <div class="stat-card__icon">
       <el-icon :size="28"><component :is="icon" v-if="icon" /></el-icon>
     </div>
@@ -20,13 +20,11 @@ defineProps<{
       </div>
       <div class="stat-card__title">{{ title }}</div>
     </div>
-  </div>
+  </el-card>
 </template>
 
 <style scoped lang="scss">
 .stat-card {
-  @include card;
-  @include card-hover;
   display: flex;
   align-items: center;
   gap: $spacing-md;
