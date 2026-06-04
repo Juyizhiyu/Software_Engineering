@@ -2,12 +2,14 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import VueECharts from 'vue-echarts'
 import { use } from 'echarts/core'
-import { BarChart, PieChart } from 'echarts/charts'
+import { BarChart, PieChart, LineChart } from 'echarts/charts'
 import {
   TitleComponent,
   TooltipComponent,
   LegendComponent,
   GridComponent,
+  DataZoomComponent,
+  ToolboxComponent,
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 
@@ -15,7 +17,7 @@ import App from './App.vue'
 import router from './router'
 
 // ECharts 按需注册
-use([BarChart, PieChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent, CanvasRenderer])
+use([BarChart, PieChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent, DataZoomComponent, ToolboxComponent, CanvasRenderer])
 
 // Element Plus 深色模式 CSS
 import 'element-plus/theme-chalk/dark/css-vars.css'
