@@ -12,8 +12,15 @@ const isDark = useDark()
 
 const chartOption = computed(() => {
   const textColor = isDark.value ? '#cfd3dc' : '#606266'
+  const tooltipBg = isDark.value ? '#252538' : '#fff'
+  const tooltipBorder = isDark.value ? '#4c4d4f' : '#e4e7ed'
   return {
-    tooltip: { trigger: 'axis' as const },
+    tooltip: {
+      trigger: 'axis' as const,
+      backgroundColor: tooltipBg,
+      borderColor: tooltipBorder,
+      textStyle: { color: textColor },
+    },
     grid: { left: 60, right: 20, top: 20, bottom: 40 },
     xAxis: {
       type: 'category' as const,
@@ -72,7 +79,7 @@ const chartOption = computed(() => {
 .chart-wrap {
   height: 280px;
 
-  :deep(div) {
+  :deep(> div) {
     width: 100% !important;
     height: 100% !important;
   }
