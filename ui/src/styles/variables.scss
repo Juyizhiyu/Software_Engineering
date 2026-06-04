@@ -1,0 +1,66 @@
+// ============================================
+// SCSS 变量定义 - 颜色/间距/字体
+// 修改样式时优先修改此文件中的变量
+// ============================================
+
+// --- 颜色系统 ---
+$color-primary: #409eff;
+$color-success: #67c23a;
+$color-warning: #e6a23c;
+$color-danger: #f56c6c;
+$color-info: #909399;
+
+// 文字颜色
+$color-text-primary: #303133;
+$color-text-regular: #606266;
+$color-text-secondary: #909399;
+$color-text-placeholder: #c0c4cc;
+
+// 边框颜色
+$color-border: #dcdfe6;
+$color-border-light: #e4e7ed;
+
+// 背景颜色
+$color-bg-page: #f5f7fa;
+$color-bg-card: #ffffff;
+$color-bg-sidebar: #1d1e2c;
+$color-bg-sidebar-hover: #2a2b3d;
+
+// 风险等级颜色
+$color-risk-critical: #f56c6c;
+$color-risk-high: #e6a23c;
+$color-risk-medium: #409eff;
+$color-risk-low: #67c23a;
+
+// --- 间距系统 ---
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// --- 字体系统 ---
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-family-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+$font-size-xs: 12px;
+$font-size-sm: 13px;
+$font-size-md: 14px;
+$font-size-lg: 16px;
+$font-size-xl: 18px;
+$font-size-xxl: 24px;
+
+// --- 布局 ---
+$sidebar-width: 220px;
+$sidebar-collapsed-width: 64px;
+$header-height: 56px;
+$border-radius: 8px;
+$border-radius-sm: 4px;
+
+// --- 阴影 ---
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);
+$shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.16);
+
+// --- 过渡 ---
+$transition-fast: 0.15s ease;
+$transition-normal: 0.25s ease;

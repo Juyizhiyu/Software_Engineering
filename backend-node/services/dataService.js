@@ -17,24 +17,56 @@ const repositoryMap = {
     risks: risksRepo
 };
 
-const productNames = {
-    P001: '核心零件 A',
-    P002: '核心零件 B',
-    P003: '核心零件 C',
-    P004: '核心零件 D',
-    P005: '核心零件 E'
-};
+// Dynamic lookup maps — built from actual data
+let _productNameMap = null;
+let _warehouseNameMap = null;
 
-const warehouseNames = {
-    W001: '广州中心仓',
-    W002: '上海前置仓',
-    W003: '北京分仓'
-};
+function getProductNameMap() {
+    if (_productNameMap) return _productNameMap;
+    _productNameMap = {};
+    try {
+        const inventory = require('../repositories/jsonRepository').inventoryRepo.findAllSync
+            ? require('../repositories/jsonRepository').inventoryRepo.findAllSync()
+            : [];
+        inventory.forEach(item => {
+            if (item.product_id && item.product_name) {
+                _productNameMap[item.product_id] = item.product_name;
+            }
+        });
+    } catch (e) { /* ignore */ }
+    return _productNameMap;
+}
+
+function getWarehouseNameMap() {
+    if (_warehouseNameMap) return _warehouseNameMap;
+    _warehouseNameMap = {};
+    try {
+        const inventory = require('../repositories/jsonRepository').inventoryRepo.findAllSync
+            ? require('../repositories/jsonRepository').inventoryRepo.findAllSync()
+            : [];
+        inventory.forEach(item => {
+            if (item.warehouse_id && item.warehouse_name) {
+                _warehouseNameMap[item.warehouse_id] = item.warehouse_name;
+            }
+        });
+    } catch (e) { /* ignore */ }
+    _warehouseNameMap.W001 = _warehouseNameMap.W001 || '广州中心仓';
+    _warehouseNameMap.W002 = _warehouseNameMap.W002 || '上海前置仓';
+    _warehouseNameMap.W003 = _warehouseNameMap.W003 || '北京分仓';
+    _warehouseNameMap.W004 = _warehouseNameMap.W004 || '成都区域仓';
+    _warehouseNameMap.W005 = _warehouseNameMap.W005 || '武汉中转仓';
+    return _warehouseNameMap;
+}
 
 const routeMap = {
     '广州-上海': '华南到华东',
     '深圳-北京': '华南到华北',
-    '上海-成都': '华东到西南'
+    '上海-成都': '华东到西南',
+    '广州-北京': '华南到华北',
+    '杭州-武汉': '华东到华中',
+    '南京-广州': '华东到华南',
+    '成都-上海': '西南到华东',
+    '武汉-北京': '华中到华北'
 };
 
 function round(value, digits = 1) {
@@ -85,12 +117,14 @@ function normalizeInventoryItem(item, index) {
         stockStatusLabel = '预警';
     }
 
+    const nameMap = getProductNameMap();
+    const whMap = getWarehouseNameMap();
     return {
         id: `${item.product_id}-${item.warehouse_id}-${index}`,
         productId: item.product_id,
-        productName: item.product_name || productNames[item.product_id] || item.product_id,
+        productName: item.product_name || nameMap[item.product_id] || item.product_id,
         warehouseId: item.warehouse_id,
-        warehouseName: item.warehouse_name || warehouseNames[item.warehouse_id] || item.warehouse_id,
+        warehouseName: item.warehouse_name || whMap[item.warehouse_id] || item.warehouse_id,
         currentStock,
         safetyStock,
         maxStock,
@@ -132,7 +166,10 @@ function normalizeSupplier(item, index) {
         cooperationYears: toNumber(item.cooperation_years),
         compositeScore: round(compositeScore * 100, 1),
         riskLevel,
-        riskLabel
+        riskLabel,
+        totalGmv: toNumber(item.total_gmv),
+        totalUnits: toNumber(item.total_units),
+        productCount: toNumber(item.product_count)
     };
 }
 
@@ -159,10 +196,11 @@ function normalizeShipment(item) {
 }
 
 function normalizeCost(item) {
+    const nameMap = getProductNameMap();
     return {
         date: item.date,
         productId: item.product_id,
-        productName: productNames[item.product_id] || item.product_id,
+        productName: nameMap[item.product_id] || item.product_id,
         purchaseCost: toNumber(item.purchase_cost),
         storageCost: toNumber(item.storage_cost),
         transportCost: toNumber(item.transport_cost),
@@ -179,6 +217,11 @@ function normalizeRisk(item) {
         Low: '低'
     };
 
+    const statusLabelMap = {
+        open: '待处理',
+        resolved: '已关闭',
+        monitoring: '监控中'
+    };
     return {
         riskId: item.risk_id,
         riskType: item.risk_type,
@@ -188,19 +231,20 @@ function normalizeRisk(item) {
         description: item.description,
         suggestion: item.suggestion,
         status: item.status,
-        statusLabel: item.status === 'open' ? '待处理' : '已关闭',
+        statusLabel: statusLabelMap[item.status] || item.status,
         createdAt: item.created_at || nowDateTime()
     };
 }
 
 function normalizeOrder(item) {
+    const nameMap = getProductNameMap();
     return {
         orderId: item.order_id,
         date: item.date,
         customerRegion: item.customer_region,
         productId: item.product_id,
-        productName: item.product_name || productNames[item.product_id] || item.product_id,
-        category: item.category || '核心零部件',
+        productName: item.product_name || nameMap[item.product_id] || item.product_id,
+        category: item.category || '综合',
         quantity: toNumber(item.quantity),
         unitPrice: toNumber(item.unit_price),
         amount: toNumber(item.amount),
@@ -315,23 +359,45 @@ class DataService {
         return record;
     }
 
-    async getDashboardSummary() {
-        const { orders, inventory, logistics, risks, suppliers, costs } = await this.loadAll();
+    async getDashboardSummary({ region, date, category } = {}) {
+        const rawData = await this.loadAll();
+        
+        let filteredOrders = rawData.orders;
+        
+        if (region) {
+            filteredOrders = filteredOrders.filter(item => item.customerRegion === region);
+        }
+        if (date) {
+            filteredOrders = filteredOrders.filter(item => item.date === date);
+        }
+        if (category) {
+            filteredOrders = filteredOrders.filter(item => item.category === category);
+        }
 
-        const totalSales = orders.reduce((sum, item) => sum + item.amount, 0);
-        const averageOrderAmount = totalSales / Math.max(orders.length, 1);
-        const shortageCount = inventory.filter(item => item.stockStatus === 'shortage').length;
-        const delayedShipments = logistics.filter(item => item.status === 'delayed').length;
-        const openRisks = risks.filter(item => item.status === 'open').length;
-        const totalCost = costs.reduce((sum, item) => sum + item.totalCost, 0);
+        let filteredInventory = rawData.inventory;
+        if (region) {
+            // 简单映射一下：华南看广州中心仓，华东看上海前置仓，华北看北京分仓
+            const regionWarehouseMap = { '华南': 'W001', '华东': 'W002', '华北': 'W003', '西南': 'W004', '华中': 'W005' };
+            const targetWarehouse = regionWarehouseMap[region];
+            if (targetWarehouse) {
+                filteredInventory = filteredInventory.filter(item => item.warehouseId === targetWarehouse);
+            }
+        }
+
+        const totalSales = filteredOrders.reduce((sum, item) => sum + item.amount, 0);
+        const averageOrderAmount = totalSales / Math.max(filteredOrders.length, 1);
+        const shortageCount = filteredInventory.filter(item => item.stockStatus === 'shortage').length;
+        const delayedShipments = rawData.logistics.filter(item => item.status === 'delayed').length;
+        const openRisks = rawData.risks.filter(item => item.status === 'open').length;
+        const totalCost = rawData.costs.reduce((sum, item) => sum + item.totalCost, 0);
         const supplierScoreAvg =
-            suppliers.reduce((sum, item) => sum + item.compositeScore, 0) / Math.max(suppliers.length, 1);
+            rawData.suppliers.reduce((sum, item) => sum + item.compositeScore, 0) / Math.max(rawData.suppliers.length, 1);
 
         return {
-            totalOrders: orders.length,
+            totalOrders: filteredOrders.length, // 变成过滤后的数量
             totalSales,
             averageOrderAmount: round(averageOrderAmount, 0),
-            totalStock: inventory.reduce((sum, item) => sum + item.currentStock, 0),
+            totalStock: filteredInventory.reduce((sum, item) => sum + item.currentStock, 0), // 变成过滤后的库存
             shortageCount,
             delayedShipments,
             openRisks,
@@ -343,12 +409,30 @@ class DataService {
     async getDashboardOverview() {
         const { orders, inventory, suppliers, logistics, costs, risks } = await this.loadAll();
 
+        // Aggregate sales by date
+        const salesByDate = {};
+        orders.forEach(item => {
+            salesByDate[item.date] = salesByDate[item.date] || { date: item.date, amount: 0, quantity: 0 };
+            salesByDate[item.date].amount += item.amount;
+            salesByDate[item.date].quantity += item.quantity;
+        });
+        const salesTrend = Object.values(salesByDate)
+            .sort((a, b) => a.date.localeCompare(b.date))
+            .slice(-10);
+
+        // Aggregate costs by date
+        const costByDate = {};
+        costs.forEach(item => {
+            costByDate[item.date] = costByDate[item.date] || { date: item.date, totalCost: 0, purchaseCost: 0 };
+            costByDate[item.date].totalCost += item.totalCost;
+            costByDate[item.date].purchaseCost += item.purchaseCost;
+        });
+        const costTrend = Object.values(costByDate)
+            .sort((a, b) => a.date.localeCompare(b.date))
+            .slice(-10);
+
         return {
-            salesTrend: orders.slice(-8).map(item => ({
-                date: item.date,
-                amount: item.amount,
-                quantity: item.quantity
-            })),
+            salesTrend,
             inventoryAlerts: inventory
                 .filter(item => item.stockStatus !== 'healthy')
                 .sort((a, b) => a.stockGap - b.stockGap)
@@ -360,11 +444,7 @@ class DataService {
                 .filter(item => item.status === 'delayed')
                 .sort((a, b) => b.delayHours - a.delayHours)
                 .slice(0, 6),
-            costTrend: costs.slice(-8).map(item => ({
-                date: item.date,
-                totalCost: item.totalCost,
-                purchaseCost: item.purchaseCost
-            })),
+            costTrend,
             riskDistribution: ['Critical', 'High', 'Medium', 'Low'].map(level => ({
                 level,
                 count: risks.filter(item => item.riskLevel === level && item.status === 'open').length

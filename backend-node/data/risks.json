@@ -1,202 +1,502 @@
 [
   {
-    "risk_id": "R20260401001",
+    "risk_id": "R0001",
     "risk_type": "库存不足",
-    "risk_level": "High",
-    "related_object": "P001",
-    "description": "这是一条自动生成的风险记录 1",
-    "suggestion": "这是处理建议 1",
-    "status": "resolved",
-    "created_at": "2026-04-01 11:00:00"
-  },
-  {
-    "risk_id": "R20260401002",
-    "risk_type": "物流延误",
     "risk_level": "Medium",
     "related_object": "P002",
-    "description": "这是一条自动生成的风险记录 2",
-    "suggestion": "这是处理建议 2",
+    "description": "产品 小南瓜电煮锅宿舍学生锅家用多功能一体锅火锅电炒锅炒菜煮面小锅 在 成都区域仓 库存仅剩 250 件，低于安全库存 460 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 小南瓜电煮锅宿舍学生锅家用多功能一体锅火锅电炒锅炒菜煮面小锅，补货量不少于 410 件",
     "status": "open",
-    "created_at": "2026-04-02 11:00:00"
+    "created_at": "2026-06-02 09:00:00"
   },
   {
-    "risk_id": "R20260401003",
-    "risk_type": "供应商波动",
-    "risk_level": "Low",
+    "risk_id": "R0002",
+    "risk_type": "库存不足",
+    "risk_level": "Medium",
     "related_object": "P003",
-    "description": "这是一条自动生成的风险记录 3",
-    "suggestion": "这是处理建议 3",
+    "description": "产品 Apple iPhone 11 64G 移动联通电信4G全网 在 上海前置仓 库存仅剩 366 件，低于安全库存 375 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 Apple iPhone 11 64G 移动联通电信4G全网，补货量不少于 209 件",
     "status": "open",
-    "created_at": "2026-04-03 11:00:00"
+    "created_at": "2026-06-02 09:00:00"
   },
   {
-    "risk_id": "R20260401004",
-    "risk_type": "成本异常",
-    "risk_level": "Critical",
-    "related_object": "P004",
-    "description": "这是一条自动生成的风险记录 4",
-    "suggestion": "这是处理建议 4",
-    "status": "resolved",
-    "created_at": "2026-04-04 11:00:00"
-  },
-  {
-    "risk_id": "R20260401005",
-    "risk_type": "库存不足",
-    "risk_level": "High",
-    "related_object": "P005",
-    "description": "这是一条自动生成的风险记录 5",
-    "suggestion": "这是处理建议 5",
-    "status": "open",
-    "created_at": "2026-04-05 11:00:00"
-  },
-  {
-    "risk_id": "R20260401006",
-    "risk_type": "物流延误",
-    "risk_level": "Medium",
-    "related_object": "P001",
-    "description": "这是一条自动生成的风险记录 6",
-    "suggestion": "这是处理建议 6",
-    "status": "open",
-    "created_at": "2026-04-06 11:00:00"
-  },
-  {
-    "risk_id": "R20260401007",
-    "risk_type": "供应商波动",
-    "risk_level": "Low",
-    "related_object": "P002",
-    "description": "这是一条自动生成的风险记录 7",
-    "suggestion": "这是处理建议 7",
-    "status": "resolved",
-    "created_at": "2026-04-07 11:00:00"
-  },
-  {
-    "risk_id": "R20260401008",
-    "risk_type": "成本异常",
-    "risk_level": "Critical",
-    "related_object": "P003",
-    "description": "这是一条自动生成的风险记录 8",
-    "suggestion": "这是处理建议 8",
-    "status": "open",
-    "created_at": "2026-04-08 11:00:00"
-  },
-  {
-    "risk_id": "R20260401009",
-    "risk_type": "库存不足",
-    "risk_level": "High",
-    "related_object": "P004",
-    "description": "这是一条自动生成的风险记录 9",
-    "suggestion": "这是处理建议 9",
-    "status": "open",
-    "created_at": "2026-04-09 11:00:00"
-  },
-  {
-    "risk_id": "R20260401010",
-    "risk_type": "物流延误",
-    "risk_level": "Medium",
-    "related_object": "P005",
-    "description": "这是一条自动生成的风险记录 10",
-    "suggestion": "这是处理建议 10",
-    "status": "resolved",
-    "created_at": "2026-04-10 11:00:00"
-  },
-  {
-    "risk_id": "R20260401011",
-    "risk_type": "供应商波动",
-    "risk_level": "Low",
-    "related_object": "P001",
-    "description": "这是一条自动生成的风险记录 11",
-    "suggestion": "这是处理建议 11",
-    "status": "open",
-    "created_at": "2026-04-11 11:00:00"
-  },
-  {
-    "risk_id": "R20260401012",
-    "risk_type": "成本异常",
-    "risk_level": "Critical",
-    "related_object": "P002",
-    "description": "这是一条自动生成的风险记录 12",
-    "suggestion": "这是处理建议 12",
-    "status": "open",
-    "created_at": "2026-04-12 11:00:00"
-  },
-  {
-    "risk_id": "R20260401013",
+    "risk_id": "R0003",
     "risk_type": "库存不足",
     "risk_level": "High",
     "related_object": "P003",
-    "description": "这是一条自动生成的风险记录 13",
-    "suggestion": "这是处理建议 13",
-    "status": "resolved",
-    "created_at": "2026-04-13 11:00:00"
+    "description": "产品 Apple iPhone 11 64G 移动联通电信4G全网 在 广州中心仓 库存仅剩 142 件，低于安全库存 301 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 Apple iPhone 11 64G 移动联通电信4G全网，补货量不少于 359 件",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
   },
   {
-    "risk_id": "R20260401014",
-    "risk_type": "物流延误",
+    "risk_id": "R0004",
+    "risk_type": "库存不足",
     "risk_level": "Medium",
-    "related_object": "P004",
-    "description": "这是一条自动生成的风险记录 14",
-    "suggestion": "这是处理建议 14",
+    "related_object": "P006",
+    "description": "产品 Apple iPhone 11 64G 移动联通电信4G全网 在 成都区域仓 库存仅剩 361 件，低于安全库存 402 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 Apple iPhone 11 64G 移动联通电信4G全网，补货量不少于 241 件",
     "status": "open",
-    "created_at": "2026-04-14 11:00:00"
+    "created_at": "2026-06-02 09:00:00"
   },
   {
-    "risk_id": "R20260401015",
-    "risk_type": "供应商波动",
-    "risk_level": "Low",
-    "related_object": "P005",
-    "description": "这是一条自动生成的风险记录 15",
-    "suggestion": "这是处理建议 15",
+    "risk_id": "R0005",
+    "risk_type": "库存不足",
+    "risk_level": "Medium",
+    "related_object": "P008",
+    "description": "产品 Apple iPhone 11 移动联通电信4G手机 在 广州中心仓 库存仅剩 253 件，低于安全库存 338 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 Apple iPhone 11 移动联通电信4G手机，补货量不少于 285 件",
     "status": "open",
-    "created_at": "2026-04-15 11:00:00"
+    "created_at": "2026-06-02 09:00:00"
   },
   {
-    "risk_id": "R20260401016",
-    "risk_type": "成本异常",
-    "risk_level": "Critical",
-    "related_object": "P001",
-    "description": "这是一条自动生成的风险记录 16",
-    "suggestion": "这是处理建议 16",
-    "status": "resolved",
-    "created_at": "2026-04-16 11:00:00"
-  },
-  {
-    "risk_id": "R20260401017",
+    "risk_id": "R0006",
     "risk_type": "库存不足",
     "risk_level": "High",
-    "related_object": "P002",
-    "description": "这是一条自动生成的风险记录 17",
-    "suggestion": "这是处理建议 17",
+    "related_object": "P008",
+    "description": "产品 Apple iPhone 11 移动联通电信4G手机 在 武汉中转仓 库存仅剩 174 件，低于安全库存 353 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 Apple iPhone 11 移动联通电信4G手机，补货量不少于 379 件",
     "status": "open",
-    "created_at": "2026-04-17 11:00:00"
+    "created_at": "2026-06-02 09:00:00"
   },
   {
-    "risk_id": "R20260401018",
+    "risk_id": "R0007",
+    "risk_type": "库存不足",
+    "risk_level": "High",
+    "related_object": "P009",
+    "description": "产品 后天气丹花献光彩紧颜系列礼盒7件套 在 武汉中转仓 库存仅剩 190 件，低于安全库存 433 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 后天气丹花献光彩紧颜系列礼盒7件套，补货量不少于 443 件",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0008",
+    "risk_type": "库存不足",
+    "risk_level": "High",
+    "related_object": "P010",
+    "description": "产品 innisfree 悦诗风吟悦享鲜萃面膜深层补水持久保湿滋养 在 上海前置仓 库存仅剩 61 件，低于安全库存 291 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 innisfree 悦诗风吟悦享鲜萃面膜深层补水持久保湿滋养，补货量不少于 430 件",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0009",
+    "risk_type": "库存不足",
+    "risk_level": "Medium",
+    "related_object": "P016",
+    "description": "产品 Apple iPhone 12 128GB 支持移动联通电信 在 广州中心仓 库存仅剩 366 件，低于安全库存 486 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 Apple iPhone 12 128GB 支持移动联通电信，补货量不少于 320 件",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0010",
+    "risk_type": "库存不足",
+    "risk_level": "Medium",
+    "related_object": "P016",
+    "description": "产品 Apple iPhone 12 128GB 支持移动联通电信 在 上海前置仓 库存仅剩 408 件，低于安全库存 434 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 Apple iPhone 12 128GB 支持移动联通电信，补货量不少于 226 件",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0011",
+    "risk_type": "库存不足",
+    "risk_level": "Medium",
+    "related_object": "P018",
+    "description": "产品 Nintendo Switch任天堂 健身环大冒险游戏套装 在 上海前置仓 库存仅剩 112 件，低于安全库存 196 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 Nintendo Switch任天堂 健身环大冒险游戏套装，补货量不少于 284 件",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0012",
+    "risk_type": "库存不足",
+    "risk_level": "Medium",
+    "related_object": "P019",
+    "description": "产品 中国黄金 财富金条 50克 在 武汉中转仓 库存仅剩 372 件，低于安全库存 466 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 中国黄金 财富金条 50克，补货量不少于 294 件",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0013",
+    "risk_type": "库存不足",
+    "risk_level": "Medium",
+    "related_object": "P020",
+    "description": "产品 雪花秀限定明星润燥滋盈礼盒 在 广州中心仓 库存仅剩 340 件，低于安全库存 497 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 雪花秀限定明星润燥滋盈礼盒，补货量不少于 357 件",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0014",
+    "risk_type": "库存不足",
+    "risk_level": "Medium",
+    "related_object": "P025",
+    "description": "产品 AB版撞色超声波可机洗夏被 LRT 在 北京分仓 库存仅剩 359 件，低于安全库存 375 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 AB版撞色超声波可机洗夏被 LRT，补货量不少于 216 件",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0015",
+    "risk_type": "库存不足",
+    "risk_level": "Medium",
+    "related_object": "P027",
+    "description": "产品 精典泰迪医护级婴儿纸尿裤超薄透气尿不湿拉拉裤 在 成都区域仓 库存仅剩 218 件，低于安全库存 380 件",
+    "suggestion": "建议从其他仓库调拨或紧急采购 精典泰迪医护级婴儿纸尿裤超薄透气尿不湿拉拉裤，补货量不少于 362 件",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0016",
     "risk_type": "物流延误",
     "risk_level": "Medium",
-    "related_object": "P003",
-    "description": "这是一条自动生成的风险记录 18",
-    "suggestion": "这是处理建议 18",
+    "related_object": "O202605010095",
+    "description": "订单 O202605010095 由 京广速运 承运，深圳→北京，延误 24 小时",
+    "suggestion": "联系承运商 京广速运 确认货物位置，必要时启动备选物流方案",
     "status": "open",
-    "created_at": "2026-04-18 11:00:00"
+    "created_at": "2026-06-02 09:00:00"
   },
   {
-    "risk_id": "R20260401019",
+    "risk_id": "R0017",
+    "risk_type": "物流延误",
+    "risk_level": "Medium",
+    "related_object": "O202605020038",
+    "description": "订单 O202605020038 由 飞豹运输 承运，杭州→武汉，延误 19 小时",
+    "suggestion": "联系承运商 飞豹运输 确认货物位置，必要时启动备选物流方案",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0018",
+    "risk_type": "物流延误",
+    "risk_level": "High",
+    "related_object": "O202605020156",
+    "description": "订单 O202605020156 由 快运通 承运，广州→北京，延误 37 小时",
+    "suggestion": "联系承运商 快运通 确认货物位置，必要时启动备选物流方案",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0019",
+    "risk_type": "物流延误",
+    "risk_level": "Medium",
+    "related_object": "O202605030130",
+    "description": "订单 O202605030130 由 顺达物流 承运，成都→上海，延误 22 小时",
+    "suggestion": "联系承运商 顺达物流 确认货物位置，必要时启动备选物流方案",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0020",
+    "risk_type": "物流延误",
+    "risk_level": "High",
+    "related_object": "O202605060118",
+    "description": "订单 O202605060118 由 京广速运 承运，广州→北京，延误 36 小时",
+    "suggestion": "联系承运商 京广速运 确认货物位置，必要时启动备选物流方案",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0021",
+    "risk_type": "物流延误",
+    "risk_level": "High",
+    "related_object": "O202605070012",
+    "description": "订单 O202605070012 由 顺达物流 承运，广州→北京，延误 26 小时",
+    "suggestion": "联系承运商 顺达物流 确认货物位置，必要时启动备选物流方案",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0022",
+    "risk_type": "物流延误",
+    "risk_level": "High",
+    "related_object": "O202605070075",
+    "description": "订单 O202605070075 由 京广速运 承运，上海→成都，延误 38 小时",
+    "suggestion": "联系承运商 京广速运 确认货物位置，必要时启动备选物流方案",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0023",
+    "risk_type": "物流延误",
+    "risk_level": "Medium",
+    "related_object": "O202605080043",
+    "description": "订单 O202605080043 由 顺达物流 承运，上海→成都，延误 11 小时",
+    "suggestion": "联系承运商 顺达物流 确认货物位置，必要时启动备选物流方案",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0024",
+    "risk_type": "物流延误",
+    "risk_level": "Medium",
+    "related_object": "O202605080112",
+    "description": "订单 O202605080112 由 快运通 承运，广州→北京，延误 22 小时",
+    "suggestion": "联系承运商 快运通 确认货物位置，必要时启动备选物流方案",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0025",
+    "risk_type": "物流延误",
+    "risk_level": "High",
+    "related_object": "O202605080163",
+    "description": "订单 O202605080163 由 快运通 承运，杭州→武汉，延误 41 小时",
+    "suggestion": "联系承运商 快运通 确认货物位置，必要时启动备选物流方案",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0026",
     "risk_type": "供应商波动",
-    "risk_level": "Low",
-    "related_object": "P004",
-    "description": "这是一条自动生成的风险记录 19",
-    "suggestion": "这是处理建议 19",
-    "status": "resolved",
-    "created_at": "2026-04-19 11:00:00"
+    "risk_level": "Medium",
+    "related_object": "S001",
+    "description": "供应商 苹果 (APPLE)（浙江）存在履约波动：准时率仅 79%",
+    "suggestion": "启动供应商履约复盘，评估是否需要引入备选供应商以分散风险",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
   },
   {
-    "risk_id": "R20260401020",
+    "risk_id": "R0027",
+    "risk_type": "供应商波动",
+    "risk_level": "Medium",
+    "related_object": "S002",
+    "description": "供应商 路易威登 (Louis Vuitton)（浙江）存在履约波动：品质评分偏低 (81%)",
+    "suggestion": "启动供应商履约复盘，评估是否需要引入备选供应商以分散风险",
+    "status": "monitoring",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0028",
+    "risk_type": "供应商波动",
+    "risk_level": "Medium",
+    "related_object": "S004",
+    "description": "供应商 中国黄金 (China Gold)（北京）存在履约波动：品质评分偏低 (80%)",
+    "suggestion": "启动供应商履约复盘，评估是否需要引入备选供应商以分散风险",
+    "status": "monitoring",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0029",
+    "risk_type": "供应商波动",
+    "risk_level": "Medium",
+    "related_object": "S005",
+    "description": "供应商 后 (The history of whoo)（北京）存在履约波动：准时率仅 81%",
+    "suggestion": "启动供应商履约复盘，评估是否需要引入备选供应商以分散风险",
+    "status": "monitoring",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0030",
+    "risk_type": "供应商波动",
+    "risk_level": "Medium",
+    "related_object": "S010",
+    "description": "供应商 欧诗漫 (OSM)（江苏）存在履约波动：品质评分偏低 (84%)",
+    "suggestion": "启动供应商履约复盘，评估是否需要引入备选供应商以分散风险",
+    "status": "monitoring",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0031",
+    "risk_type": "供应商波动",
+    "risk_level": "Medium",
+    "related_object": "S011",
+    "description": "供应商 迪奥 (DIOR)（浙江）存在履约波动：品质评分偏低 (83%)",
+    "suggestion": "启动供应商履约复盘，评估是否需要引入备选供应商以分散风险",
+    "status": "monitoring",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0032",
+    "risk_type": "供应商波动",
+    "risk_level": "Medium",
+    "related_object": "S014",
+    "description": "供应商 SK-II（四川）存在履约波动：准时率仅 82%",
+    "suggestion": "启动供应商履约复盘，评估是否需要引入备选供应商以分散风险",
+    "status": "monitoring",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0033",
+    "risk_type": "供应商波动",
+    "risk_level": "Medium",
+    "related_object": "S015",
+    "description": "供应商 蒂佳婷 (Dr.Jart+)（北京）存在履约波动：准时率仅 81%",
+    "suggestion": "启动供应商履约复盘，评估是否需要引入备选供应商以分散风险",
+    "status": "monitoring",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0034",
     "risk_type": "成本异常",
-    "risk_level": "Critical",
-    "related_object": "P005",
-    "description": "这是一条自动生成的风险记录 20",
-    "suggestion": "这是处理建议 20",
+    "risk_level": "Medium",
+    "related_object": "P019",
+    "description": "产品 P019 在 2026-05-07 总成本 1616195.74 元，高于均值",
+    "suggestion": "审查采购和物流成本构成，考虑供应商议价和运输方案优化",
     "status": "open",
-    "created_at": "2026-04-20 11:00:00"
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0035",
+    "risk_type": "成本异常",
+    "risk_level": "Medium",
+    "related_object": "P014",
+    "description": "产品 P014 在 2026-05-24 总成本 1218533.19 元，高于均值",
+    "suggestion": "审查采购和物流成本构成，考虑供应商议价和运输方案优化",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0036",
+    "risk_type": "成本异常",
+    "risk_level": "Medium",
+    "related_object": "P038",
+    "description": "产品 P038 在 2026-05-10 总成本 1059162.99 元，高于均值",
+    "suggestion": "审查采购和物流成本构成，考虑供应商议价和运输方案优化",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0037",
+    "risk_type": "成本异常",
+    "risk_level": "Medium",
+    "related_object": "P019",
+    "description": "产品 P019 在 2026-05-29 总成本 1017581.76 元，高于均值",
+    "suggestion": "审查采购和物流成本构成，考虑供应商议价和运输方案优化",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0038",
+    "risk_type": "成本异常",
+    "risk_level": "Medium",
+    "related_object": "P015",
+    "description": "产品 P015 在 2026-05-11 总成本 964000.38 元，高于均值",
+    "suggestion": "审查采购和物流成本构成，考虑供应商议价和运输方案优化",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0039",
+    "risk_type": "成本异常",
+    "risk_level": "Medium",
+    "related_object": "P015",
+    "description": "产品 P015 在 2026-05-06 总成本 902251.10 元，高于均值",
+    "suggestion": "审查采购和物流成本构成，考虑供应商议价和运输方案优化",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0040",
+    "risk_type": "成本异常",
+    "risk_level": "Medium",
+    "related_object": "P038",
+    "description": "产品 P038 在 2026-05-25 总成本 893350.92 元，高于均值",
+    "suggestion": "审查采购和物流成本构成，考虑供应商议价和运输方案优化",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0041",
+    "risk_type": "成本异常",
+    "risk_level": "Medium",
+    "related_object": "P038",
+    "description": "产品 P038 在 2026-05-16 总成本 717303.01 元，高于均值",
+    "suggestion": "审查采购和物流成本构成，考虑供应商议价和运输方案优化",
+    "status": "open",
+    "created_at": "2026-06-02 09:00:00"
+  },
+  {
+    "risk_id": "R0045",
+    "risk_type": "库存不足",
+    "risk_level": "Low",
+    "related_object": "P041",
+    "description": "数据监测发现潜在供应链风险项 #4，需关注异常指标变化趋势",
+    "suggestion": "建议专项分析该指标的历史变化趋势，制定应对预案",
+    "status": "open",
+    "created_at": "2026-05-27 11:00:00"
+  },
+  {
+    "risk_id": "R0044",
+    "risk_type": "品质下滑",
+    "risk_level": "Low",
+    "related_object": "P007",
+    "description": "数据监测发现潜在供应链风险项 #3，需关注异常指标变化趋势",
+    "suggestion": "建议专项分析该指标的历史变化趋势，制定应对预案",
+    "status": "open",
+    "created_at": "2026-05-23 11:00:00"
+  },
+  {
+    "risk_id": "R0042",
+    "risk_type": "库存不足",
+    "risk_level": "Medium",
+    "related_object": "P033",
+    "description": "数据监测发现潜在供应链风险项 #1，需关注异常指标变化趋势",
+    "suggestion": "建议专项分析该指标的历史变化趋势，制定应对预案",
+    "status": "resolved",
+    "created_at": "2026-05-20 11:00:00"
+  },
+  {
+    "risk_id": "R0048",
+    "risk_type": "库存不足",
+    "risk_level": "Low",
+    "related_object": "P002",
+    "description": "数据监测发现潜在供应链风险项 #7，需关注异常指标变化趋势",
+    "suggestion": "建议专项分析该指标的历史变化趋势，制定应对预案",
+    "status": "open",
+    "created_at": "2026-05-16 11:00:00"
+  },
+  {
+    "risk_id": "R0049",
+    "risk_type": "需求突增",
+    "risk_level": "Low",
+    "related_object": "P005",
+    "description": "数据监测发现潜在供应链风险项 #8，需关注异常指标变化趋势",
+    "suggestion": "建议专项分析该指标的历史变化趋势，制定应对预案",
+    "status": "open",
+    "created_at": "2026-05-14 11:00:00"
+  },
+  {
+    "risk_id": "R0050",
+    "risk_type": "库存不足",
+    "risk_level": "Low",
+    "related_object": "P037",
+    "description": "数据监测发现潜在供应链风险项 #9，需关注异常指标变化趋势",
+    "suggestion": "建议专项分析该指标的历史变化趋势，制定应对预案",
+    "status": "resolved",
+    "created_at": "2026-05-14 11:00:00"
+  },
+  {
+    "risk_id": "R0043",
+    "risk_type": "品质下滑",
+    "risk_level": "Low",
+    "related_object": "P019",
+    "description": "数据监测发现潜在供应链风险项 #2，需关注异常指标变化趋势",
+    "suggestion": "建议专项分析该指标的历史变化趋势，制定应对预案",
+    "status": "resolved",
+    "created_at": "2026-05-12 11:00:00"
+  },
+  {
+    "risk_id": "R0046",
+    "risk_type": "库存不足",
+    "risk_level": "Low",
+    "related_object": "P044",
+    "description": "数据监测发现潜在供应链风险项 #5，需关注异常指标变化趋势",
+    "suggestion": "建议专项分析该指标的历史变化趋势，制定应对预案",
+    "status": "open",
+    "created_at": "2026-05-09 11:00:00"
+  },
+  {
+    "risk_id": "R0047",
+    "risk_type": "需求突增",
+    "risk_level": "Medium",
+    "related_object": "P042",
+    "description": "数据监测发现潜在供应链风险项 #6，需关注异常指标变化趋势",
+    "suggestion": "建议专项分析该指标的历史变化趋势，制定应对预案",
+    "status": "resolved",
+    "created_at": "2026-05-08 11:00:00"
   }
 ]

@@ -1,0 +1,33 @@
+// ============================================
+// 深色模式变量覆盖
+// ============================================
+
+html.dark {
+  // 文字颜色
+  --el-text-color-primary: #e5eaf3;
+  --el-text-color-regular: #cfd3dc;
+  --el-text-color-secondary: #a3a6ad;
+  --el-text-color-placeholder: #8d9095;
+
+  // 边框颜色
+  --el-border-color: #4c4d4f;
+  --el-border-color-light: #414243;
+  --el-border-color-lighter: #363637;
+
+  // 背景颜色
+  --el-bg-color: #1d1e2c;
+  --el-bg-color-page: #141422;
+  --el-bg-color-overlay: #252538;
+
+  // 填充颜色
+  --el-fill-color: #303040;
+  --el-fill-color-light: #262636;
+  --el-fill-color-lighter: #1d1d2c;
+
+  // 自定义变量
+  --app-bg-page: #141422;
+  --app-bg-card: #252538;
+  --app-bg-sidebar: #1a1a2e;
+  --app-bg-sidebar-hover: #2a2a42;
+  --app-shadow-color: rgba(0, 0, 0, 0.3);
+}

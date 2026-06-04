@@ -7,7 +7,12 @@ from pathlib import Path
 DEFAULT_CONFIG = {
     "openai_api_key": "",
     "openai_model": "gpt-4.1-mini",
-    "openai_base_url": "https://api.openai.com/v1"
+    "openai_base_url": "https://api.openai.com/v1",
+    "api_style": "responses",
+    "timeout": 45,
+    "max_retries": 1,
+    "fallback_enabled": True,
+    "fallback_log_level": "warning"
 }
 
 
@@ -24,7 +29,12 @@ def load_llm_config() -> dict:
     return {
         "openai_api_key": str(raw.get("openai_api_key", DEFAULT_CONFIG["openai_api_key"])).strip(),
         "openai_model": str(raw.get("openai_model", DEFAULT_CONFIG["openai_model"])).strip(),
-        "openai_base_url": str(raw.get("openai_base_url", DEFAULT_CONFIG["openai_base_url"])).rstrip("/")
+        "openai_base_url": str(raw.get("openai_base_url", DEFAULT_CONFIG["openai_base_url"])).rstrip("/"),
+        "api_style": str(raw.get("api_style", DEFAULT_CONFIG["api_style"])).strip(),
+        "timeout": int(raw.get("timeout", DEFAULT_CONFIG["timeout"])),
+        "max_retries": int(raw.get("max_retries", DEFAULT_CONFIG["max_retries"])),
+        "fallback_enabled": bool(raw.get("fallback_enabled", DEFAULT_CONFIG["fallback_enabled"])),
+        "fallback_log_level": str(raw.get("fallback_log_level", DEFAULT_CONFIG["fallback_log_level"])).strip()
     }
 
 
@@ -165,7 +175,7 @@ def _call_openai(question: str, context: dict, config: dict) -> dict:
         method="POST"
     )
 
-    with urllib.request.urlopen(request, timeout=45) as response:
+    with urllib.request.urlopen(request, timeout=config["timeout"]) as response:
         body = json.loads(response.read().decode("utf-8"))
 
     output_text = body.get("output_text")
@@ -188,15 +198,98 @@ def _call_openai(question: str, context: dict, config: dict) -> dict:
     return result
 
 
+def _call_chat_completions(question: str, context: dict, config: dict) -> dict:
+    """使用 Chat Completions API（兼容 DeepSeek / Qwen / Kimi 等）"""
+    compact_context = _compact_context(context)
+    prompt = {
+        "question": question,
+        "context": compact_context
+    }
+
+    system_prompt = (
+        "你是企业供应链分析助手。"
+        "请严格基于给定数据做分析，不要虚构不存在的数据。"
+        "输出必须是 JSON 对象，字段包括 answer、summary、suggestions、evidence、charts。"
+        "summary 和 suggestions 分别输出 3 条以内中文短句。"
+        "evidence 为数组，每项包含 type、object、value。"
+        "charts 为数组，可为空。"
+        "不要输出 Markdown 代码块，直接输出纯 JSON。"
+    )
+
+    payload = json.dumps({
+        "model": config["openai_model"],
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)}
+        ],
+        "temperature": 0.3,
+        "max_tokens": 2048
+    }).encode("utf-8")
+
+    request = urllib.request.Request(
+        f"{config['openai_base_url']}/chat/completions",
+        data=payload,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {config['openai_api_key']}"
+        },
+        method="POST"
+    )
+
+    with urllib.request.urlopen(request, timeout=config["timeout"]) as response:
+        body = json.loads(response.read().decode("utf-8"))
+
+    output_text = body.get("choices", [{}])[0].get("message", {}).get("content", "")
+    if not output_text:
+        raise ValueError("Empty Chat Completions response")
+
+    result = _extract_json(output_text)
+    result["metadata"] = {
+        "mode": "chat_completions",
+        "model": body.get("model", config["openai_model"]),
+        "response_id": body.get("id")
+    }
+    return result
+
+
 def generate_report(question: str, context: dict) -> dict:
+    import logging
+    logger = logging.getLogger("llm_client")
+
     config = load_llm_config()
     if not config["openai_api_key"]:
-        return _fallback_report(question, context, "config.json is missing openai_api_key")
+        reason = "config.json is missing openai_api_key"
+        if config["fallback_log_level"]:
+            getattr(logger, config["fallback_log_level"], logger.warning)(
+                "LLM fallback: %s", reason
+            )
+        if config["fallback_enabled"]:
+            return _fallback_report(question, context, reason)
+        return {"answer": "AI 服务未配置 API Key，且降级模式已关闭。", "metadata": {"mode": "disabled"}}
 
-    try:
-        return _call_openai(question, context, config)
-    except urllib.error.HTTPError as error:
-        message = error.read().decode("utf-8", errors="ignore")
-        return _fallback_report(question, context, f"HTTPError: {message}")
-    except Exception as error:
-        return _fallback_report(question, context, f"{type(error).__name__}: {error}")
+    call_fn = _call_chat_completions if config["api_style"] == "chat_completions" else _call_openai
+
+    for attempt in range(config["max_retries"] + 1):
+        try:
+            return call_fn(question, context, config)
+        except urllib.error.HTTPError as error:
+            message = error.read().decode("utf-8", errors="ignore")
+            if attempt < config["max_retries"]:
+                continue
+            if config["fallback_log_level"]:
+                getattr(logger, config["fallback_log_level"], logger.warning)(
+                    "LLM HTTP error after %d retries: %s", attempt + 1, message
+                )
+            if config["fallback_enabled"]:
+                return _fallback_report(question, context, f"HTTPError: {message}")
+            return {"answer": f"AI 服务请求失败：{message}", "metadata": {"mode": "error"}}
+        except Exception as error:
+            if attempt < config["max_retries"]:
+                continue
+            if config["fallback_log_level"]:
+                getattr(logger, config["fallback_log_level"], logger.warning)(
+                    "LLM error after %d retries: %s", attempt + 1, error
+                )
+            if config["fallback_enabled"]:
+                return _fallback_report(question, context, f"{type(error).__name__}: {error}")
+            return {"answer": f"AI 服务异常：{error}", "metadata": {"mode": "error"}}
