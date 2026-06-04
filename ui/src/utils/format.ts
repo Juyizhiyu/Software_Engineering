@@ -18,26 +18,26 @@ export function formatPercent(value: number, decimals = 1): string {
   return `${value.toFixed(decimals)}%`
 }
 
-/** 风险等级对应颜色 */
+/** 风险等级对应颜色（使用 Element Plus 语义色） */
 export function riskLevelColor(level: string): string {
   const map: Record<string, string> = {
-    Critical: '#f56c6c',
-    High: '#e6a23c',
-    Medium: '#409eff',
-    Low: '#67c23a',
+    Critical: 'var(--el-color-danger)',
+    High: 'var(--el-color-warning)',
+    Medium: 'var(--el-color-primary)',
+    Low: 'var(--el-color-success)',
   }
-  return map[level] || '#909399'
+  return map[level] || 'var(--el-color-info)'
 }
 
-/** 库存状态对应颜色 */
+/** 库存状态对应颜色（使用 Element Plus 语义色） */
 export function stockStatusColor(status: string): string {
   const map: Record<string, string> = {
-    shortage: '#f56c6c',
-    warning: '#e6a23c',
-    overstock: '#409eff',
-    healthy: '#67c23a',
+    shortage: 'var(--el-color-danger)',
+    warning: 'var(--el-color-warning)',
+    overstock: 'var(--el-color-primary)',
+    healthy: 'var(--el-color-success)',
   }
-  return map[status] || '#909399'
+  return map[status] || 'var(--el-color-info)'
 }
 
 /** 格式化日期 */

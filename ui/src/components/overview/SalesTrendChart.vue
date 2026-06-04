@@ -1,78 +1,72 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useDark } from '@vueuse/core'
 import { formatLargeNumber } from '@/utils/format'
+import {
+  themeColors,
+  textColors,
+  borderColors,
+  getChartTooltip,
+  getChartSplitLine,
+  getChartAxisLabel,
+  getCssVar,
+} from '@/utils/theme'
 import type { SalesTrendItem } from '@/types'
 
 const props = defineProps<{
   data: SalesTrendItem[]
 }>()
 
-const isDark = useDark()
 const scaleType = ref<'linear' | 'log'>('linear')
 
 const chartOption = computed(() => {
-  const textColor = isDark.value ? '#cfd3dc' : '#606266'
-  const tooltipBg = isDark.value ? '#252538' : '#fff'
-  const tooltipBorder = isDark.value ? '#4c4d4f' : '#e4e7ed'
   return {
     tooltip: {
       trigger: 'axis' as const,
-      backgroundColor: tooltipBg,
-      borderColor: tooltipBorder,
-      textStyle: { color: textColor },
+      ...getChartTooltip(),
     },
     legend: {
       data: ['销售额', '订单量'],
       bottom: 0,
-      textStyle: { color: textColor, fontSize: 12 },
+      textStyle: { color: textColors.secondary(), fontSize: 12 },
     },
     grid: { left: 60, right: 60, top: 20, bottom: 80 },
     xAxis: {
       type: 'category' as const,
       data: props.data.map((i) => i.date.slice(5)),
-      axisLabel: { color: textColor, fontSize: 11 },
-      axisLine: { lineStyle: { color: isDark.value ? '#4c4d4f' : '#e4e7ed' } },
+      axisLabel: getChartAxisLabel(),
+      axisLine: { lineStyle: { color: borderColors.light() } },
     },
     yAxis: [
       {
         type: scaleType.value === 'log' ? 'log' : 'value',
         name: '销售额',
-        nameTextStyle: { color: textColor, fontSize: 11 },
+        nameTextStyle: { color: textColors.secondary(), fontSize: 11 },
         axisLabel: {
-          color: textColor,
-          fontSize: 11,
+          ...getChartAxisLabel(),
           formatter: (v: number) => formatLargeNumber(v),
         },
-        splitLine: { lineStyle: { color: isDark.value ? '#363637' : '#f0f0f0' } },
+        splitLine: getChartSplitLine(),
       },
       {
         type: 'value' as const,
         name: '订单量',
-        nameTextStyle: { color: textColor, fontSize: 11 },
-        axisLabel: {
-          color: textColor,
-          fontSize: 11,
-        },
+        nameTextStyle: { color: textColors.secondary(), fontSize: 11 },
+        axisLabel: getChartAxisLabel(),
         splitLine: { show: false },
       },
     ],
     dataZoom: [
-      {
-        type: 'inside' as const,
-        start: 0,
-        end: 100,
-      },
+      { type: 'inside' as const, start: 0, end: 100 },
       {
         type: 'slider' as const,
         start: 0,
         end: 100,
         height: 20,
         bottom: 30,
-        borderColor: isDark.value ? '#4c4d4f' : '#e4e7ed',
-        fillerColor: isDark.value ? 'rgba(64,158,255,0.2)' : 'rgba(64,158,255,0.15)',
-        handleStyle: { color: '#409eff' },
-        textStyle: { color: textColor },
+        borderColor: borderColors.light(),
+        fillerColor: `rgba(64,158,255,0.15)`,
+        handleStyle: { color: themeColors.primary() },
+        textStyle: { color: textColors.secondary() },
       },
     ],
     series: [
@@ -86,8 +80,8 @@ const chartOption = computed(() => {
             type: 'linear' as const,
             x: 0, y: 0, x2: 0, y2: 1,
             colorStops: [
-              { offset: 0, color: '#409eff' },
-              { offset: 1, color: '#79bbff' },
+              { offset: 0, color: themeColors.primary() },
+              { offset: 1, color: getCssVar('--el-color-primary-light-3') },
             ],
           },
           borderRadius: [4, 4, 0, 0],
@@ -102,8 +96,8 @@ const chartOption = computed(() => {
         smooth: true,
         symbol: 'circle',
         symbolSize: 6,
-        lineStyle: { color: '#67c23a', width: 2 },
-        itemStyle: { color: '#67c23a' },
+        lineStyle: { color: themeColors.success(), width: 2 },
+        itemStyle: { color: themeColors.success() },
       },
     ],
   }

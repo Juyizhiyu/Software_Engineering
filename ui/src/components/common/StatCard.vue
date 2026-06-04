@@ -37,7 +37,7 @@ defineProps<{
     height: 32px;
     border-radius: 50%;
     @include flex-center;
-    background: var(--stat-color, #{$color-primary});
+    background: var(--stat-color, var(--el-color-primary));
     color: #fff;
     flex-shrink: 0;
   }

@@ -2,13 +2,10 @@
 // 全局基础样式
 // ============================================
 
-// CSS 自定义属性（运行时可切换）
+// 应用级 CSS 变量（非 Element Plus 管理的部分）
 :root {
-  --app-bg-page: #{$color-bg-page};
-  --app-bg-card: #{$color-bg-card};
-  --app-bg-sidebar: #{$color-bg-sidebar};
-  --app-bg-sidebar-hover: #{$color-bg-sidebar-hover};
-  --app-shadow-color: rgba(0, 0, 0, 0.08);
+  --app-bg-sidebar: #1d1e2c;
+  --app-bg-sidebar-hover: #2a2b3d;
   --app-sidebar-width: #{$sidebar-width};
   --app-sidebar-collapsed-width: #{$sidebar-collapsed-width};
   --app-header-height: #{$header-height};
@@ -27,8 +24,8 @@ body,
   height: 100%;
   font-family: $font-family;
   font-size: $font-size-md;
-  color: $color-text-primary;
-  background: var(--app-bg-page);
+  color: var(--el-text-color-primary);
+  background: var(--el-bg-color-page);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -40,7 +37,7 @@ body {
 
 // 链接
 a {
-  color: $color-primary;
+  color: var(--el-color-primary);
   text-decoration: none;
 }
 
@@ -66,23 +63,6 @@ a {
   height: 100%;
   overflow-y: auto;
   @include custom-scrollbar;
-}
-
-// 页面标题区域
-.page-header {
-  margin-bottom: $spacing-lg;
-  
-  &__title {
-    font-size: $font-size-xxl;
-    font-weight: 600;
-    color: $color-text-primary;
-  }
-  
-  &__desc {
-    font-size: $font-size-sm;
-    color: $color-text-secondary;
-    margin-top: $spacing-xs;
-  }
 }
 
 // 卡片网格布局

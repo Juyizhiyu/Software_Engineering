@@ -5,7 +5,7 @@
 
 // 卡片样式
 @mixin card($padding: $spacing-lg) {
-  background: $color-bg-card;
+  background: var(--el-bg-color-overlay);
   border-radius: $border-radius;
   box-shadow: $shadow-sm;
   padding: $padding;
@@ -48,7 +48,7 @@
 }
 
 // 滚动条样式
-@mixin custom-scrollbar($thumb-color: #c0c4cc) {
+@mixin custom-scrollbar($thumb-color: var(--el-border-color)) {
   &::-webkit-scrollbar {
     width: 6px;
     height: 6px;

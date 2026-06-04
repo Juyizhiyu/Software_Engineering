@@ -124,7 +124,7 @@ onMounted(() => {
     align-items: flex-start;
     gap: $spacing-sm;
     font-size: $font-size-sm;
-    color: $color-success;
+    color: var(--el-color-success);
 
     .el-icon {
       margin-top: 2px;

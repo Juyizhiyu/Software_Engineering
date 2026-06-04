@@ -149,7 +149,7 @@ async function handleLogin() {
     letter-spacing: 2px;
 
     :root:not(.dark) & {
-      color: $color-text-primary;
+      color: var(--el-text-color-primary);
     }
   }
 
@@ -159,7 +159,7 @@ async function handleLogin() {
     margin-top: $spacing-sm;
 
     :root:not(.dark) & {
-      color: $color-text-secondary;
+      color: var(--el-text-color-secondary);
     }
   }
 
@@ -171,7 +171,7 @@ async function handleLogin() {
 
       :root:not(.dark) & {
         background: #fff;
-        border-color: $color-border;
+        border-color: var(--el-border-color);
       }
     }
 
@@ -183,10 +183,10 @@ async function handleLogin() {
       }
 
       :root:not(.dark) & {
-        color: $color-text-primary;
+        color: var(--el-text-color-primary);
 
         &::placeholder {
-          color: $color-text-placeholder;
+          color: var(--el-text-color-placeholder);
         }
       }
     }
@@ -209,7 +209,7 @@ async function handleLogin() {
     color: rgba(255, 255, 255, 0.4);
 
     :root:not(.dark) & {
-      color: $color-text-placeholder;
+      color: var(--el-text-color-placeholder);
     }
   }
 }

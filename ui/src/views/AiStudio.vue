@@ -429,8 +429,8 @@ const presetQuestions = [
     transition: all $transition-fast;
 
     &:hover {
-      color: $color-primary;
-      border-color: $color-primary;
+      color: var(--el-color-primary);
+      border-color: var(--el-color-primary);
     }
   }
 

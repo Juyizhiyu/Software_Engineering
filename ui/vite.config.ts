@@ -12,12 +12,12 @@ export default defineConfig({
     vue(),
     vueDevTools(),
     AutoImport({
-      resolvers: [ElementPlusResolver()],
+      resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
       imports: ['vue', 'vue-router', 'pinia'],
       dts: 'src/auto-imports.d.ts',
     }),
     Components({
-      resolvers: [ElementPlusResolver()],
+      resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
       dts: 'src/components.d.ts',
     }),
   ],
@@ -29,7 +29,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use "@/styles/variables" as *; @use "@/styles/mixins" as *;`,
+        additionalData: `@use "@/styles/element-variables" as ep-vars;@use "@/styles/variables" as *;@use "@/styles/mixins" as *;`,
       },
     },
   },

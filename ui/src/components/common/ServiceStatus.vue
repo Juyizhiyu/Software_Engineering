@@ -56,10 +56,10 @@ onMounted(async () => {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: $color-danger;
+    background: var(--el-color-danger);
 
     &--online {
-      background: $color-success;
+      background: var(--el-color-success);
     }
   }
 }

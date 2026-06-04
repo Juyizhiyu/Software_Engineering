@@ -136,7 +136,7 @@ function handleLogout() {
       }
 
       &.is-active {
-        background: $color-primary !important;
+        background: var(--el-color-primary) !important;
         color: #fff !important;
       }
     }
@@ -166,7 +166,7 @@ function handleLogout() {
     }
 
     &--logout:hover {
-      color: $color-danger;
+      color: var(--el-color-danger);
     }
   }
 }

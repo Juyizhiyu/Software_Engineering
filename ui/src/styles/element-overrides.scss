@@ -11,7 +11,7 @@
 }
 
 .el-table {
-  --el-table-border-color: #{$color-border-light};
+  --el-table-border-color: var(--el-border-color-light);
 }
 
 .el-button {
