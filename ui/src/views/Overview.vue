@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import { useDark } from '@vueuse/core'
+import { ref, onMounted } from 'vue'
 import { getDashboardSummary, getDashboardOverview } from '@/api/dashboard'
 import type { DashboardSummary, DashboardOverview } from '@/types'
-import { formatCurrency, formatNumber, formatLargeNumber } from '@/utils/format'
+import { formatCurrency, formatNumber } from '@/utils/format'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StatCard from '@/components/common/StatCard.vue'
 import ServiceStatus from '@/components/common/ServiceStatus.vue'
+import SalesTrendChart from '@/components/overview/SalesTrendChart.vue'
+import RiskDistChart from '@/components/overview/RiskDistChart.vue'
 import InventoryAlertTable from '@/components/overview/InventoryAlertTable.vue'
 import TopSupplierTable from '@/components/overview/TopSupplierTable.vue'
 import RecentOrderTable from '@/components/overview/RecentOrderTable.vue'
 
-const isDark = useDark()
 const loading = ref(true)
 const summary = ref<DashboardSummary | null>(null)
 const overview = ref<DashboardOverview | null>(null)
@@ -30,85 +30,6 @@ onMounted(async () => {
     loading.value = false
   }
 })
-
-// ECharts 主题色
-const chartTheme = computed(() => ({
-  textColor: isDark.value ? '#cfd3dc' : '#606266',
-  backgroundColor: 'transparent',
-}))
-
-// 销售趋势图表配置
-const salesChartOption = computed(() => ({
-  tooltip: { trigger: 'axis' as const },
-  grid: { left: 60, right: 20, top: 20, bottom: 40 },
-  xAxis: {
-    type: 'category' as const,
-    data: overview.value?.salesTrend.map((i) => i.date.slice(5)) || [],
-    axisLabel: { color: chartTheme.value.textColor, fontSize: 11 },
-    axisLine: { lineStyle: { color: isDark.value ? '#4c4d4f' : '#e4e7ed' } },
-  },
-  yAxis: {
-    type: 'value' as const,
-    axisLabel: {
-      color: chartTheme.value.textColor,
-      fontSize: 11,
-      formatter: (v: number) => formatLargeNumber(v),
-    },
-    splitLine: { lineStyle: { color: isDark.value ? '#363637' : '#f0f0f0' } },
-  },
-  series: [
-    {
-      type: 'bar' as const,
-      data: overview.value?.salesTrend.map((i) => i.amount) || [],
-      itemStyle: {
-        color: {
-          type: 'linear' as const,
-          x: 0, y: 0, x2: 0, y2: 1,
-          colorStops: [
-            { offset: 0, color: '#409eff' },
-            { offset: 1, color: '#79bbff' },
-          ],
-        },
-        borderRadius: [4, 4, 0, 0],
-      },
-      barWidth: '60%',
-    },
-  ],
-}))
-
-// 风险分布图表配置
-const riskChartOption = computed(() => ({
-  tooltip: { trigger: 'item' as const },
-  legend: {
-    bottom: 0,
-    textStyle: { color: chartTheme.value.textColor, fontSize: 12 },
-  },
-  series: [
-    {
-      type: 'pie' as const,
-      radius: ['40%', '70%'],
-      center: ['50%', '45%'],
-      avoidLabelOverlap: false,
-      label: { show: false },
-      emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' } },
-      data:
-        overview.value?.riskDistribution.map((i) => ({
-          name: i.level,
-          value: i.count,
-          itemStyle: {
-            color:
-              i.level === 'Critical'
-                ? '#f56c6c'
-                : i.level === 'High'
-                  ? '#e6a23c'
-                  : i.level === 'Medium'
-                    ? '#409eff'
-                    : '#67c23a',
-          },
-        })) || [],
-    },
-  ],
-}))
 </script>
 
 <template>
@@ -153,18 +74,8 @@ const riskChartOption = computed(() => ({
 
           <!-- 图表区域 -->
           <div class="overview__charts">
-            <div class="overview__chart-card">
-              <h3 class="overview__chart-title">销售走势</h3>
-              <div class="overview__chart-wrap">
-                <v-chart :option="salesChartOption" autoresize />
-              </div>
-            </div>
-            <div class="overview__chart-card">
-              <h3 class="overview__chart-title">风险分布</h3>
-              <div class="overview__chart-wrap">
-                <v-chart :option="riskChartOption" autoresize />
-              </div>
-            </div>
+            <SalesTrendChart :data="overview?.salesTrend ?? []" />
+            <RiskDistChart :data="overview?.riskDistribution ?? []" />
           </div>
 
           <!-- 信息列表区域 -->
@@ -195,26 +106,6 @@ const riskChartOption = computed(() => ({
     grid-template-columns: 1.5fr 1fr;
     gap: $spacing-md;
     margin-bottom: $spacing-lg;
-  }
-
-  &__chart-card {
-    @include card;
-  }
-
-  &__chart-title {
-    font-size: $font-size-md;
-    font-weight: 600;
-    color: var(--el-text-color-primary);
-    margin-bottom: $spacing-md;
-  }
-
-  &__chart-wrap {
-    height: 280px;
-
-    :deep(div) {
-      width: 100% !important;
-      height: 100% !important;
-    }
   }
 
   &__lists {
