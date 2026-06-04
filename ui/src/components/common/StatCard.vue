@@ -25,14 +25,17 @@ defineProps<{
 
 <style scoped lang="scss">
 .stat-card {
-  display: flex;
-  align-items: center;
-  gap: $spacing-md;
+  :deep(.el-card__body) {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
 
   &__icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 12px;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     @include flex-center;
     background: var(--stat-color, #{$color-primary});
     color: #fff;
