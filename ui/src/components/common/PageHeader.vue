@@ -6,10 +6,14 @@ defineProps<{
 </script>
 
 <template>
-  <div class="page-header">
-    <h2 class="page-header__title">{{ title }}</h2>
-    <p v-if="description" class="page-header__desc">{{ description }}</p>
-  </div>
+  <el-page-header :title="title" class="page-header">
+    <template #content>
+      <span class="page-header__title">{{ title }}</span>
+    </template>
+    <template v-if="description" #extra>
+      <span class="page-header__desc">{{ description }}</span>
+    </template>
+  </el-page-header>
 </template>
 
 <style scoped lang="scss">
@@ -25,7 +29,6 @@ defineProps<{
   &__desc {
     font-size: $font-size-sm;
     color: var(--el-text-color-secondary);
-    margin-top: $spacing-xs;
   }
 }
 </style>

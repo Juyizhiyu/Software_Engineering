@@ -49,7 +49,7 @@ function handleLogout() {
 </script>
 
 <template>
-  <aside class="app-sidebar" :class="{ 'app-sidebar--collapsed': isCollapsed }">
+  <el-aside :width="isCollapsed ? '64px' : '220px'" class="app-sidebar">
     <!-- 品牌 -->
     <div class="app-sidebar__brand">
       <h1 v-show="!isCollapsed" class="app-sidebar__title">供应链 BI</h1>
@@ -75,44 +75,29 @@ function handleLogout() {
 
     <!-- 底部操作区 -->
     <div class="app-sidebar__footer">
-      <!-- 深色模式切换 -->
       <div class="app-sidebar__action" @click="toggleDark()">
         <el-icon :size="18"><Sunny v-if="isDark" /><Moon v-else /></el-icon>
         <span v-show="!isCollapsed">{{ isDark ? '亮色模式' : '深色模式' }}</span>
       </div>
-
-      <!-- 折叠切换 -->
       <div class="app-sidebar__action" @click="isCollapsed = !isCollapsed">
         <el-icon :size="18"><Expand v-if="isCollapsed" /><Fold v-else /></el-icon>
         <span v-show="!isCollapsed">收起菜单</span>
       </div>
-
-      <!-- 退出登录 -->
       <div class="app-sidebar__action app-sidebar__action--logout" @click="handleLogout">
         <el-icon :size="18"><SwitchButton /></el-icon>
         <span v-show="!isCollapsed">退出登录</span>
       </div>
     </div>
-  </aside>
+  </el-aside>
 </template>
 
 <style scoped lang="scss">
 .app-sidebar {
-  width: var(--app-sidebar-width);
-  height: 100vh;
   background: var(--app-bg-sidebar);
   display: flex;
   flex-direction: column;
-  transition: width $transition-normal;
   overflow: hidden;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 100;
-
-  &--collapsed {
-    width: var(--app-sidebar-collapsed-width);
-  }
+  transition: width $transition-normal;
 
   &__brand {
     height: var(--app-header-height);
@@ -140,7 +125,6 @@ function handleLogout() {
     overflow-y: auto;
     @include custom-scrollbar(rgba(255, 255, 255, 0.2));
 
-    // 菜单项样式
     :deep(.el-menu-item) {
       height: 48px;
       line-height: 48px;
