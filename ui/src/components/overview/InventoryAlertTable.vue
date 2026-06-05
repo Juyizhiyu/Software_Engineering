@@ -11,7 +11,7 @@ defineProps<{
     <template #header>
       <span class="card-title">库存预警</span>
     </template>
-    <el-table :data="data.slice(0, 5)" size="small" stripe :max-height="280">
+    <el-table :data="data.slice(0, 10)" border size="small" stripe :max-height="280" style="width: 100%" :scroll-x="true">
       <el-table-column prop="productName" label="产品" min-width="100" show-overflow-tooltip />
       <el-table-column prop="warehouseName" label="仓库" width="100" show-overflow-tooltip />
       <el-table-column prop="currentStock" label="当前库存" width="80" align="right">
@@ -19,13 +19,13 @@ defineProps<{
           <span class="mono">{{ row.currentStock }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="stockStatusLabel" label="状态" width="70" align="center">
+      <el-table-column prop="stockStatusLabel" label="状态" width="90" align="center">
         <template #default="{ row }">
           <el-tag
             :type="
               row.stockStatus === 'shortage'
                 ? 'danger'
-                : row.stockStatus === 'warning'
+                : row.stockStatus === 'warning' || row.stockStatus === 'overstock'
                   ? 'warning'
                   : 'info'
             "

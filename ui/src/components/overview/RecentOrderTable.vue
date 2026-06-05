@@ -12,7 +12,7 @@ defineProps<{
     <template #header>
       <span class="card-title">最近订单</span>
     </template>
-    <el-table :data="data.slice(0, 5)" size="small" stripe :max-height="280">
+    <el-table :data="data.slice(0, 10)" border size="small" stripe :max-height="280" style="width: 100%" :scroll-x="true">
       <el-table-column prop="orderId" label="订单号" min-width="80" show-overflow-tooltip />
       <el-table-column prop="date" label="日期" width="100" />
       <el-table-column prop="amount" label="金额" width="100" align="right">
