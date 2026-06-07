@@ -44,7 +44,10 @@ declare module 'vue' {
     EmptyState: typeof import('./components/common/EmptyState.vue')['default']
     EntityForm: typeof import('./components/dataCenter/EntityForm.vue')['default']
     EntityList: typeof import('./components/dataCenter/EntityList.vue')['default']
+    HighCostTable: typeof import('./components/operations/HighCostTable.vue')['default']
     InventoryAlertTable: typeof import('./components/overview/InventoryAlertTable.vue')['default']
+    InventoryPriorityTable: typeof import('./components/operations/InventoryPriorityTable.vue')['default']
+    LogisticsAlertTable: typeof import('./components/operations/LogisticsAlertTable.vue')['default']
     PageHeader: typeof import('./components/common/PageHeader.vue')['default']
     RecentOrderTable: typeof import('./components/overview/RecentOrderTable.vue')['default']
     RiskDistChart: typeof import('./components/overview/RiskDistChart.vue')['default']
@@ -53,6 +56,7 @@ declare module 'vue' {
     SalesTrendChart: typeof import('./components/overview/SalesTrendChart.vue')['default']
     ServiceStatus: typeof import('./components/common/ServiceStatus.vue')['default']
     StatCard: typeof import('./components/common/StatCard.vue')['default']
+    SupplierRankTable: typeof import('./components/operations/SupplierRankTable.vue')['default']
     TopSupplierTable: typeof import('./components/overview/TopSupplierTable.vue')['default']
   }
 }
