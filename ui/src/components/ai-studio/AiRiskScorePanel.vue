@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAiRiskScore } from '@/composables/useAiRiskScore'
-import { riskLevelColor, formatPercent } from '@/utils/format'
+import { riskLevelColor } from '@/utils/format'
 
 const { loading, supplierId, result, submit } = useAiRiskScore()
 
@@ -57,12 +57,12 @@ const breakdownItems = [
           <div v-for="item in breakdownItems" :key="item.key" class="risk-score-bar">
             <span class="risk-score-bar__label">{{ item.label }}</span>
             <el-progress
-              :percentage="result.breakdown[item.key] * 100 / item.weight"
+              :percentage="Math.round(result.breakdown[item.key] / item.weight * 100)"
               :stroke-width="12"
               :color="item.color"
             />
             <span class="risk-score-bar__value mono">
-              {{ formatPercent(result.breakdown[item.key] * 100) }}
+              {{ (result.breakdown[item.key] * 100).toFixed(1) }}
             </span>
           </div>
         </div>
