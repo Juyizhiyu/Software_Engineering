@@ -40,6 +40,7 @@ declare module 'vue' {
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTag: typeof import('element-plus/es')['ElTag']
+    ElTooltip: typeof import('element-plus/es')['ElTooltip']
     EmptyState: typeof import('./components/common/EmptyState.vue')['default']
     EntityForm: typeof import('./components/dataCenter/EntityForm.vue')['default']
     EntityList: typeof import('./components/dataCenter/EntityList.vue')['default']

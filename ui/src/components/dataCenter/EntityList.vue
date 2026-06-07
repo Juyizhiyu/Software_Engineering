@@ -92,12 +92,16 @@ function getCellValue(row: Record<string, unknown>, columnKey: string) {
         :row-key="'id'"
       >
         <template #cell="{ column, rowData }">
-          <span
-            class="entity-list__cell"
-            :title="getCellValue(rowData, column.dataKey as string)"
+          <el-tooltip
+            :content="getCellValue(rowData, column.dataKey as string)"
+            placement="top"
+            :show-after="300"
+            :disabled="getCellValue(rowData, column.dataKey as string) === '-'"
           >
-            {{ getCellValue(rowData, column.dataKey as string) }}
-          </span>
+            <span class="entity-list__cell">
+              {{ getCellValue(rowData, column.dataKey as string) }}
+            </span>
+          </el-tooltip>
         </template>
       </el-table-v2>
     </div>
