@@ -21,6 +21,7 @@ async function handleSubmit() {
           v-model="productId"
           placeholder="输入产品 ID（如 P001）"
           style="max-width: 300px"
+          @keyup.enter="handleSubmit"
         >
           <template #prepend>产品ID</template>
         </el-input>

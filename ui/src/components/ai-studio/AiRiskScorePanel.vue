@@ -28,6 +28,7 @@ const breakdownItems = [
           v-model="supplierId"
           placeholder="输入供应商 ID（如 S001）"
           style="max-width: 300px"
+          @keyup.enter="handleSubmit"
         >
           <template #prepend>供应商ID</template>
         </el-input>
