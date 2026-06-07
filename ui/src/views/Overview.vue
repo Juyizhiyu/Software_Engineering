@@ -4,7 +4,7 @@ import { getDashboardSummary, getDashboardOverview } from '@/api/dashboard'
 import type { DashboardSummary, DashboardOverview } from '@/types'
 import { formatCurrency, formatNumber } from '@/utils/format'
 import PageHeader from '@/components/common/PageHeader.vue'
-import StatCard from '@/components/common/StatCard.vue'
+import MetricCard from '@/components/common/MetricCard.vue'
 import ServiceStatus from '@/components/common/ServiceStatus.vue'
 import SalesTrendChart from '@/components/overview/SalesTrendChart.vue'
 import RiskDistChart from '@/components/overview/RiskDistChart.vue'
@@ -45,25 +45,25 @@ onMounted(async () => {
         <template #default>
           <!-- 指标卡片 -->
           <div class="card-grid card-grid--4 overview__stats">
-            <StatCard
+            <MetricCard
               title="订单总量"
               :value="summary ? formatNumber(summary.totalOrders) : '-'"
               icon="Document"
               color="#409eff"
             />
-            <StatCard
+            <MetricCard
               title="销售额"
               :value="summary ? formatCurrency(summary.totalSales) : '-'"
               icon="Money"
               color="#67c23a"
             />
-            <StatCard
+            <MetricCard
               title="库存总量"
               :value="summary ? formatNumber(summary.totalStock) : '-'"
               icon="Box"
               color="#e6a23c"
             />
-            <StatCard
+            <MetricCard
               title="供应链风险"
               :value="summary ? String(summary.openRisks) : '-'"
               icon="Warning"

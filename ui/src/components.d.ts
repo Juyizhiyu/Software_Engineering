@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AccentCard: typeof import('./components/common/AccentCard.vue')['default']
     AppLayout: typeof import('./components/layout/AppLayout.vue')['default']
     AppSidebar: typeof import('./components/layout/AppSidebar.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
@@ -48,6 +49,7 @@ declare module 'vue' {
     InventoryAlertTable: typeof import('./components/overview/InventoryAlertTable.vue')['default']
     InventoryPriorityTable: typeof import('./components/operations/InventoryPriorityTable.vue')['default']
     LogisticsAlertTable: typeof import('./components/operations/LogisticsAlertTable.vue')['default']
+    MetricCard: typeof import('./components/common/MetricCard.vue')['default']
     PageHeader: typeof import('./components/common/PageHeader.vue')['default']
     RecentOrderTable: typeof import('./components/overview/RecentOrderTable.vue')['default']
     RiskDistChart: typeof import('./components/overview/RiskDistChart.vue')['default']
@@ -55,8 +57,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SalesTrendChart: typeof import('./components/overview/SalesTrendChart.vue')['default']
     ServiceStatus: typeof import('./components/common/ServiceStatus.vue')['default']
-    StatCard: typeof import('./components/common/StatCard.vue')['default']
-    StatusCard: typeof import('./components/common/StatusCard.vue')['default']
     SupplierRankTable: typeof import('./components/operations/SupplierRankTable.vue')['default']
     TopSupplierTable: typeof import('./components/overview/TopSupplierTable.vue')['default']
   }

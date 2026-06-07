@@ -3,8 +3,8 @@ import { onMounted } from 'vue'
 import { useRisks } from '@/composables/useRisks'
 import { riskLevelColor, formatDate } from '@/utils/format'
 import PageHeader from '@/components/common/PageHeader.vue'
-import StatCard from '@/components/common/StatCard.vue'
-import StatusCard from '@/components/common/StatusCard.vue'
+import MetricCard from '@/components/common/MetricCard.vue'
+import AccentCard from '@/components/common/AccentCard.vue'
 
 const { loading, openRisks, riskStats, fetchRisks } = useRisks()
 
@@ -21,15 +21,15 @@ onMounted(() => {
       <template #default>
         <!-- 风险统计 -->
         <div class="card-grid card-grid--4 risk-center__stats">
-          <StatCard title="严重风险" :value="riskStats.Critical" icon="WarningFilled" color="#f56c6c" />
-          <StatCard title="高级风险" :value="riskStats.High" icon="Warning" color="#e6a23c" />
-          <StatCard title="中级风险" :value="riskStats.Medium" icon="InfoFilled" color="#409eff" />
-          <StatCard title="低级风险" :value="riskStats.Low" icon="CircleCheck" color="#67c23a" />
+          <MetricCard title="严重风险" :value="riskStats.Critical" icon="WarningFilled" color="#f56c6c" />
+          <MetricCard title="高级风险" :value="riskStats.High" icon="Warning" color="#e6a23c" />
+          <MetricCard title="中级风险" :value="riskStats.Medium" icon="InfoFilled" color="#409eff" />
+          <MetricCard title="低级风险" :value="riskStats.Low" icon="CircleCheck" color="#67c23a" />
         </div>
 
         <!-- 风险卡片列表 -->
         <div class="risk-center__list">
-          <StatusCard
+          <AccentCard
             v-for="risk in openRisks"
             :key="risk.riskId"
             :accent-color="riskLevelColor(risk.riskLevel)"
@@ -56,7 +56,7 @@ onMounted(() => {
                 <span>{{ risk.suggestion }}</span>
               </div>
             </template>
-          </StatusCard>
+          </AccentCard>
 
           <el-empty v-if="!openRisks.length" description="暂无待处理风险" />
         </div>
