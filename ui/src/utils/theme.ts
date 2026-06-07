@@ -52,7 +52,7 @@ export const riskLevelLabels: Record<string, string> = {
   Critical: '严重',
   High: '高危',
   Medium: '中等',
-  Low: '低危',
+  Low: '安全',
 }
 
 /** 库存状态颜色 */

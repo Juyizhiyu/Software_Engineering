@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAiRiskScore } from '@/composables/useAiRiskScore'
 import { riskLevelColor } from '@/utils/format'
+import { riskLevelLabels } from '@/utils/theme'
 
 const { loading, supplierId, result, submit } = useAiRiskScore()
 
@@ -51,7 +52,7 @@ const breakdownItems = [
             size="large"
             style="border: none"
           >
-            {{ result.risk_level }}
+            {{ riskLevelLabels[result.risk_level] || result.risk_level }}
           </el-tag>
         </el-card>
         <div class="risk-score-overview__breakdown">
