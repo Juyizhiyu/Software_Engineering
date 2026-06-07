@@ -12,7 +12,9 @@ import {
   Moon,
   Expand,
   Fold,
+  SwitchButton,
 } from '@element-plus/icons-vue'
+import { ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
@@ -43,8 +45,14 @@ const menuItems = [
 ]
 
 function handleLogout() {
-  userStore.logout()
-  router.push('/login')
+  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    userStore.logout()
+    router.push('/login')
+  }).catch(() => {})
 }
 </script>
 
@@ -138,6 +146,14 @@ function handleLogout() {
       &.is-active {
         background: var(--el-color-primary) !important;
         color: #fff !important;
+      }
+    }
+
+    &.el-menu--collapse {
+      :deep(.el-menu-item) {
+        margin: 2px 0;
+        padding: 0 !important;
+        justify-content: center;
       }
     }
   }
