@@ -56,6 +56,7 @@ declare module 'vue' {
     SalesTrendChart: typeof import('./components/overview/SalesTrendChart.vue')['default']
     ServiceStatus: typeof import('./components/common/ServiceStatus.vue')['default']
     StatCard: typeof import('./components/common/StatCard.vue')['default']
+    StatusCard: typeof import('./components/common/StatusCard.vue')['default']
     SupplierRankTable: typeof import('./components/operations/SupplierRankTable.vue')['default']
     TopSupplierTable: typeof import('./components/overview/TopSupplierTable.vue')['default']
   }

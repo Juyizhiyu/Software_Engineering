@@ -4,6 +4,7 @@ import { useRisks } from '@/composables/useRisks'
 import { riskLevelColor, formatDate } from '@/utils/format'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StatCard from '@/components/common/StatCard.vue'
+import StatusCard from '@/components/common/StatusCard.vue'
 
 const { loading, openRisks, riskStats, fetchRisks } = useRisks()
 
@@ -28,13 +29,12 @@ onMounted(() => {
 
         <!-- 风险卡片列表 -->
         <div class="risk-center__list">
-          <div
+          <StatusCard
             v-for="risk in openRisks"
             :key="risk.riskId"
-            class="risk-card"
-            :style="{ '--risk-color': riskLevelColor(risk.riskLevel) }"
+            :accent-color="riskLevelColor(risk.riskLevel)"
           >
-            <div class="risk-card__header">
+            <template #header>
               <el-tag
                 :color="riskLevelColor(risk.riskLevel)"
                 effect="dark"
@@ -43,20 +43,20 @@ onMounted(() => {
               >
                 {{ risk.riskLevelLabel }}
               </el-tag>
-              <span class="risk-card__type">{{ risk.riskType }}</span>
-              <span class="risk-card__time">{{ formatDate(risk.createdAt) }}</span>
-            </div>
-            <div class="risk-card__body">
-              <div class="risk-card__object">关联对象：{{ risk.relatedObject }}</div>
-              <div class="risk-card__desc">{{ risk.description }}</div>
-            </div>
-            <div class="risk-card__footer">
-              <div class="risk-card__suggestion">
+              <span class="risk-center__type">{{ risk.riskType }}</span>
+              <span class="risk-center__time">{{ formatDate(risk.createdAt) }}</span>
+            </template>
+
+            <div class="risk-center__object">关联对象：{{ risk.relatedObject }}</div>
+            <div class="risk-center__desc">{{ risk.description }}</div>
+
+            <template #footer>
+              <div class="risk-center__suggestion">
                 <el-icon><CircleCheck /></el-icon>
                 <span>{{ risk.suggestion }}</span>
               </div>
-            </div>
-          </div>
+            </template>
+          </StatusCard>
 
           <el-empty v-if="!openRisks.length" description="暂无待处理风险" />
         </div>
@@ -76,17 +76,6 @@ onMounted(() => {
     grid-template-columns: repeat(2, 1fr);
     gap: $spacing-md;
   }
-}
-
-.risk-card {
-  @include card;
-  @include card-hover;
-  border-left: 4px solid var(--risk-color);
-
-  &__header {
-    @include flex-between;
-    margin-bottom: $spacing-md;
-  }
 
   &__type {
     font-size: $font-size-sm;
@@ -96,10 +85,6 @@ onMounted(() => {
   &__time {
     font-size: $font-size-xs;
     color: var(--el-text-color-placeholder);
-  }
-
-  &__body {
-    margin-bottom: $spacing-md;
   }
 
   &__object {
@@ -112,11 +97,6 @@ onMounted(() => {
     font-size: $font-size-md;
     color: var(--el-text-color-primary);
     line-height: 1.6;
-  }
-
-  &__footer {
-    border-top: 1px solid var(--el-border-color-lighter);
-    padding-top: $spacing-md;
   }
 
   &__suggestion {
