@@ -21,7 +21,10 @@ async function handleSubmit() {
 
 <template>
   <div class="ai-panel">
-    <el-card shadow="hover" class="ai-panel__input">
+    <el-card
+      shadow="hover"
+      class="ai-panel__input"
+    >
       <el-input
         v-model="question"
         type="textarea"
@@ -42,31 +45,59 @@ async function handleSubmit() {
             {{ q }}
           </el-tag>
         </div>
-        <el-button type="primary" :loading="loading" style="min-width: 72px" @click="handleSubmit">
+        <el-button
+          type="primary"
+          :loading="loading"
+          style="min-width: 72px"
+          @click="handleSubmit"
+        >
           分析
         </el-button>
       </div>
     </el-card>
 
-    <el-card v-if="result" shadow="hover" class="ai-panel__result">
+    <el-card
+      v-if="result"
+      shadow="hover"
+      class="ai-panel__result"
+    >
       <h4 class="ai-panel__title">分析结论</h4>
       <p class="ai-panel__answer">{{ result.answer }}</p>
 
-      <div v-if="result.summary.length" class="ai-panel__section">
+      <div
+        v-if="result.summary.length"
+        class="ai-panel__section"
+      >
         <h5>要点摘要</h5>
         <ul>
-          <li v-for="(s, i) in result.summary" :key="i">{{ s }}</li>
+          <li
+            v-for="(s, i) in result.summary"
+            :key="i"
+          >
+            {{ s }}
+          </li>
         </ul>
       </div>
 
-      <div v-if="result.suggestions.length" class="ai-panel__section">
+      <div
+        v-if="result.suggestions.length"
+        class="ai-panel__section"
+      >
         <h5>建议</h5>
         <ul>
-          <li v-for="(s, i) in result.suggestions" :key="i">{{ s }}</li>
+          <li
+            v-for="(s, i) in result.suggestions"
+            :key="i"
+          >
+            {{ s }}
+          </li>
         </ul>
       </div>
 
-      <div v-if="result.evidence.length" class="ai-panel__section">
+      <div
+        v-if="result.evidence.length"
+        class="ai-panel__section"
+      >
         <h5>数据证据</h5>
         <div class="ai-panel__evidence">
           <el-tag
@@ -82,8 +113,18 @@ async function handleSubmit() {
       </div>
 
       <div class="ai-panel__meta">
-        <el-tag size="small" effect="plain">{{ result.metadata.mode }}</el-tag>
-        <el-tag v-if="result.metadata.model" size="small" effect="plain" type="success">
+        <el-tag
+          size="small"
+          effect="plain"
+        >
+          {{ result.metadata.mode }}
+        </el-tag>
+        <el-tag
+          v-if="result.metadata.model"
+          size="small"
+          effect="plain"
+          type="success"
+        >
           {{ result.metadata.model }}
         </el-tag>
       </div>
@@ -111,23 +152,23 @@ async function handleSubmit() {
 
   &__presets {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: $spacing-sm;
-    flex-wrap: wrap;
   }
 
   &__presets-label {
-    font-size: $font-size-sm;
     color: var(--el-text-color-secondary);
+    font-size: $font-size-sm;
   }
 
   &__preset-tag {
-    cursor: pointer;
     transition: all $transition-fast;
+    cursor: pointer;
 
     &:hover {
-      color: var(--el-color-primary);
       border-color: var(--el-color-primary);
+      color: var(--el-color-primary);
     }
   }
 
@@ -136,34 +177,34 @@ async function handleSubmit() {
   }
 
   &__title {
-    font-size: $font-size-lg;
-    font-weight: 600;
-    color: var(--el-text-color-primary);
     margin-bottom: $spacing-md;
+    color: var(--el-text-color-primary);
+    font-weight: 600;
+    font-size: $font-size-lg;
   }
 
   &__answer {
+    margin-bottom: $spacing-md;
     color: var(--el-text-color-regular);
     line-height: 1.8;
-    margin-bottom: $spacing-md;
   }
 
   &__section {
     margin-bottom: $spacing-md;
 
     h5 {
-      font-size: $font-size-md;
-      font-weight: 600;
-      color: var(--el-text-color-primary);
       margin-bottom: $spacing-sm;
+      color: var(--el-text-color-primary);
+      font-weight: 600;
+      font-size: $font-size-md;
     }
 
     ul {
       padding-left: $spacing-lg;
       li {
+        margin-bottom: $spacing-xs;
         color: var(--el-text-color-regular);
         line-height: 1.8;
-        margin-bottom: $spacing-xs;
       }
     }
   }
@@ -182,19 +223,19 @@ async function handleSubmit() {
     display: flex;
     gap: $spacing-sm;
     margin-top: $spacing-md;
-    padding-top: $spacing-md;
     border-top: 1px solid var(--el-border-color-lighter);
+    padding-top: $spacing-md;
   }
 }
 
 @keyframes fadeIn {
   from {
-    opacity: 0;
     transform: translateY(8px);
+    opacity: 0;
   }
   to {
-    opacity: 1;
     transform: translateY(0);
+    opacity: 1;
   }
 }
 </style>

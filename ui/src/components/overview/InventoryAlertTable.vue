@@ -11,15 +11,43 @@ defineProps<{
     <template #header>
       <span class="card-title">库存预警</span>
     </template>
-    <el-table :data="data.slice(0, 10)" border size="small" stripe :max-height="280" style="width: 100%" :scroll-x="true">
-      <el-table-column prop="productName" label="产品" min-width="100" show-overflow-tooltip />
-      <el-table-column prop="warehouseName" label="仓库" width="100" show-overflow-tooltip />
-      <el-table-column prop="currentStock" label="当前库存" width="80" align="right">
+    <el-table
+      :data="data.slice(0, 10)"
+      border
+      size="small"
+      stripe
+      :max-height="280"
+      style="width: 100%"
+      :scroll-x="true"
+    >
+      <el-table-column
+        prop="productName"
+        label="产品"
+        min-width="100"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        prop="warehouseName"
+        label="仓库"
+        width="100"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        prop="currentStock"
+        label="当前库存"
+        width="80"
+        align="right"
+      >
         <template #default="{ row }">
           <span class="mono">{{ row.currentStock }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="stockStatusLabel" label="状态" width="90" align="center">
+      <el-table-column
+        prop="stockStatusLabel"
+        label="状态"
+        width="90"
+        align="center"
+      >
         <template #default="{ row }">
           <el-tag
             :type="
@@ -41,7 +69,7 @@ defineProps<{
 
 <style scoped lang="scss">
 .card-title {
-  font-size: $font-size-md;
   font-weight: 600;
+  font-size: $font-size-md;
 }
 </style>

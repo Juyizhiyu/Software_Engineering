@@ -22,7 +22,7 @@ const columns = computed(() => {
   const fields = props.formFields.slice(0, 5)
   const w = containerWidth.value || 600
   const totalWeight = fields.reduce((sum, f) => sum + getColumnWeight(f.key), 0)
-  return fields.map(field => {
+  return fields.map((field) => {
     const weight = getColumnWeight(field.key)
     return {
       key: field.key,
@@ -35,7 +35,10 @@ const columns = computed(() => {
 
 const tableWidth = computed(() => {
   const w = containerWidth.value || 600
-  return Math.max(w, columns.value.reduce((sum, col) => sum + col.width, 0))
+  return Math.max(
+    w,
+    columns.value.reduce((sum, col) => sum + col.width, 0),
+  )
 })
 
 let resizeObserver: ResizeObserver | null = null
@@ -73,17 +76,30 @@ function getCellValue(row: Record<string, unknown>, columnKey: string) {
     <template #header>
       <div class="entity-list__header">
         <span>已有记录</span>
-        <el-tag size="small" type="info">
+        <el-tag
+          size="small"
+          type="info"
+        >
           {{ records.length }}
         </el-tag>
       </div>
     </template>
 
-    <div v-if="loading" class="entity-list__skeleton">
-      <el-skeleton :rows="5" animated />
+    <div
+      v-if="loading"
+      class="entity-list__skeleton"
+    >
+      <el-skeleton
+        :rows="5"
+        animated
+      />
     </div>
-    
-    <div v-else ref="tableWrapperRef" class="entity-list__table-wrapper">
+
+    <div
+      v-else
+      ref="tableWrapperRef"
+      class="entity-list__table-wrapper"
+    >
       <el-table-v2
         :columns="columns"
         :data="records"
@@ -112,8 +128,8 @@ function getCellValue(row: Record<string, unknown>, columnKey: string) {
 .entity-list {
   &__header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     font-weight: 600;
   }
 
@@ -135,17 +151,17 @@ function getCellValue(row: Record<string, unknown>, columnKey: string) {
 
   &__cell {
     display: inline-block;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 100%;
   }
 
   &__more {
-    text-align: center;
-    font-size: $font-size-xs;
-    color: var(--el-text-color-secondary);
     padding: $spacing-sm 0;
+    color: var(--el-text-color-secondary);
+    font-size: $font-size-xs;
+    text-align: center;
   }
 }
 </style>

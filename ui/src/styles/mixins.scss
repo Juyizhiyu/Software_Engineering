@@ -1,15 +1,15 @@
 // ============================================
 // SCSS 混合宏 - 常用样式模式封装
 // ============================================
-@use "@/styles/variables" as *;
+@use '@/styles/variables' as *;
 
 // 卡片样式
 @mixin card($padding: $spacing-lg) {
-  background: var(--el-bg-color-overlay);
-  border-radius: $border-radius;
-  box-shadow: $shadow-sm;
-  padding: $padding;
   transition: box-shadow $transition-normal;
+  box-shadow: $shadow-sm;
+  border-radius: $border-radius;
+  background: var(--el-bg-color-overlay);
+  padding: $padding;
 }
 
 // 悬浮卡片
@@ -36,15 +36,15 @@
 // Flex 居中
 @mixin flex-center {
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
 // Flex 两端对齐
 @mixin flex-between {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
 // 滚动条样式
@@ -54,8 +54,8 @@
     height: 6px;
   }
   &::-webkit-scrollbar-thumb {
-    background: $thumb-color;
     border-radius: 3px;
+    background: $thumb-color;
   }
   &::-webkit-scrollbar-track {
     background: transparent;

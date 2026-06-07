@@ -17,12 +17,24 @@ export const entityTypes = Object.keys(entityConfig) as EntityType[]
 export const fallbackFormFields: Record<EntityType, SchemaField[]> = {
   orders: [
     { key: 'date', label: '日期', type: 'date', required: true },
-    { key: 'customer_region', label: '客户区域', type: 'select', required: true, options: ['华南', '华东', '华北', '西南', '华中'] },
+    {
+      key: 'customer_region',
+      label: '客户区域',
+      type: 'select',
+      required: true,
+      options: ['华南', '华东', '华北', '西南', '华中'],
+    },
     { key: 'product_id', label: '产品ID', type: 'text', required: true, placeholder: '如 P001' },
     { key: 'product_name', label: '产品名称', type: 'text', required: true },
     { key: 'quantity', label: '数量', type: 'number', required: true },
     { key: 'unit_price', label: '单价', type: 'number', required: true },
-    { key: 'status', label: '状态', type: 'select', required: false, options: ['pending', 'shipped', 'delivered', 'cancelled'] },
+    {
+      key: 'status',
+      label: '状态',
+      type: 'select',
+      required: false,
+      options: ['pending', 'shipped', 'delivered', 'cancelled'],
+    },
   ],
   inventory: [
     { key: 'product_id', label: '产品ID', type: 'text', required: true, placeholder: '如 P001' },
@@ -36,7 +48,13 @@ export const fallbackFormFields: Record<EntityType, SchemaField[]> = {
   ],
   suppliers: [
     { key: 'supplier_name', label: '供应商名称', type: 'text', required: true },
-    { key: 'region', label: '区域', type: 'select', required: true, options: ['华南', '华东', '华北', '西南', '华中'] },
+    {
+      key: 'region',
+      label: '区域',
+      type: 'select',
+      required: true,
+      options: ['华南', '华东', '华北', '西南', '华中'],
+    },
     { key: 'on_time_rate', label: '准时率(%)', type: 'number', required: true },
     { key: 'quality_rate', label: '质量率(%)', type: 'number', required: true },
     { key: 'price_stability', label: '价格稳定性(%)', type: 'number', required: true },
@@ -50,7 +68,13 @@ export const fallbackFormFields: Record<EntityType, SchemaField[]> = {
     { key: 'carrier', label: '承运商', type: 'text', required: true },
     { key: 'expected_duration_hours', label: '预计时长(小时)', type: 'number', required: true },
     { key: 'actual_duration_hours', label: '实际时长(小时)', type: 'number', required: true },
-    { key: 'status', label: '状态', type: 'select', required: true, options: ['pending', 'in_transit', 'delivered', 'delayed'] },
+    {
+      key: 'status',
+      label: '状态',
+      type: 'select',
+      required: true,
+      options: ['pending', 'in_transit', 'delivered', 'delayed'],
+    },
     { key: 'transport_cost', label: '运输成本', type: 'number', required: true },
   ],
   costs: [
@@ -63,11 +87,29 @@ export const fallbackFormFields: Record<EntityType, SchemaField[]> = {
     { key: 'return_cost', label: '退货成本', type: 'number', required: false },
   ],
   risks: [
-    { key: 'risk_type', label: '风险类型', type: 'select', required: true, options: ['supply_shortage', 'quality_issue', 'delivery_delay', 'price_volatility', 'logistics_disruption'] },
-    { key: 'risk_level', label: '风险等级', type: 'select', required: true, options: ['Critical', 'High', 'Medium', 'Low'] },
+    {
+      key: 'risk_type',
+      label: '风险类型',
+      type: 'select',
+      required: true,
+      options: ['supply_shortage', 'quality_issue', 'delivery_delay', 'price_volatility', 'logistics_disruption'],
+    },
+    {
+      key: 'risk_level',
+      label: '风险等级',
+      type: 'select',
+      required: true,
+      options: ['Critical', 'High', 'Medium', 'Low'],
+    },
     { key: 'related_object', label: '关联对象', type: 'text', required: true },
     { key: 'description', label: '描述', type: 'text', required: true },
     { key: 'suggestion', label: '建议', type: 'text', required: true },
-    { key: 'status', label: '状态', type: 'select', required: true, options: ['open', 'resolved', 'monitoring'] },
+    {
+      key: 'status',
+      label: '状态',
+      type: 'select',
+      required: true,
+      options: ['open', 'resolved', 'monitoring'],
+    },
   ],
 }

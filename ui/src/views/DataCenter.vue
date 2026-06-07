@@ -37,10 +37,17 @@ onMounted(() => {
 
 <template>
   <div class="page-container">
-    <PageHeader title="数据中心" description="录入和管理供应链六类实体数据" />
+    <PageHeader
+      title="数据中心"
+      description="录入和管理供应链六类实体数据"
+    />
 
     <!-- 实体类型 Tab -->
-    <el-tabs :model-value="activeEntity" class="data-center__tabs" @tab-change="handleTabChange">
+    <el-tabs
+      :model-value="activeEntity"
+      class="data-center__tabs"
+      @tab-change="handleTabChange"
+    >
       <el-tab-pane
         v-for="opt in entityOptions"
         :key="opt.value"
@@ -86,8 +93,8 @@ onMounted(() => {
   &__content {
     display: grid;
     grid-template-columns: 380px 1fr;
-    gap: $spacing-lg;
     align-items: start;
+    gap: $spacing-lg;
   }
 }
 </style>

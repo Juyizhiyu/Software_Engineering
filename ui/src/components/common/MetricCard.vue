@@ -9,14 +9,28 @@ defineProps<{
 </script>
 
 <template>
-  <el-card shadow="hover" class="stat-card" :style="{ '--stat-color': color || '#409eff' }">
+  <el-card
+    shadow="hover"
+    class="stat-card"
+    :style="{ '--stat-color': color || '#409eff' }"
+  >
     <div class="stat-card__icon">
-      <el-icon :size="28"><component :is="icon" v-if="icon" /></el-icon>
+      <el-icon :size="28">
+        <component
+          :is="icon"
+          v-if="icon"
+        />
+      </el-icon>
     </div>
     <div class="stat-card__content">
       <div class="stat-card__value">
         {{ value }}
-        <span v-if="suffix" class="stat-card__suffix">{{ suffix }}</span>
+        <span
+          v-if="suffix"
+          class="stat-card__suffix"
+        >
+          {{ suffix }}
+        </span>
       </div>
       <div class="stat-card__title">{{ title }}</div>
     </div>
@@ -33,13 +47,13 @@ defineProps<{
 
   &__icon {
     display: inline-block;
+    border-radius: 50%;
     width: 32px;
     height: 32px;
-    border-radius: 50%;
     @include flex-center;
+    flex-shrink: 0;
     background: var(--stat-color, var(--el-color-primary));
     color: #fff;
-    flex-shrink: 0;
   }
 
   &__content {
@@ -48,24 +62,24 @@ defineProps<{
   }
 
   &__value {
-    font-size: $font-size-xxl;
-    font-weight: 700;
     color: var(--el-text-color-primary);
-    font-family: $font-family-mono;
+    font-weight: 700;
+    font-size: $font-size-xxl;
     line-height: 1.2;
+    font-family: $font-family-mono;
   }
 
   &__suffix {
-    font-size: $font-size-sm;
-    font-weight: 400;
-    color: var(--el-text-color-secondary);
     margin-left: 2px;
+    color: var(--el-text-color-secondary);
+    font-weight: 400;
+    font-size: $font-size-sm;
   }
 
   &__title {
-    font-size: $font-size-sm;
-    color: var(--el-text-color-secondary);
     margin-top: 4px;
+    color: var(--el-text-color-secondary);
+    font-size: $font-size-sm;
   }
 }
 </style>

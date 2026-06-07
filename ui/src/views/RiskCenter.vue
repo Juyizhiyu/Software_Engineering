@@ -15,16 +15,42 @@ onMounted(() => {
 
 <template>
   <div class="page-container">
-    <PageHeader title="风险中心" description="供应链风险监控与闭环管理" />
+    <PageHeader
+      title="风险中心"
+      description="供应链风险监控与闭环管理"
+    />
 
-    <el-skeleton :loading="loading" animated>
+    <el-skeleton
+      :loading="loading"
+      animated
+    >
       <template #default>
         <!-- 风险统计 -->
         <div class="card-grid card-grid--4 risk-center__stats">
-          <MetricCard title="严重风险" :value="riskStats.Critical" icon="WarningFilled" color="#f56c6c" />
-          <MetricCard title="高级风险" :value="riskStats.High" icon="Warning" color="#e6a23c" />
-          <MetricCard title="中级风险" :value="riskStats.Medium" icon="InfoFilled" color="#409eff" />
-          <MetricCard title="低级风险" :value="riskStats.Low" icon="CircleCheck" color="#67c23a" />
+          <MetricCard
+            title="严重风险"
+            :value="riskStats.Critical"
+            icon="WarningFilled"
+            color="#f56c6c"
+          />
+          <MetricCard
+            title="高级风险"
+            :value="riskStats.High"
+            icon="Warning"
+            color="#e6a23c"
+          />
+          <MetricCard
+            title="中级风险"
+            :value="riskStats.Medium"
+            icon="InfoFilled"
+            color="#409eff"
+          />
+          <MetricCard
+            title="低级风险"
+            :value="riskStats.Low"
+            icon="CircleCheck"
+            color="#67c23a"
+          />
         </div>
 
         <!-- 风险卡片列表 -->
@@ -58,7 +84,10 @@ onMounted(() => {
             </template>
           </AccentCard>
 
-          <el-empty v-if="!openRisks.length" description="暂无待处理风险" />
+          <el-empty
+            v-if="!openRisks.length"
+            description="暂无待处理风险"
+          />
         </div>
       </template>
     </el-skeleton>
@@ -78,24 +107,24 @@ onMounted(() => {
   }
 
   &__type {
-    font-size: $font-size-sm;
     color: var(--el-text-color-secondary);
+    font-size: $font-size-sm;
   }
 
   &__time {
-    font-size: $font-size-xs;
     color: var(--el-text-color-placeholder);
+    font-size: $font-size-xs;
   }
 
   &__object {
-    font-size: $font-size-sm;
-    color: var(--el-text-color-secondary);
     margin-bottom: $spacing-sm;
+    color: var(--el-text-color-secondary);
+    font-size: $font-size-sm;
   }
 
   &__desc {
-    font-size: $font-size-md;
     color: var(--el-text-color-primary);
+    font-size: $font-size-md;
     line-height: 1.6;
   }
 
@@ -103,12 +132,12 @@ onMounted(() => {
     display: flex;
     align-items: flex-start;
     gap: $spacing-sm;
-    font-size: $font-size-sm;
     color: var(--el-color-success);
+    font-size: $font-size-sm;
 
     .el-icon {
-      margin-top: 2px;
       flex-shrink: 0;
+      margin-top: 2px;
     }
   }
 }

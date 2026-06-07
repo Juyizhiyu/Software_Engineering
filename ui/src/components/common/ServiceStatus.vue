@@ -26,7 +26,10 @@ onMounted(async () => {
 <template>
   <div class="service-status">
     <div class="service-status__item">
-      <span class="service-status__dot" :class="{ 'service-status__dot--online': nodeOnline }" />
+      <span
+        class="service-status__dot"
+        :class="{ 'service-status__dot--online': nodeOnline }"
+      />
       <span>Node API</span>
     </div>
     <div class="service-status__item">
@@ -43,8 +46,8 @@ onMounted(async () => {
 .service-status {
   display: flex;
   gap: $spacing-md;
-  font-size: $font-size-xs;
   color: var(--el-text-color-secondary);
+  font-size: $font-size-xs;
 
   &__item {
     display: flex;
@@ -53,10 +56,10 @@ onMounted(async () => {
   }
 
   &__dot {
-    width: 8px;
-    height: 8px;
     border-radius: 50%;
     background: var(--el-color-danger);
+    width: 8px;
+    height: 8px;
 
     &--online {
       background: var(--el-color-success);

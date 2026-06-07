@@ -17,7 +17,18 @@ import App from './App.vue'
 import router from './router'
 
 // ECharts 按需注册
-use([BarChart, PieChart, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent, DataZoomComponent, ToolboxComponent, CanvasRenderer])
+use([
+  BarChart,
+  PieChart,
+  LineChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+  DataZoomComponent,
+  ToolboxComponent,
+  CanvasRenderer,
+])
 
 // Element Plus 深色模式 CSS
 import 'element-plus/theme-chalk/dark/css-vars.css'

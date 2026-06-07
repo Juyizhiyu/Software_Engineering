@@ -18,10 +18,7 @@ const overview = ref<DashboardOverview | null>(null)
 
 onMounted(async () => {
   try {
-    const [summaryRes, overviewRes] = await Promise.all([
-      getDashboardSummary(),
-      getDashboardOverview(),
-    ])
+    const [summaryRes, overviewRes] = await Promise.all([getDashboardSummary(), getDashboardOverview()])
     summary.value = summaryRes.data
     overview.value = overviewRes.data
   } catch (err) {
@@ -37,11 +34,18 @@ onMounted(async () => {
     <div class="overview">
       <!-- 页面头部 -->
       <div class="overview__header">
-        <PageHeader title="全局总览" description="供应链经营核心指标一览" />
+        <PageHeader
+          title="全局总览"
+          description="供应链经营核心指标一览"
+        />
         <ServiceStatus />
       </div>
 
-      <el-skeleton :loading="loading" animated :count="1">
+      <el-skeleton
+        :loading="loading"
+        animated
+        :count="1"
+      >
         <template #default>
           <!-- 指标卡片 -->
           <div class="card-grid card-grid--4 overview__stats">

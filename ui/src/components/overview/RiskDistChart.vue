@@ -61,15 +61,18 @@ const chartOption = computed(() => {
       <span class="card-title">风险分布</span>
     </template>
     <div class="chart-wrap">
-      <v-chart :option="chartOption" autoresize />
+      <v-chart
+        :option="chartOption"
+        autoresize
+      />
     </div>
   </el-card>
 </template>
 
 <style scoped lang="scss">
 .card-title {
-  font-size: $font-size-md;
   font-weight: 600;
+  font-size: $font-size-md;
 }
 
 .chart-wrap {

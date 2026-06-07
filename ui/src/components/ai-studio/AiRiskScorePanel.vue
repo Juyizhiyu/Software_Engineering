@@ -16,14 +16,22 @@ async function handleSubmit() {
 const breakdownItems = [
   { key: 'on_time_rate', label: '准时率 (40%)', weight: 0.4, color: 'var(--el-color-primary)' },
   { key: 'quality_rate', label: '质量率 (30%)', weight: 0.3, color: 'var(--el-color-success)' },
-  { key: 'price_stability', label: '价格稳定 (20%)', weight: 0.2, color: 'var(--el-color-warning)' },
+  {
+    key: 'price_stability',
+    label: '价格稳定 (20%)',
+    weight: 0.2,
+    color: 'var(--el-color-warning)',
+  },
   { key: 'response_score', label: '响应速度 (10%)', weight: 0.1, color: 'var(--el-color-info)' },
 ] as const
 </script>
 
 <template>
   <div class="ai-panel">
-    <el-card shadow="hover" class="ai-panel__input">
+    <el-card
+      shadow="hover"
+      class="ai-panel__input"
+    >
       <div class="ai-panel__input-row">
         <el-input
           v-model="supplierId"
@@ -33,18 +41,28 @@ const breakdownItems = [
         >
           <template #prepend>供应商ID</template>
         </el-input>
-        <el-button type="primary" :loading="loading" style="min-width: 80px" @click="handleSubmit">
+        <el-button
+          type="primary"
+          :loading="loading"
+          style="min-width: 80px"
+          @click="handleSubmit"
+        >
           评分
         </el-button>
       </div>
     </el-card>
 
-    <el-card v-if="result" shadow="hover" class="ai-panel__result">
-      <h4 class="ai-panel__title">
-        {{ result.supplier_name || result.supplier_id }} 风险评分
-      </h4>
+    <el-card
+      v-if="result"
+      shadow="hover"
+      class="ai-panel__result"
+    >
+      <h4 class="ai-panel__title">{{ result.supplier_name || result.supplier_id }} 风险评分</h4>
       <div class="risk-score-overview">
-        <el-card shadow="never" class="risk-score-overview__score">
+        <el-card
+          shadow="never"
+          class="risk-score-overview__score"
+        >
           <span class="risk-score-overview__number mono">{{ result.score.toFixed(1) }}</span>
           <el-tag
             :color="riskLevelColor(result.risk_level)"
@@ -56,10 +74,14 @@ const breakdownItems = [
           </el-tag>
         </el-card>
         <div class="risk-score-overview__breakdown">
-          <div v-for="item in breakdownItems" :key="item.key" class="risk-score-bar">
+          <div
+            v-for="item in breakdownItems"
+            :key="item.key"
+            class="risk-score-bar"
+          >
             <span class="risk-score-bar__label">{{ item.label }}</span>
             <el-progress
-              :percentage="Math.round(result.breakdown[item.key] / item.weight * 100)"
+              :percentage="Math.round((result.breakdown[item.key] / item.weight) * 100)"
               :stroke-width="12"
               :color="item.color"
             />
@@ -70,16 +92,35 @@ const breakdownItems = [
         </div>
       </div>
 
-      <div v-if="result.recommendations.length" class="ai-panel__section">
+      <div
+        v-if="result.recommendations.length"
+        class="ai-panel__section"
+      >
         <h5>AI 建议</h5>
         <ul>
-          <li v-for="(r, i) in result.recommendations" :key="i">{{ r }}</li>
+          <li
+            v-for="(r, i) in result.recommendations"
+            :key="i"
+          >
+            {{ r }}
+          </li>
         </ul>
       </div>
 
       <div class="ai-panel__meta">
-        <el-tag size="small" effect="plain">{{ result.metadata.mode }}</el-tag>
-        <el-tag size="small" effect="plain" type="info">{{ result.metadata.method }}</el-tag>
+        <el-tag
+          size="small"
+          effect="plain"
+        >
+          {{ result.metadata.mode }}
+        </el-tag>
+        <el-tag
+          size="small"
+          effect="plain"
+          type="info"
+        >
+          {{ result.metadata.method }}
+        </el-tag>
       </div>
     </el-card>
   </div>
@@ -104,28 +145,28 @@ const breakdownItems = [
   }
 
   &__title {
-    font-size: $font-size-lg;
-    font-weight: 600;
-    color: var(--el-text-color-primary);
     margin-bottom: $spacing-md;
+    color: var(--el-text-color-primary);
+    font-weight: 600;
+    font-size: $font-size-lg;
   }
 
   &__section {
     margin-bottom: $spacing-md;
 
     h5 {
-      font-size: $font-size-md;
-      font-weight: 600;
-      color: var(--el-text-color-primary);
       margin-bottom: $spacing-sm;
+      color: var(--el-text-color-primary);
+      font-weight: 600;
+      font-size: $font-size-md;
     }
 
     ul {
       padding-left: $spacing-lg;
       li {
+        margin-bottom: $spacing-xs;
         color: var(--el-text-color-regular);
         line-height: 1.8;
-        margin-bottom: $spacing-xs;
       }
     }
   }
@@ -134,8 +175,8 @@ const breakdownItems = [
     display: flex;
     gap: $spacing-sm;
     margin-top: $spacing-md;
-    padding-top: $spacing-md;
     border-top: 1px solid var(--el-border-color-lighter);
+    padding-top: $spacing-md;
   }
 }
 
@@ -160,9 +201,9 @@ const breakdownItems = [
   }
 
   &__number {
-    font-size: 48px;
-    font-weight: 800;
     color: var(--el-text-color-primary);
+    font-weight: 800;
+    font-size: 48px;
   }
 
   &__breakdown {
@@ -179,8 +220,8 @@ const breakdownItems = [
   gap: $spacing-sm;
 
   &__label {
-    font-size: $font-size-sm;
     color: var(--el-text-color-secondary);
+    font-size: $font-size-sm;
   }
 
   &__value {
@@ -191,12 +232,12 @@ const breakdownItems = [
 
 @keyframes fadeIn {
   from {
-    opacity: 0;
     transform: translateY(8px);
+    opacity: 0;
   }
   to {
-    opacity: 1;
     transform: translateY(0);
+    opacity: 1;
   }
 }
 </style>

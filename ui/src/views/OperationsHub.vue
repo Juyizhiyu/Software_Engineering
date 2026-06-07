@@ -16,9 +16,16 @@ onMounted(() => {
 
 <template>
   <div class="page-container">
-    <PageHeader title="业务分析" description="库存、供应商、物流、成本四大维度综合分析" />
+    <PageHeader
+      title="业务分析"
+      description="库存、供应商、物流、成本四大维度综合分析"
+    />
 
-    <el-skeleton :loading="loading" animated :count="2">
+    <el-skeleton
+      :loading="loading"
+      animated
+      :count="2"
+    >
       <template #default>
         <div class="operations">
           <InventoryPriorityTable :data="snapshot?.inventory ?? []" />

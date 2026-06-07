@@ -22,7 +22,10 @@ function handleReset() {
 </script>
 
 <template>
-  <el-card title="新增记录" class="entity-form">
+  <el-card
+    title="新增记录"
+    class="entity-form"
+  >
     <el-form
       :model="form"
       label-width="100px"
@@ -40,7 +43,7 @@ function handleReset() {
           v-model="form[field.key]"
           :placeholder="field.placeholder || `请输入${field.label}`"
         />
-        
+
         <el-input-number
           v-else-if="field.type === 'number'"
           v-model="form[field.key] as number"
@@ -48,7 +51,7 @@ function handleReset() {
           :controls="false"
           style="width: 100%"
         />
-        
+
         <el-select
           v-else-if="field.type === 'select'"
           v-model="form[field.key]"
@@ -62,7 +65,7 @@ function handleReset() {
             :value="opt"
           />
         </el-select>
-        
+
         <el-date-picker
           v-else-if="field.type === 'date'"
           v-model="form[field.key]"
@@ -74,7 +77,11 @@ function handleReset() {
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" :loading="submitting" @click="handleSubmit">
+        <el-button
+          type="primary"
+          :loading="submitting"
+          @click="handleSubmit"
+        >
           提交数据
         </el-button>
         <el-button @click="handleReset">重置</el-button>
@@ -92,6 +99,6 @@ function handleReset() {
   :deep(.el-input__wrapper),
   :deep(.el-select__wrapper) {
     background: var(--el-bg-color);
-   }
+  }
 }
 </style>

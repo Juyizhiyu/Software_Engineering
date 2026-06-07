@@ -44,7 +44,10 @@ async function handleLogin() {
         <p class="login-card__subtitle">AI 赋能供应链可视化分析系统</p>
       </div>
 
-      <el-form class="login-card__form" @submit.prevent="handleLogin">
+      <el-form
+        class="login-card__form"
+        @submit.prevent="handleLogin"
+      >
         <el-form-item>
           <el-input
             v-model="form.username"
@@ -77,7 +80,11 @@ async function handleLogin() {
 
       <div class="login-card__footer">
         <span class="login-card__hint">默认账号：admin / 123456</span>
-        <el-button text size="small" @click="isDark = !isDark">
+        <el-button
+          text
+          size="small"
+          @click="isDark = !isDark"
+        >
           {{ isDark ? '亮色模式' : '深色模式' }}
         </el-button>
       </div>
@@ -90,42 +97,42 @@ async function handleLogin() {
   width: 100%;
   height: 100vh;
   @include flex-center;
-  background: linear-gradient(135deg, #1d1e2c 0%, #2a3a5c 50%, #1d1e2c 100%);
   position: relative;
+  background: linear-gradient(135deg, #1d1e2c 0%, #2a3a5c 50%, #1d1e2c 100%);
   overflow: hidden;
 
   // 装饰背景
   &::before {
-    content: '';
     position: absolute;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(64, 158, 255, 0.15) 0%, transparent 70%);
     top: -200px;
     right: -100px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(64, 158, 255, 0.15) 0%, transparent 70%);
+    width: 600px;
+    height: 600px;
+    content: '';
   }
 
   &::after {
-    content: '';
     position: absolute;
-    width: 400px;
-    height: 400px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(103, 194, 58, 0.1) 0%, transparent 70%);
     bottom: -100px;
     left: -50px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(103, 194, 58, 0.1) 0%, transparent 70%);
+    width: 400px;
+    height: 400px;
+    content: '';
   }
 }
 
 .login-card {
-  width: 400px;
-  padding: $spacing-xl;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 1;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: $spacing-xl;
+  width: 400px;
 
   @include dark-mode {
     background: rgba(255, 255, 255, 0.04);
@@ -133,19 +140,19 @@ async function handleLogin() {
 
   // 亮色模式覆盖
   :root:not(.dark) & {
-    background: rgba(255, 255, 255, 0.9);
     border-color: rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.9);
   }
 
   &__header {
-    text-align: center;
     margin-bottom: $spacing-xl;
+    text-align: center;
   }
 
   &__title {
-    font-size: 32px;
-    font-weight: 800;
     color: #fff;
+    font-weight: 800;
+    font-size: 32px;
     letter-spacing: 2px;
 
     :root:not(.dark) & {
@@ -154,9 +161,9 @@ async function handleLogin() {
   }
 
   &__subtitle {
-    font-size: $font-size-sm;
-    color: rgba(255, 255, 255, 0.6);
     margin-top: $spacing-sm;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: $font-size-sm;
 
     :root:not(.dark) & {
       color: var(--el-text-color-secondary);
@@ -165,13 +172,13 @@ async function handleLogin() {
 
   &__form {
     :deep(.el-input__wrapper) {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
       box-shadow: none;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.08);
 
       :root:not(.dark) & {
-        background: #fff;
         border-color: var(--el-border-color);
+        background: #fff;
       }
     }
 
@@ -193,10 +200,10 @@ async function handleLogin() {
   }
 
   &__btn {
+    border-radius: 10px;
     width: 100%;
     height: 44px;
     font-size: $font-size-lg;
-    border-radius: 10px;
   }
 
   &__footer {
@@ -205,8 +212,8 @@ async function handleLogin() {
   }
 
   &__hint {
-    font-size: $font-size-xs;
     color: rgba(255, 255, 255, 0.4);
+    font-size: $font-size-xs;
 
     :root:not(.dark) & {
       color: var(--el-text-color-placeholder);

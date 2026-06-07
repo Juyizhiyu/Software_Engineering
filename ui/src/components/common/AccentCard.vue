@@ -10,13 +10,19 @@ defineProps<{
     class="status-card"
     :style="accentColor ? { '--status-card-accent': accentColor } : undefined"
   >
-    <div v-if="$slots.header" class="status-card__header">
+    <div
+      v-if="$slots.header"
+      class="status-card__header"
+    >
       <slot name="header" />
     </div>
     <div class="status-card__body">
       <slot />
     </div>
-    <div v-if="$slots.footer" class="status-card__footer">
+    <div
+      v-if="$slots.footer"
+      class="status-card__footer"
+    >
       <slot name="footer" />
     </div>
   </div>

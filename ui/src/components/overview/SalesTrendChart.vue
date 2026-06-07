@@ -78,7 +78,10 @@ const chartOption = computed(() => {
         itemStyle: {
           color: {
             type: 'linear' as const,
-            x: 0, y: 0, x2: 0, y2: 1,
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
             colorStops: [
               { offset: 0, color: themeColors.primary() },
               { offset: 1, color: getCssVar('--el-color-primary-light-3') },
@@ -109,14 +112,20 @@ const chartOption = computed(() => {
     <template #header>
       <div class="chart-header">
         <span class="card-title">销售走势</span>
-        <el-radio-group v-model="scaleType" size="small">
+        <el-radio-group
+          v-model="scaleType"
+          size="small"
+        >
           <el-radio-button value="linear">线性</el-radio-button>
           <el-radio-button value="log">对数</el-radio-button>
         </el-radio-group>
       </div>
     </template>
     <div class="chart-wrap">
-      <v-chart :option="chartOption" autoresize />
+      <v-chart
+        :option="chartOption"
+        autoresize
+      />
     </div>
   </el-card>
 </template>
@@ -127,8 +136,8 @@ const chartOption = computed(() => {
 }
 
 .card-title {
-  font-size: $font-size-md;
   font-weight: 600;
+  font-size: $font-size-md;
 }
 
 .chart-wrap {
