@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useAiForecast } from '@/composables/useAiForecast'
-import { formatPercent } from '@/utils/format'
 
 const { loading, productId, result, submit } = useAiForecast()
+
+const confidenceLabels: Record<string, string> = { high: '高', medium: '中', low: '低' }
+const trendLabels: Record<string, string> = { up: '上升', down: '下降', stable: '平稳', unknown: '未知' }
 
 async function handleSubmit() {
   try {
@@ -48,16 +50,18 @@ async function handleSubmit() {
           <span class="forecast-stats__label">置信度</span>
           <el-tag
             :type="result.confidence === 'high' ? 'success' : result.confidence === 'medium' ? 'warning' : 'danger'"
+            effect="dark"
           >
-            {{ result.confidence }}
+            {{ confidenceLabels[result.confidence] || result.confidence }}
           </el-tag>
         </el-card>
         <el-card shadow="never" class="forecast-stats__item">
           <span class="forecast-stats__label">趋势</span>
           <el-tag
             :type="result.trend === 'up' ? 'success' : result.trend === 'down' ? 'danger' : 'info'"
+            effect="dark"
           >
-            {{ result.trend }}
+            {{ trendLabels[result.trend] || result.trend }}
           </el-tag>
         </el-card>
       </div>
