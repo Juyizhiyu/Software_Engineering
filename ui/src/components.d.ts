@@ -12,6 +12,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AccentCard: typeof import('./components/common/AccentCard.vue')['default']
+    AiAnomalyPanel: typeof import('./components/ai-studio/AiAnomalyPanel.vue')['default']
+    AiChatPanel: typeof import('./components/ai-studio/AiChatPanel.vue')['default']
+    AiForecastPanel: typeof import('./components/ai-studio/AiForecastPanel.vue')['default']
+    AiRiskScorePanel: typeof import('./components/ai-studio/AiRiskScorePanel.vue')['default']
     AppLayout: typeof import('./components/layout/AppLayout.vue')['default']
     AppSidebar: typeof import('./components/layout/AppSidebar.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
