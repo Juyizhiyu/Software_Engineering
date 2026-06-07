@@ -24,7 +24,7 @@ async function handleSubmit() {
             :value="opt.value"
           />
         </el-select>
-        <el-button type="primary" :loading="loading" @click="handleSubmit">
+        <el-button type="primary" :loading="loading" style="min-width: 96px" @click="handleSubmit">
           检测异常
         </el-button>
       </div>

@@ -33,7 +33,7 @@ const breakdownItems = [
         >
           <template #prepend>供应商ID</template>
         </el-input>
-        <el-button type="primary" :loading="loading" @click="handleSubmit">
+        <el-button type="primary" :loading="loading" style="min-width: 80px" @click="handleSubmit">
           评分
         </el-button>
       </div>

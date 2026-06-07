@@ -27,7 +27,7 @@ async function handleSubmit() {
         >
           <template #prepend>产品ID</template>
         </el-input>
-        <el-button type="primary" :loading="loading" @click="handleSubmit">
+        <el-button type="primary" :loading="loading" style="min-width: 80px" @click="handleSubmit">
           预测
         </el-button>
       </div>

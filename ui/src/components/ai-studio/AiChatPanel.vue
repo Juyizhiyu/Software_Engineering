@@ -42,7 +42,7 @@ async function handleSubmit() {
             {{ q }}
           </el-tag>
         </div>
-        <el-button type="primary" :loading="loading" @click="handleSubmit">
+        <el-button type="primary" :loading="loading" style="min-width: 72px" @click="handleSubmit">
           分析
         </el-button>
       </div>
