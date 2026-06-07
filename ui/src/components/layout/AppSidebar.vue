@@ -76,7 +76,9 @@ function handleLogout() {
       active-text-color="#ffffff"
     >
       <el-menu-item v-for="item in menuItems" :key="item.path" :index="item.path">
-        <el-icon><component :is="item.icon" /></el-icon>
+        <el-icon class="app-sidebar__menu__icon">
+          <component :is="item.icon" />
+        </el-icon>
         <template #title>{{ item.title }}</template>
       </el-menu-item>
     </el-menu>
@@ -151,11 +153,15 @@ function handleLogout() {
 
     &.el-menu--collapse {
       :deep(.el-menu-item) {
-        margin: 2px 0;
         padding: 0 !important;
         justify-content: center;
       }
     }
+  }
+
+  &__menu__icon {
+    position: relative;
+    right: 8px;
   }
 
   &__footer {
