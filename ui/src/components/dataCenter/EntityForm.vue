@@ -88,5 +88,10 @@ function handleReset() {
   :deep(.el-form-item) {
     margin-bottom: $spacing-md;
   }
+
+  :deep(.el-input__wrapper),
+  :deep(.el-select__wrapper) {
+    background: var(--el-bg-color);
+   }
 }
 </style>
