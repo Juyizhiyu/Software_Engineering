@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch, onBeforeUnmount, nextTick } from 'vue'
 import type { SchemaField } from '@/types'
 
 const props = defineProps<{
@@ -8,33 +8,63 @@ const props = defineProps<{
   formFields: SchemaField[]
 }>()
 
+const tableWrapperRef = ref<HTMLElement>()
+const containerWidth = ref(0)
+
+// 每列的基础权重，用于按比例分配宽度
+function getColumnWeight(key: string) {
+  if (key === 'id' || key.includes('_id')) return 1
+  if (key.includes('name')) return 1.5
+  return 1.2
+}
+
 const columns = computed(() => {
-  return props.formFields.slice(0, 5).map(field => ({
-    key: field.key,
-    title: field.label,
-    width: field.key === 'id' || field.key.includes('_id') ? 120 : field.key.includes('name') ? 150 : 120,
-  }))
+  const fields = props.formFields.slice(0, 5)
+  const w = containerWidth.value || 600
+  const totalWeight = fields.reduce((sum, f) => sum + getColumnWeight(f.key), 0)
+  return fields.map(field => {
+    const weight = getColumnWeight(field.key)
+    return {
+      key: field.key,
+      dataKey: field.key,
+      title: field.label,
+      width: Math.floor((weight / totalWeight) * w),
+    }
+  })
 })
 
 const tableWidth = computed(() => {
-  const total = columns.value.reduce((sum, col) => sum + col.width, 0)
-  return Math.max(total, 500)
+  const w = containerWidth.value || 600
+  return Math.max(w, columns.value.reduce((sum, col) => sum + col.width, 0))
+})
+
+let resizeObserver: ResizeObserver | null = null
+
+function setupObserver(el: HTMLElement) {
+  containerWidth.value = el.clientWidth
+  resizeObserver?.disconnect()
+  resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      containerWidth.value = entry.contentRect.width
+    }
+  })
+  resizeObserver.observe(el)
+}
+
+watch(tableWrapperRef, (el) => {
+  if (el) {
+    nextTick(() => setupObserver(el))
+  }
+})
+
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect()
 })
 
 function getCellValue(row: Record<string, unknown>, columnKey: string) {
   const value = row[columnKey]
   if (value === null || value === undefined) return '-'
   return String(value)
-}
-
-function getRowKey(row: Record<string, unknown>, index: number) {
-  const idFields = ['id', 'order_id', 'supplier_id', 'shipment_id', 'risk_id']
-  for (const field of idFields) {
-    if (row[field] !== undefined) {
-      return String(row[field])
-    }
-  }
-  return String(index)
 }
 </script>
 
@@ -53,27 +83,23 @@ function getRowKey(row: Record<string, unknown>, index: number) {
       <el-skeleton :rows="5" animated />
     </div>
     
-    <div v-else class="entity-list__table-wrapper">
+    <div v-else ref="tableWrapperRef" class="entity-list__table-wrapper">
       <el-table-v2
         :columns="columns"
         :data="records"
         :width="tableWidth"
         :height="500"
-        :row-key="getRowKey"
+        :row-key="'id'"
       >
-        <template #cell="{ column, row }">
+        <template #cell="{ column, rowData }">
           <span
             class="entity-list__cell"
-            :title="getCellValue(row, column.key)"
+            :title="getCellValue(rowData, column.dataKey as string)"
           >
-            {{ getCellValue(row, column.key) }}
+            {{ getCellValue(rowData, column.dataKey as string) }}
           </span>
         </template>
       </el-table-v2>
-    </div>
-    
-    <div v-if="!loading && records.length > 20" class="entity-list__more">
-      仅展示前 20 条，共 {{ records.length }} 条记录
     </div>
   </el-card>
 </template>
@@ -93,6 +119,14 @@ function getRowKey(row: Record<string, unknown>, index: number) {
 
   &__table-wrapper {
     overflow: auto;
+
+    :deep(.el-table-v2__header-wrapper) {
+      background-color: var(--el-fill-color-blank);
+    }
+
+    :deep(.el-table-v2__row-wrapper:hover) {
+      background-color: var(--el-table-row-hover-bg-color);
+    }
   }
 
   &__cell {
