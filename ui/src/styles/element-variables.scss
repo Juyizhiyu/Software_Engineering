@@ -56,4 +56,9 @@
     'placeholder': #b0b3be,
     'disabled': #c0c4cc,
   ),
+  // 卡片 - 无边框，圆角 8px
+  $card: (
+    'border-color': transparent,
+    'border-radius': 8px,
+  ),
 );
