@@ -11,7 +11,7 @@ export function useAiRiskScore() {
     if (!supplierId.value.trim()) return
     loading.value = true
     try {
-      const { data } = await scoreRisk({ supplier_id: supplierId.value })
+      const { data } = await scoreRisk({ supplier_id: supplierId.value.toUpperCase() })
       result.value = data
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '风险评分失败'

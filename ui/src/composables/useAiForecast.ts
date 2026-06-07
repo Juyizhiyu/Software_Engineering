@@ -11,7 +11,7 @@ export function useAiForecast() {
     if (!productId.value.trim()) return
     loading.value = true
     try {
-      const { data } = await forecastDemand({ product_id: productId.value })
+      const { data } = await forecastDemand({ product_id: productId.value.toUpperCase() })
       result.value = data
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '预测失败'
