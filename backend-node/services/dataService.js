@@ -1,3 +1,4 @@
+// services/dataService.js
 const {
     ordersRepo,
     inventoryRepo,
@@ -6,6 +7,7 @@ const {
     costsRepo,
     risksRepo
 } = require('../repositories/jsonRepository');
+
 const { entityDefinitions } = require('../config/dataDefinitions');
 
 const repositoryMap = {
@@ -17,45 +19,34 @@ const repositoryMap = {
     risks: risksRepo
 };
 
-// Dynamic lookup maps — built from actual data
+// 动态查找映射表（从实际数据构建）
 let _productNameMap = null;
 let _warehouseNameMap = null;
 
-function getProductNameMap() {
-    if (_productNameMap) return _productNameMap;
+// 将全局映射构建改为异步获取，防止阻塞或因异步未返回导致的数据丢失
+async function fillNameMaps() {
+    if (_productNameMap && _warehouseNameMap) return;
     _productNameMap = {};
+    _warehouseNameMap = {};
     try {
-        const inventory = require('../repositories/jsonRepository').inventoryRepo.findAllSync
-            ? require('../repositories/jsonRepository').inventoryRepo.findAllSync()
-            : [];
+        const inventory = await inventoryRepo.findAll();
         inventory.forEach(item => {
             if (item.product_id && item.product_name) {
                 _productNameMap[item.product_id] = item.product_name;
             }
-        });
-    } catch (e) { /* ignore */ }
-    return _productNameMap;
-}
-
-function getWarehouseNameMap() {
-    if (_warehouseNameMap) return _warehouseNameMap;
-    _warehouseNameMap = {};
-    try {
-        const inventory = require('../repositories/jsonRepository').inventoryRepo.findAllSync
-            ? require('../repositories/jsonRepository').inventoryRepo.findAllSync()
-            : [];
-        inventory.forEach(item => {
             if (item.warehouse_id && item.warehouse_name) {
                 _warehouseNameMap[item.warehouse_id] = item.warehouse_name;
             }
         });
-    } catch (e) { /* ignore */ }
+    } catch (e) {
+        console.error('Failed to initialize local name maps from MySQL:', e);
+    }
+    // 基础静态数据兜底
     _warehouseNameMap.W001 = _warehouseNameMap.W001 || '广州中心仓';
     _warehouseNameMap.W002 = _warehouseNameMap.W002 || '上海前置仓';
     _warehouseNameMap.W003 = _warehouseNameMap.W003 || '北京分仓';
     _warehouseNameMap.W004 = _warehouseNameMap.W004 || '成都区域仓';
     _warehouseNameMap.W005 = _warehouseNameMap.W005 || '武汉中转仓';
-    return _warehouseNameMap;
 }
 
 const routeMap = {
@@ -102,7 +93,7 @@ function toNumber(value) {
 function normalizeInventoryItem(item, index) {
     const currentStock = toNumber(item.current_stock);
     const safetyStock = toNumber(item.safety_stock);
-    const maxStock = toNumber(item.max_stock);
+    const maxStock = toNumber(item.max_stock || (safetyStock * 3)); 
 
     let stockStatus = 'healthy';
     let stockStatusLabel = '健康';
@@ -117,20 +108,18 @@ function normalizeInventoryItem(item, index) {
         stockStatusLabel = '预警';
     }
 
-    const nameMap = getProductNameMap();
-    const whMap = getWarehouseNameMap();
     return {
         id: `${item.product_id}-${item.warehouse_id}-${index}`,
         productId: item.product_id,
-        productName: item.product_name || nameMap[item.product_id] || item.product_id,
+        productName: item.product_name || _productNameMap[item.product_id] || item.product_id,
         warehouseId: item.warehouse_id,
-        warehouseName: item.warehouse_name || whMap[item.warehouse_id] || item.warehouse_id,
+        warehouseName: item.warehouse_name || _warehouseNameMap[item.warehouse_id] || item.warehouse_id,
         currentStock,
         safetyStock,
         maxStock,
         stockGap: currentStock - safetyStock,
         fillRate: round((currentStock / Math.max(safetyStock, 1)) * 100, 0),
-        unitCost: toNumber(item.unit_cost),
+        unitCost: toNumber(item.unit_cost || item.cost_price),
         lastUpdate: item.last_update || nowDateTime(),
         stockStatus,
         stockStatusLabel
@@ -196,11 +185,10 @@ function normalizeShipment(item) {
 }
 
 function normalizeCost(item) {
-    const nameMap = getProductNameMap();
     return {
         date: item.date,
         productId: item.product_id,
-        productName: nameMap[item.product_id] || item.product_id,
+        productName: _productNameMap[item.product_id] || item.product_id,
         purchaseCost: toNumber(item.purchase_cost),
         storageCost: toNumber(item.storage_cost),
         transportCost: toNumber(item.transport_cost),
@@ -210,18 +198,8 @@ function normalizeCost(item) {
 }
 
 function normalizeRisk(item) {
-    const riskLevelMap = {
-        Critical: '严重',
-        High: '高',
-        Medium: '中',
-        Low: '低'
-    };
-
-    const statusLabelMap = {
-        open: '待处理',
-        resolved: '已关闭',
-        monitoring: '监控中'
-    };
+    const riskLevelMap = { Critical: '严重', High: '高', Medium: '中', Low: '低' };
+    const statusLabelMap = { open: '待处理', resolved: '已关闭', monitoring: '监控中' };
     return {
         riskId: item.risk_id,
         riskType: item.risk_type,
@@ -237,18 +215,17 @@ function normalizeRisk(item) {
 }
 
 function normalizeOrder(item) {
-    const nameMap = getProductNameMap();
     return {
         orderId: item.order_id,
         date: item.date,
         customerRegion: item.customer_region,
         productId: item.product_id,
-        productName: item.product_name || nameMap[item.product_id] || item.product_id,
+        productName: item.product_name || _productNameMap[item.product_id] || item.product_id,
         category: item.category || '综合',
         quantity: toNumber(item.quantity),
         unitPrice: toNumber(item.unit_price),
-        amount: toNumber(item.amount),
-        status: item.status
+        amount: toNumber(item.amount || (item.quantity * item.unit_price)),
+        status: item.status || 'success'
     };
 }
 
@@ -267,6 +244,7 @@ class DataService {
     }
 
     async loadAll() {
+        await fillNameMaps(); 
         const raw = await this.getRawData();
         return {
             orders: raw.orders.map(normalizeOrder),
@@ -376,7 +354,6 @@ class DataService {
 
         let filteredInventory = rawData.inventory;
         if (region) {
-            // 简单映射一下：华南看广州中心仓，华东看上海前置仓，华北看北京分仓
             const regionWarehouseMap = { '华南': 'W001', '华东': 'W002', '华北': 'W003', '西南': 'W004', '华中': 'W005' };
             const targetWarehouse = regionWarehouseMap[region];
             if (targetWarehouse) {
@@ -394,10 +371,10 @@ class DataService {
             rawData.suppliers.reduce((sum, item) => sum + item.compositeScore, 0) / Math.max(rawData.suppliers.length, 1);
 
         return {
-            totalOrders: filteredOrders.length, // 变成过滤后的数量
+            totalOrders: filteredOrders.length,
             totalSales,
             averageOrderAmount: round(averageOrderAmount, 0),
-            totalStock: filteredInventory.reduce((sum, item) => sum + item.currentStock, 0), // 变成过滤后的库存
+            totalStock: filteredInventory.reduce((sum, item) => sum + item.currentStock, 0),
             shortageCount,
             delayedShipments,
             openRisks,
@@ -409,7 +386,6 @@ class DataService {
     async getDashboardOverview() {
         const { orders, inventory, suppliers, logistics, costs, risks } = await this.loadAll();
 
-        // Aggregate sales by date
         const salesByDate = {};
         orders.forEach(item => {
             salesByDate[item.date] = salesByDate[item.date] || { date: item.date, amount: 0, quantity: 0 };
@@ -417,17 +393,6 @@ class DataService {
             salesByDate[item.date].quantity += item.quantity;
         });
         const salesTrend = Object.values(salesByDate)
-            .sort((a, b) => a.date.localeCompare(b.date))
-            .slice(-10);
-
-        // Aggregate costs by date
-        const costByDate = {};
-        costs.forEach(item => {
-            costByDate[item.date] = costByDate[item.date] || { date: item.date, totalCost: 0, purchaseCost: 0 };
-            costByDate[item.date].totalCost += item.totalCost;
-            costByDate[item.date].purchaseCost += item.purchaseCost;
-        });
-        const costTrend = Object.values(costByDate)
             .sort((a, b) => a.date.localeCompare(b.date))
             .slice(-10);
 
@@ -444,7 +409,7 @@ class DataService {
                 .filter(item => item.status === 'delayed')
                 .sort((a, b) => b.delayHours - a.delayHours)
                 .slice(0, 6),
-            costTrend,
+            costTrend: costs || [],
             riskDistribution: ['Critical', 'High', 'Medium', 'Low'].map(level => ({
                 level,
                 count: risks.filter(item => item.riskLevel === level && item.status === 'open').length
@@ -463,7 +428,6 @@ class DataService {
 
     async getOperationsSnapshot() {
         const { inventory, suppliers, logistics, costs } = await this.loadAll();
-
         return {
             inventory: inventory.sort((a, b) => a.currentStock - b.currentStock).slice(0, 8),
             suppliers: suppliers.sort((a, b) => b.compositeScore - a.compositeScore).slice(0, 8),
