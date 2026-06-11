@@ -1,5 +1,8 @@
+// routes/auth.js
 const express = require('express');
 const router = express.Router();
+const dataService = require('../services/dataService');
+const { secureCheck } = require('./authMiddleware');
 
 const MOCK_USER = {
     username: 'admin',
@@ -27,6 +30,25 @@ router.post('/login', (req, res) => {
         });
     } else {
         return res.status(401).json({ success: false, message: '账号或密码错误，请重试' });
+    }
+});
+
+router.get('/dashboard/summary', secureCheck, async (req, res) => {
+    try {
+        const { region, date, category } = req.query;
+
+        const summary = await dataService.getDashboardSummary({ region, date, category });
+        
+        return res.json({
+            success: true,
+            message: "数据获取成功",
+            data: summary
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: `服务器内部错误: ${error.message}`
+        });
     }
 });
 
