@@ -2,6 +2,8 @@
   "name": "supply-chain-bi-demo",
   "private": true,
   "scripts": {
+    "start": "bash start.sh",
+    "stop": "bash stop.sh",
     "demo": "start start.bat",
     "frontend:dev": "npm --prefix frontend run dev",
     "frontend:build": "npm --prefix frontend run build",
