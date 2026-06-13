@@ -1,0 +1,57 @@
+// ============================================
+// Element Plus 主题变量覆盖
+// 修改此文件即可全局改变 Element Plus 组件样式
+// 文档: https://element-plus.org/zh-CN/guide/theming.html
+// ============================================
+
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  // 主题色 - 与侧边栏深蓝色调统一
+  $colors: (
+      'primary': (
+        'base': #4a7cf7,
+      ),
+      'success': (
+        'base': #52c41a,
+      ),
+      'warning': (
+        'base': #faad14,
+      ),
+      'danger': (
+        'base': #f56565,
+      ),
+      'info': (
+        'base': #8c8c8c,
+      )
+    ),
+  // 背景色 - 亮色模式使用偏冷灰调
+  $bg-color: ('': #ffffff, 'page': #f0f2f5, 'overlay': #ffffff),
+  // 填充色 - 偏冷灰调
+  $fill-color: (
+      '': #f0f2f5,
+      'light': #f5f7fa,
+      'lighter': #fafafa,
+      'extra-light': #fafcff,
+      'dark': #ebedf0,
+      'darker': #e6e8eb,
+      'blank': #ffffff
+    ),
+  // 边框色
+  $border-color: (
+      '': #d9dce1,
+      'light': #e4e7ed,
+      'lighter': #ebeef5,
+      'extra-light': #f2f6fc,
+      'dark': #d4d7de,
+      'darker': #cdd0d6
+    ),
+  // 文字色
+  $text-color: (
+      'primary': #1d1e2c,
+      'regular': #5a5e6b,
+      'secondary': #8c8fa0,
+      'placeholder': #b0b3be,
+      'disabled': #c0c4cc
+    ),
+  // 卡片 - 无边框，圆角 8px
+  $card: ('border-color': transparent, 'border-radius': 8px)
+);

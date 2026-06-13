@@ -1,0 +1,21 @@
+// ============================================
+// 深色模式自定义变量覆盖
+// Element Plus 自带深色模式（dark/css-vars.css），此处仅定义项目自定义变量
+// 深色模式背景色统一为深蓝色调，与侧边栏风格一致
+// ============================================
+
+html.dark {
+  // 侧边栏
+  --app-bg-sidebar: #1a1a2e;
+  --app-bg-sidebar-hover: #2a2a42;
+
+  // 覆盖 EP 深色模式背景色，统一为深蓝色调
+  --el-bg-color: #1d1e2c;
+  --el-bg-color-page: #141422;
+  --el-bg-color-overlay: #1e1e2d;
+
+  // 填充色
+  --el-fill-color: #303040;
+  --el-fill-color-light: #262636;
+  --el-fill-color-lighter: #1d1d2c;
+}
