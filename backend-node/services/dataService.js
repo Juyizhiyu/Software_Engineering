@@ -399,7 +399,9 @@ class DataService {
                 ORDER BY unit_sold DESC
                 LIMIT 30
             `);
-
+            
+            console.log(`成功从 MySQL 捞出 ${rows.length} 条真实库存数据！`);
+            
             return rows.map((item, index) => {
                 const stockGap = item.currentStock - item.safetyStock;
                 let stockStatus = 'healthy';
@@ -412,7 +414,7 @@ class DataService {
                     stockStatusLabel = '预警';
                 }
 
-                // 基于 ID 哈希生成的伪随机高拟真成本，不再使用纯 Math.random()
+                // 基于 ID 哈希生成的伪随机高拟真成本
                 const pseudoIdSeed = parseInt(item.productId) || index;
                 const determinedCost = parseFloat((30 + (pseudoIdSeed % 70) + (pseudoIdSeed % 10) * 0.1).toFixed(2));
 
@@ -488,7 +490,6 @@ class DataService {
                 };
             });
 
-            // ⭐ 修复测试同学提出的致命排序错乱 Bug
             return result.sort((a, b) => b.compositeScore - a.compositeScore);
 
         } catch (e) {
