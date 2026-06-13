@@ -1,0 +1,84 @@
+// ============================================
+// 全局基础样式
+// ============================================
+
+// 应用级 CSS 变量（非 Element Plus 管理的部分）
+:root {
+  --app-bg-sidebar: #1d1e2c;
+  --app-bg-sidebar-hover: #2a2b3d;
+  --app-sidebar-width: #{$sidebar-width};
+  --app-sidebar-collapsed-width: #{$sidebar-collapsed-width};
+  --app-header-height: #{$header-height};
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#app {
+  background: var(--el-bg-color-page);
+  width: 100%;
+  height: 100%;
+  color: var(--el-text-color-primary);
+  font-size: $font-size-md;
+  font-family: $font-family;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 滚动条
+body {
+  @include custom-scrollbar;
+}
+
+// 链接
+a {
+  color: var(--el-color-primary);
+  text-decoration: none;
+}
+
+// 等宽数字
+.mono {
+  font-family: $font-family-mono;
+}
+
+// 页面过渡
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+// 页面内容区域
+.page-container {
+  padding: $spacing-lg;
+  height: 100%;
+  overflow-y: auto;
+  @include custom-scrollbar;
+}
+
+// 卡片网格布局
+.card-grid {
+  display: grid;
+  gap: $spacing-md;
+
+  &--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  &--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

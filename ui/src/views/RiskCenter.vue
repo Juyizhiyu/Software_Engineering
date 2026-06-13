@@ -1,0 +1,144 @@
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { useRisks } from '@/composables/useRisks'
+import { riskLevelColor, formatDate } from '@/utils/format'
+import PageHeader from '@/components/common/PageHeader.vue'
+import MetricCard from '@/components/common/MetricCard.vue'
+import AccentCard from '@/components/common/AccentCard.vue'
+
+const { loading, openRisks, riskStats, fetchRisks } = useRisks()
+
+onMounted(() => {
+  fetchRisks()
+})
+</script>
+
+<template>
+  <div class="page-container">
+    <PageHeader
+      title="风险中心"
+      description="供应链风险监控与闭环管理"
+    />
+
+    <el-skeleton
+      :loading="loading"
+      animated
+    >
+      <template #default>
+        <!-- 风险统计 -->
+        <div class="card-grid card-grid--4 risk-center__stats">
+          <MetricCard
+            title="严重风险"
+            :value="riskStats.Critical"
+            icon="WarningFilled"
+            color="#f56c6c"
+          />
+          <MetricCard
+            title="高级风险"
+            :value="riskStats.High"
+            icon="Warning"
+            color="#e6a23c"
+          />
+          <MetricCard
+            title="中级风险"
+            :value="riskStats.Medium"
+            icon="InfoFilled"
+            color="#409eff"
+          />
+          <MetricCard
+            title="低级风险"
+            :value="riskStats.Low"
+            icon="CircleCheck"
+            color="#67c23a"
+          />
+        </div>
+
+        <!-- 风险卡片列表 -->
+        <div class="risk-center__list">
+          <AccentCard
+            v-for="risk in openRisks"
+            :key="risk.riskId"
+            :accent-color="riskLevelColor(risk.riskLevel)"
+          >
+            <template #header>
+              <el-tag
+                :color="riskLevelColor(risk.riskLevel)"
+                effect="dark"
+                size="small"
+                style="border: none"
+              >
+                {{ risk.riskLevelLabel }}
+              </el-tag>
+              <span class="risk-center__type">{{ risk.riskType }}</span>
+              <span class="risk-center__time">{{ formatDate(risk.createdAt) }}</span>
+            </template>
+
+            <div class="risk-center__object">关联对象：{{ risk.relatedObject }}</div>
+            <div class="risk-center__desc">{{ risk.description }}</div>
+
+            <template #footer>
+              <div class="risk-center__suggestion">
+                <el-icon><CircleCheck /></el-icon>
+                <span>{{ risk.suggestion }}</span>
+              </div>
+            </template>
+          </AccentCard>
+
+          <el-empty
+            v-if="!openRisks.length"
+            description="暂无待处理风险"
+          />
+        </div>
+      </template>
+    </el-skeleton>
+  </div>
+</template>
+
+<style scoped lang="scss">
+.risk-center {
+  &__stats {
+    margin-bottom: $spacing-lg;
+  }
+
+  &__list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-md;
+  }
+
+  &__type {
+    color: var(--el-text-color-secondary);
+    font-size: $font-size-sm;
+  }
+
+  &__time {
+    color: var(--el-text-color-placeholder);
+    font-size: $font-size-xs;
+  }
+
+  &__object {
+    margin-bottom: $spacing-sm;
+    color: var(--el-text-color-secondary);
+    font-size: $font-size-sm;
+  }
+
+  &__desc {
+    color: var(--el-text-color-primary);
+    font-size: $font-size-md;
+    line-height: 1.6;
+  }
+
+  &__suggestion {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    color: var(--el-color-success);
+    font-size: $font-size-sm;
+
+    .el-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+  }
+}
+</style>
