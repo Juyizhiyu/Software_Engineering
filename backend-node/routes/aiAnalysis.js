@@ -31,7 +31,7 @@ router.post('/forecast', async (req, res) => {
             product_name || product_id,
             rows
         );
-        res.json(result);
+        res.json({ success: true, data: result });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -64,14 +64,14 @@ router.post('/anomaly', async (req, res) => {
                     productName: item.spu_name_clean,
                     brand: item.brand_clean,
                     price: item.price_per_unit,
-                    currentStock: 5,            
-                    safetyStock: 10,            
+                    currentStock: 5,
+                    safetyStock: 10,
                     stockStatus: 'shortage'
                 }));
             } else if (data_type === 'logistics') {
                 analysisData = rows.map(item => ({
                     id: item.spu_id,
-                    status: Math.random() > 0.7 ? 'delayed' : 'delivered', 
+                    status: Math.random() > 0.7 ? 'delayed' : 'delivered',
                     destination: item.brand_clean + '托管点'
                 }));
             } else {
@@ -80,7 +80,7 @@ router.post('/anomaly', async (req, res) => {
         }
 
         const result = await aiService.detectAnomalies(data_type, analysisData);
-        res.json(result);
+        res.json({ success: true, data: result });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -102,7 +102,7 @@ router.post('/risk-score', async (req, res) => {
                 quality_rate: 82.0,
                 price_stability: 75.4,
                 response_score: 79.0,
-                compositeScore: 78.2 
+                compositeScore: 78.2
             };
         }
 
@@ -111,7 +111,7 @@ router.post('/risk-score', async (req, res) => {
             supplier_name || supplier_id,
             supplierMetrics
         );
-        res.json(result);
+        res.json({ success: true, data: result });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
