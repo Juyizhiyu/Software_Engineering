@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { InventoryItem } from '@/types'
+import type { InventoryAlertItem } from '@/types'
 
 defineProps<{
-  data: InventoryItem[]
+  data: InventoryAlertItem[]
 }>()
 </script>
 
@@ -50,6 +50,7 @@ defineProps<{
       >
         <template #default="{ row }">
           <el-tag
+            v-if="row.stockStatus"
             :type="
               row.stockStatus === 'shortage'
                 ? 'danger'
@@ -57,6 +58,13 @@ defineProps<{
                   ? 'warning'
                   : 'info'
             "
+            size="small"
+          >
+            {{ row.stockStatusLabel }}
+          </el-tag>
+          <el-tag
+            v-else
+            :type="row.stockStatusLabel?.includes('缺货') || row.stockStatusLabel?.includes('紧张') ? 'danger' : row.stockStatusLabel?.includes('预警') || row.stockStatusLabel?.includes('积压') ? 'warning' : 'info'"
             size="small"
           >
             {{ row.stockStatusLabel }}
