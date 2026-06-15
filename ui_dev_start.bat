@@ -15,9 +15,9 @@ if not exist "node_modules" (
 )
 start "Node.js Backend" cmd /k "node server.js"
 
-echo [2/3] Starting Python AI Backend (Port 8080)...
+echo [2/3] Starting Python AI Backend (Port 8000)...
 cd /d "%PROJECT_DIR%backend-python"
-start "Python AI Backend" cmd /k "uv run uvicorn main:app --reload --port 8080"
+start "Python AI Backend" cmd /k "uv run uvicorn main:app --reload --port 8000"
 
 echo [3/3] Starting Frontend (Port 5173)...
 cd /d "%PROJECT_DIR%ui"
@@ -35,7 +35,7 @@ echo   All Services Started!
 echo =========================================
 echo   Frontend:       http://localhost:5173
 echo   Node Backend:   http://localhost:3000
-echo   Python Backend: http://localhost:8080
+echo   Python Backend: http://localhost:8000
 echo   Login:          admin / 123456
 echo =========================================
 echo   Press any key to stop all services
