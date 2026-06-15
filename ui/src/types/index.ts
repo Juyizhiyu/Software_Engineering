@@ -80,8 +80,9 @@ export interface InventoryAlertItem {
   fillRate?: number
   unitCost?: number
   lastUpdate?: string
-  stockStatus?: 'healthy' | 'shortage' | 'overstock' | 'warning'
-  stockStatusLabel: string
+  stockStatus?: 'healthy' | 'shortage' | 'overstock' | 'warning' | 'danger'
+  stockStatusLabel?: string
+  status?: string
 }
 
 export interface TopSupplierItem {
