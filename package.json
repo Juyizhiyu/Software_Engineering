@@ -5,8 +5,8 @@
     "start": "bash start.sh",
     "stop": "bash stop.sh",
     "demo": "start start.bat",
-    "frontend:dev": "npm --prefix frontend run dev",
-    "frontend:build": "npm --prefix frontend run build",
+    "frontend:dev": "npm --prefix ui run dev",
+    "frontend:build": "npm --prefix ui run build",
     "backend:node": "node backend-node/server.js"
   },
   "dependencies": {
