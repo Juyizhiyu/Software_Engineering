@@ -131,13 +131,13 @@ start_node_backend() {
 
 # ---------- 4. 前端构建 ----------
 build_frontend() {
-  if [ -d "$ROOT_DIR/frontend/dist" ]; then
+  if [ -d "$ROOT_DIR/ui/dist" ]; then
     log_ok "前端 dist 已存在，跳过构建"
     return 0
   fi
 
   log_info "构建前端..."
-  cd "$ROOT_DIR/frontend"
+  cd "$ROOT_DIR/ui"
 
   if [ ! -d "node_modules" ]; then
     npm install --silent

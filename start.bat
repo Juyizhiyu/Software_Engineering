@@ -43,11 +43,11 @@ if !PORT_FOUND!==1 (
 echo.
 
 :: ============ 2. Frontend Build ============
-if exist "%ROOT%frontend\dist\" (
+if exist "%ROOT%ui\dist\" (
     echo [OK] Frontend dist exists, skip build
 ) else (
     echo [INFO] Building frontend...
-    cd /d "%ROOT%frontend"
+    cd /d "%ROOT%ui"
     if not exist "node_modules\" call npm install --silent
     call npm run build
     if !ERRORLEVEL! neq 0 (
