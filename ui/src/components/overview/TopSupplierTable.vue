@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { SupplierItem } from '@/types'
+import type { TopSupplierItem } from '@/types'
 
 defineProps<{
-  data: SupplierItem[]
+  data: TopSupplierItem[]
 }>()
 </script>
 
@@ -49,11 +49,13 @@ defineProps<{
       >
         <template #default="{ row }">
           <el-tag
+            v-if="row.riskLevel"
             :type="row.riskLevel === 'low' ? 'success' : row.riskLevel === 'medium' ? 'warning' : 'danger'"
             size="small"
           >
-            {{ row.riskLabel }}
+            {{ row.riskLabel || row.riskLevel }}
           </el-tag>
+          <span v-else>-</span>
         </template>
       </el-table-column>
     </el-table>

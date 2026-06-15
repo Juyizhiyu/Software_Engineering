@@ -43,7 +43,7 @@ export interface DashboardSummary {
 export interface SalesTrendItem {
   date: string
   amount: number
-  quantity: number
+  quantity?: number
 }
 
 export interface CostTrendItem {
@@ -67,15 +67,41 @@ export interface RecordCounts {
   [key: string]: number
 }
 
+export interface InventoryAlertItem {
+  id?: string
+  productId?: string
+  productName: string
+  warehouseId?: string
+  warehouseName: string
+  currentStock: number
+  safetyStock?: number
+  maxStock?: number
+  stockGap?: number
+  fillRate?: number
+  unitCost?: number
+  lastUpdate?: string
+  stockStatus?: 'healthy' | 'shortage' | 'overstock' | 'warning'
+  stockStatusLabel: string
+}
+
+export interface TopSupplierItem {
+  supplierId: string
+  supplierName: string
+  region: string
+  compositeScore: number
+  riskLevel?: 'low' | 'medium' | 'high'
+  riskLabel?: string
+}
+
 export interface DashboardOverview {
   salesTrend: SalesTrendItem[]
-  inventoryAlerts: InventoryItem[]
-  topSuppliers: SupplierItem[]
-  delayedRoutes: LogisticsItem[]
-  costTrend: CostTrendItem[]
+  inventoryAlerts: InventoryAlertItem[]
+  topSuppliers: TopSupplierItem[]
+  delayedRoutes?: LogisticsItem[]
+  costTrend?: CostTrendItem[]
   riskDistribution: RiskDistItem[]
   recentOrders: RecentOrder[]
-  recordCounts: RecordCounts
+  recordCounts?: RecordCounts
 }
 
 // --- 库存 ---
@@ -215,13 +241,13 @@ export interface ForecastRequest {
 
 export interface ForecastResponse {
   product_id: string
-  product_name: string
+  product_name?: string
   forecast_demand_7d: number
-  forecast_demand_30d: number
+  forecast_demand_30d?: number
   confidence: 'low' | 'medium' | 'high'
-  trend: 'up' | 'down' | 'stable' | 'unknown'
+  trend: 'up' | 'down' | 'stable' | 'unknown' | 'upward'
   analysis: string
-  metadata: { mode: string; method: string }
+  metadata?: { mode: string; method: string }
 }
 
 export interface AnomalyRequest {
@@ -230,12 +256,14 @@ export interface AnomalyRequest {
 }
 
 export interface AnomalyItem {
-  index: number
-  severity: 'high' | 'medium' | 'low'
-  description: string
+  index?: number
+  severity?: 'high' | 'medium' | 'low'
+  description?: string
   field: string
-  expected: number
-  actual: number
+  expected?: number
+  actual?: number
+  reason?: string
+  desc?: string
 }
 
 export interface AnomalyResponse {
@@ -243,7 +271,7 @@ export interface AnomalyResponse {
   total_records: number
   anomalies: AnomalyItem[]
   summary: string
-  metadata: { mode: string; method: string }
+  metadata?: { mode: string; method: string }
 }
 
 export interface RiskScoreRequest {
@@ -259,23 +287,24 @@ export interface RiskScoreRequest {
 
 export interface RiskScoreResponse {
   supplier_id: string
-  supplier_name: string
+  supplier_name?: string
   score: number
   risk_level: 'Low' | 'Medium' | 'High' | 'Critical'
-  breakdown: {
+  breakdown?: {
     on_time_rate: number
     quality_rate: number
     price_stability: number
     response_score: number
   }
   recommendations: string[]
-  metadata: { mode: string; method: string }
+  metadata?: { mode: string; method: string }
 }
 
 export interface AiHealthData {
   online: boolean
-  status: string
-  service: string
-  llm_enabled: boolean
-  model: string
+  status?: string
+  service?: string
+  llm_enabled?: boolean
+  model?: string
+  error?: string
 }

@@ -73,7 +73,10 @@ const breakdownItems = [
             {{ riskLevelLabels[result.risk_level] || result.risk_level }}
           </el-tag>
         </el-card>
-        <div class="risk-score-overview__breakdown">
+        <div
+          v-if="result.breakdown"
+          class="risk-score-overview__breakdown"
+        >
           <div
             v-for="item in breakdownItems"
             :key="item.key"
@@ -107,7 +110,10 @@ const breakdownItems = [
         </ul>
       </div>
 
-      <div class="ai-panel__meta">
+      <div
+        v-if="result.metadata"
+        class="ai-panel__meta"
+      >
         <el-tag
           size="small"
           effect="plain"

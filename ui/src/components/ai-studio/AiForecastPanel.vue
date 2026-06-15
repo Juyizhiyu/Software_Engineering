@@ -6,6 +6,7 @@ const { loading, productId, result, submit } = useAiForecast()
 const confidenceLabels: Record<string, string> = { high: '高', medium: '中', low: '低' }
 const trendLabels: Record<string, string> = {
   up: '上升',
+  upward: '上升',
   down: '下降',
   stable: '平稳',
   unknown: '未知',
@@ -66,7 +67,7 @@ async function handleSubmit() {
         >
           <span class="forecast-stats__label">30天预测</span>
           <span class="forecast-stats__value mono">
-            {{ result.forecast_demand_30d.toFixed(0) }}
+            {{ result.forecast_demand_30d != null ? result.forecast_demand_30d.toFixed(0) : '-' }}
           </span>
         </el-card>
         <el-card
@@ -87,7 +88,7 @@ async function handleSubmit() {
         >
           <span class="forecast-stats__label">趋势</span>
           <el-tag
-            :type="result.trend === 'up' ? 'success' : result.trend === 'down' ? 'danger' : 'info'"
+            :type="result.trend === 'up' || result.trend === 'upward' ? 'success' : result.trend === 'down' ? 'danger' : 'info'"
             effect="dark"
           >
             {{ trendLabels[result.trend] || result.trend }}
@@ -95,7 +96,10 @@ async function handleSubmit() {
         </el-card>
       </div>
       <p class="ai-panel__answer">{{ result.analysis }}</p>
-      <div class="ai-panel__meta">
+      <div
+        v-if="result.metadata"
+        class="ai-panel__meta"
+      >
         <el-tag
           size="small"
           effect="plain"

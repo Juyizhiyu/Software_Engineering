@@ -64,60 +64,75 @@ async function handleSubmit() {
           prop="index"
           label="序号"
           width="60"
-        />
+        >
+          <template #default="{ row, $index }">
+            {{ row.index ?? $index + 1 }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="field"
           label="字段"
           width="120"
         />
         <el-table-column
-          prop="severity"
           label="严重度"
           width="80"
           align="center"
         >
           <template #default="{ row }">
             <el-tag
+              v-if="row.severity"
               :type="row.severity === 'high' ? 'danger' : row.severity === 'medium' ? 'warning' : 'info'"
               size="small"
             >
               {{ row.severity }}
             </el-tag>
+            <span v-else>-</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="description"
           label="描述"
           min-width="200"
           show-overflow-tooltip
-        />
+        >
+          <template #default="{ row }">
+            {{ row.description || row.desc || row.reason }}
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="expected"
           label="期望值"
           width="100"
           align="right"
         >
           <template #default="{ row }">
-            <span class="mono">{{ row.expected?.toFixed(2) }}</span>
+            <span
+              v-if="row.expected != null"
+              class="mono"
+            >{{ row.expected.toFixed(2) }}</span>
+            <span v-else>-</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="actual"
           label="实际值"
           width="100"
           align="right"
         >
           <template #default="{ row }">
             <span
+              v-if="row.actual != null"
               class="mono"
               style="color: var(--el-color-danger)"
             >
               {{ row.actual }}
             </span>
+            <span v-else>-</span>
           </template>
         </el-table-column>
       </el-table>
-      <div class="ai-panel__meta">
+      <div
+        v-if="result.metadata"
+        class="ai-panel__meta"
+      >
         <el-tag
           size="small"
           effect="plain"
