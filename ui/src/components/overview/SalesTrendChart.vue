@@ -95,7 +95,7 @@ const chartOption = computed(() => {
         name: '订单量',
         type: 'line' as const,
         yAxisIndex: 1,
-        data: props.data.map((i) => i.quantity),
+        data: props.data.map((i) => i.quantity ?? 0),
         smooth: true,
         symbol: 'circle',
         symbolSize: 6,
