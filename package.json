@@ -1,17 +1,19 @@
 {
-  "name": "supply-chain-bi-demo",
+  "name": "supply-chain-bi",
   "private": true,
+  "description": "Supply Chain BI System",
   "scripts": {
-    "start": "bash start.sh",
-    "stop": "bash stop.sh",
-    "demo": "start start.bat",
-    "frontend:dev": "npm --prefix ui run dev",
-    "frontend:build": "npm --prefix ui run build",
-    "backend:node": "node backend-node/server.js"
+    "dev": "run.bat",
+    "start": "run.bat",
+    "setup": "run.bat",
+    "build": "npm.cmd --prefix ui run build",
+    "lint": "npm.cmd --prefix ui run lint",
+    "test": "node test/run-tests.js",
+    "test:ui": "npm.cmd --prefix ui run test:unit -- --run",
+    "test:node": "npm.cmd --prefix backend-node test",
+    "test:verify": "node test/run-tests.js"
   },
   "dependencies": {
-    "axios": "^1.15.2",
-    "echarts": "^6.0.0",
-    "vue-router": "^5.0.6"
+    "playwright": "^1.61.0"
   }
 }

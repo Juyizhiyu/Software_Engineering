@@ -7,6 +7,28 @@ export interface ApiResponse<T = unknown> {
   success: boolean
   message?: string
   data: T
+  metadata?: ResponseMetadata & {
+    ai?: {
+      mode?: string
+      model?: string
+      reason?: string
+    }
+    filteredCounts?: Record<string, number>
+  }
+}
+
+export interface DataQualitySummary {
+  status: 'complete' | 'partial' | string
+  recordCounts: Record<string, number>
+  emptyEntities: string[]
+}
+
+export interface ResponseMetadata {
+  source: string
+  updatedAt: string
+  fallbackReason?: string | null
+  filters?: Record<string, unknown>
+  quality?: DataQualitySummary
 }
 
 // --- 认证 ---
@@ -38,6 +60,14 @@ export interface DashboardSummary {
   openRisks: number
   totalCost: number
   supplierScoreAvg: number
+  metadata?: ResponseMetadata & {
+    ai?: {
+      mode?: string
+      model?: string
+      reason?: string
+    }
+    filteredCounts?: Record<string, number>
+  }
 }
 
 export interface SalesTrendItem {
@@ -103,6 +133,7 @@ export interface DashboardOverview {
   riskDistribution: RiskDistItem[]
   recentOrders: RecentOrder[]
   recordCounts?: RecordCounts
+  metadata?: ResponseMetadata
 }
 
 // --- 库存 ---
@@ -127,6 +158,7 @@ export interface InventoryItem {
 export interface SupplierItem {
   id: string
   supplierId: string
+  brandName?: string
   supplierName: string
   region: string
   onTimeRate: number
@@ -184,12 +216,131 @@ export interface RiskItem {
   createdAt: string
 }
 
+export interface RiskCenterAnalysisFilters {
+  riskLevel?: string
+  status?: string
+  scope?: string
+}
+
+export interface RiskCenterAnalysisResponse {
+  filters: RiskCenterAnalysisFilters
+  risks: RiskItem[]
+  openRisks: RiskItem[]
+  riskStats: Record<'Critical' | 'High' | 'Medium' | 'Low', number>
+  anomaly: AnomalyResponse
+  supplierRiskScores: RiskScoreResponse[]
+  summary: {
+    openRisks: number
+    anomalyCount: number
+    scoredSuppliers: number
+    highRiskSuppliers: number
+  }
+  metadata?: ResponseMetadata & {
+    ai?: {
+      anomalyMode?: string
+      riskScoreModes?: string[]
+    }
+    cache?: {
+      hit: boolean
+      key: string
+      createdAt: string
+      signature: string
+    }
+  }
+}
+
 // --- 运营快照 ---
 export interface OperationsSnapshot {
   inventory: InventoryItem[]
   suppliers: SupplierItem[]
   logistics: LogisticsItem[]
   costs: CostItem[]
+  metrics?: {
+    shortageItems: number
+    warningItems: number
+    highRiskSuppliers: number
+    delayedRoutes: number
+    highCostItems: number
+  }
+  suggestions?: string[]
+  metadata?: ResponseMetadata
+}
+
+// --- 决策分析 ---
+export interface DecisionMetric {
+  key: string
+  label: string
+  value: number
+  unit?: string
+  trend: 'up' | 'down' | 'stable'
+  status: 'normal' | 'warning' | 'danger'
+}
+
+export interface DecisionSuggestion {
+  id: string
+  priority: 'high' | 'medium' | 'low'
+  category: 'inventory' | 'logistics' | 'supplier' | 'cost' | 'risk' | string
+  title: string
+  problem: string
+  impact: string
+  action: string
+  evidence: string[]
+}
+
+export interface DecisionRiskMatrixItem {
+  name: string
+  value: number
+  level: 'low' | 'medium' | 'high' | string
+}
+
+export interface DecisionCostItem {
+  name: string
+  value: number
+}
+
+export interface DecisionChartData {
+  salesTrend: SalesTrendItem[]
+  riskMatrix: DecisionRiskMatrixItem[]
+  costBreakdown: DecisionCostItem[]
+}
+
+export interface DecisionAnalysisFilters {
+  region?: string
+  date?: string
+  category?: string
+  riskLevel?: string
+  dimension?: string
+}
+
+export interface DecisionAnalysisResponse {
+  filters: DecisionAnalysisFilters
+  metrics: DecisionMetric[]
+  charts: DecisionChartData
+  suggestions: DecisionSuggestion[]
+  riskLevel: 'low' | 'medium' | 'high' | 'critical'
+  summary: {
+    shortageItems: number
+    warningItems: number
+    highRiskSuppliers: number
+    delayedRoutes: number
+    openRisks: number
+    totalCost: number
+  }
+  metadata?: ResponseMetadata & {
+    ai?: {
+      mode?: string
+      model?: string
+      reason?: string
+    }
+    filteredCounts?: Record<string, number>
+  }
+}
+
+export interface UserDashboardConfig {
+  dimension: string
+  defaultFilters: DecisionAnalysisFilters
+  visibleModules: Record<string, boolean>
+  compactMode: boolean
 }
 
 // --- 数据中心 ---
@@ -208,6 +359,11 @@ export interface EntitySchema {
   [entity: string]: {
     fields: SchemaField[]
   }
+}
+
+export interface EntityDataResponse {
+  items: Record<string, unknown>[]
+  metadata?: ResponseMetadata
 }
 
 // --- AI 助手 ---
@@ -231,6 +387,10 @@ export interface ChatResponse {
     mode: string
     model?: string
     reason?: string
+    source?: string
+    updatedAt?: string
+    fallbackReason?: string | null
+    quality?: DataQualitySummary
   }
 }
 
@@ -238,6 +398,10 @@ export interface ChatResponse {
 export interface ForecastRequest {
   product_id: string
   product_name?: string
+  supplier_id?: string
+  supplier_name?: string
+  brand_name?: string
+  forecast_scope?: 'product' | 'supplier'
 }
 
 export interface ForecastResponse {
@@ -245,10 +409,63 @@ export interface ForecastResponse {
   product_name?: string
   forecast_demand_7d: number
   forecast_demand_30d?: number
+  forecast_interval_7d?: ForecastInterval
+  forecast_interval_30d?: ForecastInterval
   confidence: 'low' | 'medium' | 'high'
   trend: 'up' | 'down' | 'stable' | 'unknown' | 'upward'
   analysis: string
-  metadata?: { mode: string; method: string }
+  chart_data?: {
+    history?: ForecastSeriesItem[]
+    forecast?: ForecastSeriesItem[]
+    cost_breakdown?: ForecastBreakdownItem[]
+  }
+  report_sections?: ForecastReportSection[]
+  recommendations?: string[]
+  metadata?: {
+    mode: string
+    method?: string
+    reason?: string
+    history_count?: number
+    required_history_count?: number
+    history_source?: string
+    generated_at?: string
+    demo_product_id?: string
+    source?: string
+    updatedAt?: string
+    fallbackReason?: string | null
+    forecast_scope?: 'product' | 'supplier'
+    supplier_id?: string
+  }
+}
+
+export interface ForecastInterval {
+  lower: number
+  point: number
+  upper: number
+  confidence?: number
+}
+
+export interface ForecastSeriesItem {
+  date: string
+  quantity: number
+  quantityLower?: number
+  quantityUpper?: number
+  amount?: number
+  purchaseCost?: number
+  storageCost?: number
+  transportCost?: number
+  totalCost?: number
+  type?: 'history' | 'forecast' | string
+}
+
+export interface ForecastBreakdownItem {
+  name: string
+  value: number
+}
+
+export interface ForecastReportSection {
+  title: string
+  content: string
 }
 
 export interface AnomalyRequest {
@@ -272,7 +489,7 @@ export interface AnomalyResponse {
   total_records: number
   anomalies: AnomalyItem[]
   summary: string
-  metadata?: { mode: string; method: string }
+  metadata?: { mode: string; method?: string; reason?: string; source?: string; updatedAt?: string; fallbackReason?: string | null }
 }
 
 export interface RiskScoreRequest {
@@ -298,7 +515,7 @@ export interface RiskScoreResponse {
     response_score: number
   }
   recommendations: string[]
-  metadata?: { mode: string; method: string }
+  metadata?: { mode: string; method?: string; reason?: string; source?: string; updatedAt?: string; fallbackReason?: string | null }
 }
 
 export interface AiHealthData {
@@ -308,4 +525,5 @@ export interface AiHealthData {
   llm_enabled?: boolean
   model?: string
   error?: string
+  metadata?: ResponseMetadata
 }

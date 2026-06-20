@@ -3,16 +3,16 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDark, useToggle } from '@vueuse/core'
 import {
-  Odometer,
-  DataBoard,
   DataAnalysis,
-  Warning,
-  MagicStick,
-  Sunny,
-  Moon,
+  DataBoard,
   Expand,
   Fold,
+  Moon,
+  Odometer,
+  Sunny,
   SwitchButton,
+  TrendCharts,
+  Warning,
 } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
@@ -25,6 +25,7 @@ const toggleDark = useToggle(isDark)
 
 const props = defineProps<{
   collapsed: boolean
+  mobile?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -40,8 +41,8 @@ const menuItems = [
   { path: '/overview', title: '全局总览', icon: Odometer },
   { path: '/data-center', title: '数据中心', icon: DataBoard },
   { path: '/operations', title: '业务分析', icon: DataAnalysis },
+  { path: '/decision-analysis', title: '决策分析', icon: TrendCharts },
   { path: '/risk-center', title: '风险中心', icon: Warning },
-  { path: '/ai-studio', title: 'AI 工作台', icon: MagicStick },
 ]
 
 function handleLogout() {
@@ -62,8 +63,8 @@ function handleLogout() {
   <el-aside
     :width="isCollapsed ? '64px' : '220px'"
     class="app-sidebar"
+    :class="{ 'app-sidebar--mobile': props.mobile }"
   >
-    <!-- 品牌 -->
     <div class="app-sidebar__brand">
       <h1
         v-show="!isCollapsed"
@@ -79,7 +80,6 @@ function handleLogout() {
       </span>
     </div>
 
-    <!-- 导航菜单 -->
     <el-menu
       :default-active="route.path"
       :collapse="isCollapsed"
@@ -102,7 +102,6 @@ function handleLogout() {
       </el-menu-item>
     </el-menu>
 
-    <!-- 底部操作区 -->
     <div class="app-sidebar__footer">
       <div
         class="app-sidebar__action"
@@ -142,6 +141,11 @@ function handleLogout() {
   transition: width $transition-normal;
   background: var(--app-bg-sidebar);
   overflow: hidden;
+
+  &--mobile {
+    width: 100% !important;
+    height: 100%;
+  }
 
   &__brand {
     height: var(--app-header-height);

@@ -8,9 +8,14 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
+  (e: 'update:field', key: string, value: string | number | null): void
   (e: 'submit'): void
   (e: 'reset'): void
 }>()
+
+function updateField(key: string, value: unknown) {
+  emit('update:field', key, value == null ? null : (value as string | number))
+}
 
 function handleSubmit() {
   emit('submit')
@@ -40,23 +45,26 @@ function handleReset() {
       >
         <el-input
           v-if="field.type === 'text'"
-          v-model="form[field.key]"
+          :model-value="form[field.key] as string"
           :placeholder="field.placeholder || `请输入${field.label}`"
+          @update:model-value="updateField(field.key, $event)"
         />
 
         <el-input-number
           v-else-if="field.type === 'number'"
-          v-model="form[field.key] as number"
+          :model-value="form[field.key] as number"
           :placeholder="field.placeholder || `请输入${field.label}`"
           :controls="false"
           style="width: 100%"
+          @update:model-value="updateField(field.key, $event)"
         />
 
         <el-select
           v-else-if="field.type === 'select'"
-          v-model="form[field.key]"
+          :model-value="form[field.key]"
           :placeholder="`请选择${field.label}`"
           style="width: 100%"
+          @update:model-value="updateField(field.key, $event)"
         >
           <el-option
             v-for="opt in field.options"
@@ -68,11 +76,12 @@ function handleReset() {
 
         <el-date-picker
           v-else-if="field.type === 'date'"
-          v-model="form[field.key]"
+          :model-value="form[field.key] as string"
           type="date"
           :placeholder="`请选择${field.label}`"
           value-format="YYYY-MM-DD"
           style="width: 100%"
+          @update:model-value="updateField(field.key, $event)"
         />
       </el-form-item>
 

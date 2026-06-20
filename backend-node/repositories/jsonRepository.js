@@ -138,9 +138,89 @@ const suppliersRepo = {
     async append(item) { return item; }
 };
 
-const logisticsRepo = { async findAll() { return []; }, async append(item) { return item; } };
-const costsRepo = { async findAll() { return []; }, async append(item) { return item; } };
-const risksRepo = { async findAll() { return []; }, async append(item) { return item; } };
+const logisticsRepo = {
+    async findAll() {
+        try {
+            const sql = `
+                SELECT
+                    shipment_id,
+                    order_id,
+                    product_name,
+                    category_name,
+                    origin_warehouse AS origin,
+                    destination_city AS destination,
+                    carrier,
+                    shipped_date,
+                    expected_duration_hours,
+                    actual_duration_hours,
+                    normalized_status AS status,
+                    logistics_status,
+                    transport_cost
+                FROM fact_logistics
+                ORDER BY shipped_date DESC, actual_duration_hours - expected_duration_hours DESC
+            `;
+            const [rows] = await db.query(sql);
+            return rows;
+        } catch (error) {
+            console.error('MySQL logisticsRepo.findAll Error:', error);
+            return [];
+        }
+    },
+    async append(item) { return item; }
+};
+const costsRepo = {
+    async findAll() {
+        try {
+            const sql = `
+                SELECT
+                    c.cost_date AS date,
+                    c.product_id,
+                    COALESCE(p.product_name, c.product_name, c.product_id) AS product_name,
+                    p.category_name,
+                    c.purchase_cost,
+                    c.storage_cost,
+                    c.transport_cost,
+                    c.return_cost,
+                    c.total_cost
+                FROM fact_costs c
+                LEFT JOIN dim_product p ON c.product_id = p.product_id
+                ORDER BY c.cost_date DESC, c.total_cost DESC
+            `;
+            const [rows] = await db.query(sql);
+            return rows;
+        } catch (error) {
+            console.error('MySQL costsRepo.findAll Error:', error);
+            return [];
+        }
+    },
+    async append(item) { return item; }
+};
+
+const risksRepo = {
+    async findAll() {
+        try {
+            const sql = `
+                SELECT
+                    risk_id,
+                    risk_type,
+                    risk_level,
+                    related_object,
+                    description,
+                    suggestion,
+                    status,
+                    created_at
+                FROM fact_risks
+                ORDER BY created_at DESC, FIELD(risk_level, 'Critical', 'High', 'Medium', 'Low')
+            `;
+            const [rows] = await db.query(sql);
+            return rows;
+        } catch (error) {
+            console.error('MySQL risksRepo.findAll Error:', error);
+            return [];
+        }
+    },
+    async append(item) { return item; }
+};
 
 module.exports = {
     ordersRepo,

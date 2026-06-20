@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const aiService = require('../services/aiService');
 const dataService = require('../services/dataService');
+const { withMetadata } = require('../services/responseMeta');
 
 router.post('/chat', async (req, res) => {
     try {
@@ -20,7 +21,13 @@ router.post('/chat', async (req, res) => {
             datasets: normalizedContext
         });
 
-        res.json({ success: true, data: result });
+        res.json({
+            success: true,
+            data: withMetadata(result, {
+                source: result.metadata?.mode === 'llm' ? 'llm' : 'rule',
+                quality: await dataService.getDataQualitySummary()
+            })
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
