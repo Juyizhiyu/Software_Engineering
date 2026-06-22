@@ -60,170 +60,181 @@ function handleLogout() {
 
 <template>
   <el-aside
-    :width="isCollapsed ? '64px' : '220px'"
+    :width="isCollapsed ? '90px' : '220px'"
     class="app-sidebar"
   >
-    <!-- 品牌 -->
-    <div class="app-sidebar__brand">
-      <h1
-        v-show="!isCollapsed"
-        class="app-sidebar__title"
-      >
-        供应链 BI
-      </h1>
-      <span
-        v-show="isCollapsed"
-        class="app-sidebar__logo"
-      >
-        BI
-      </span>
-    </div>
+    <el-card class="app-sidebar__card" :body-style="{ padding: 0 }">
+      <!-- 品牌 -->
+      <div class="app-sidebar__brand">
+        <h1
+          v-show="!isCollapsed"
+          class="app-sidebar__title"
+        >
+          供应链 BI
+        </h1>
+        <span
+          v-show="isCollapsed"
+          class="app-sidebar__logo"
+        >
+          BI
+        </span>
+      </div>
 
-    <!-- 导航菜单 -->
-    <el-menu
-      :default-active="route.path"
-      :collapse="isCollapsed"
-      :collapse-transition="false"
-      router
-      class="app-sidebar__menu"
-      background-color="transparent"
-      text-color="rgba(255, 255, 255, 0.7)"
-      active-text-color="#ffffff"
-    >
-      <el-menu-item
-        v-for="item in menuItems"
-        :key="item.path"
-        :index="item.path"
+      <!-- 导航菜单 -->
+      <el-menu
+        :default-active="route.path"
+        :collapse="isCollapsed"
+        :collapse-transition="false"
+        router
+        class="app-sidebar__menu"
+        background-color="transparent"
+        active-text-color="#ffffff"
       >
-        <el-icon class="app-sidebar__menu__icon">
-          <component :is="item.icon" />
-        </el-icon>
-        <template #title>{{ item.title }}</template>
-      </el-menu-item>
-    </el-menu>
+        <el-menu-item
+          v-for="item in menuItems"
+          :key="item.path"
+          :index="item.path"
+        >
+          <el-icon class="app-sidebar__menu__icon">
+            <component :is="item.icon" />
+          </el-icon>
+          <template #title>{{ item.title }}</template>
+        </el-menu-item>
+      </el-menu>
 
-    <!-- 底部操作区 -->
-    <div class="app-sidebar__footer">
-      <div
-        class="app-sidebar__action"
-        @click="toggleDark()"
-      >
-        <el-icon :size="18">
-          <Sunny v-if="isDark" />
-          <Moon v-else />
-        </el-icon>
-        <span v-show="!isCollapsed">{{ isDark ? '亮色模式' : '深色模式' }}</span>
+      <!-- 底部操作区 -->
+      <div class="app-sidebar__footer">
+        <div
+          class="app-sidebar__action"
+          @click="toggleDark()"
+        >
+          <el-icon :size="18">
+            <Sunny v-if="isDark" />
+            <Moon v-else />
+          </el-icon>
+          <span v-show="!isCollapsed">{{ isDark ? '亮色模式' : '深色模式' }}</span>
+        </div>
+        <div
+          class="app-sidebar__action"
+          @click="isCollapsed = !isCollapsed"
+        >
+          <el-icon :size="18">
+            <Expand v-if="isCollapsed" />
+            <Fold v-else />
+          </el-icon>
+          <span v-show="!isCollapsed">收起菜单</span>
+        </div>
+        <div
+          class="app-sidebar__action app-sidebar__action--logout"
+          @click="handleLogout"
+        >
+          <el-icon :size="18"><SwitchButton /></el-icon>
+          <span v-show="!isCollapsed">退出登录</span>
+        </div>
       </div>
-      <div
-        class="app-sidebar__action"
-        @click="isCollapsed = !isCollapsed"
-      >
-        <el-icon :size="18">
-          <Expand v-if="isCollapsed" />
-          <Fold v-else />
-        </el-icon>
-        <span v-show="!isCollapsed">收起菜单</span>
-      </div>
-      <div
-        class="app-sidebar__action app-sidebar__action--logout"
-        @click="handleLogout"
-      >
-        <el-icon :size="18"><SwitchButton /></el-icon>
-        <span v-show="!isCollapsed">退出登录</span>
-      </div>
-    </div>
+    </el-card>
   </el-aside>
 </template>
 
 <style scoped lang="scss">
 .app-sidebar {
+  padding: 12px;
+  height: 100%;
+}
+
+.app-sidebar__card {
   display: flex;
   flex-direction: column;
-  transition: width $transition-normal;
+  height: 100%;
+  margin: 0;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   background: var(--app-bg-sidebar);
+  border: none;
   overflow: hidden;
 
-  &__brand {
-    height: var(--app-header-height);
-    @include flex-center;
-    flex-shrink: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  &__title {
-    color: #fff;
-    font-weight: 700;
-    font-size: $font-size-xl;
-    white-space: nowrap;
-  }
-
-  &__logo {
-    color: #fff;
-    font-weight: 800;
-    font-size: $font-size-xxl;
-  }
-
-  &__menu {
-    flex: 1;
-    border-right: none !important;
-    overflow-y: auto;
-    @include custom-scrollbar(rgba(255, 255, 255, 0.2));
-
-    :deep(.el-menu-item) {
-      margin: 2px 8px;
-      border-radius: 8px;
-      height: 48px;
-      line-height: 48px;
-
-      &:hover {
-        background: var(--app-bg-sidebar-hover) !important;
-      }
-
-      &.is-active {
-        background: var(--el-color-primary) !important;
-        color: #fff !important;
-      }
-    }
-
-    &.el-menu--collapse {
-      :deep(.el-menu-item) {
-        justify-content: center;
-        padding: 0 !important;
-      }
-    }
-  }
-
-  &__menu__icon {
-    position: relative;
-    right: 8px;
-  }
-
-  &__footer {
-    flex-shrink: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 8px;
-  }
-
-  &__action {
+  :deep(.el-card__body) {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: all $transition-fast;
-    cursor: pointer;
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.app-sidebar__brand {
+  height: var(--app-header-height);
+  @include flex-center;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+}
+
+.app-sidebar__title {
+  color: var(--el-text-color-primary);
+  font-weight: 700;
+  font-size: $font-size-xl;
+  white-space: nowrap;
+}
+
+.app-sidebar__logo {
+  color: var(--el-color-primary);
+  font-weight: 800;
+  font-size: $font-size-xxl;
+}
+
+.app-sidebar__menu {
+  flex: 1;
+  border-right: none !important;
+  overflow-y: auto;
+  @include custom-scrollbar(var(--el-text-color-placeholder));
+
+  :deep(.el-menu-item) {
+    margin: 2px 8px;
     border-radius: 8px;
-    padding: 10px 16px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: $font-size-sm;
-    white-space: nowrap;
+    height: 48px;
+    line-height: 48px;
 
     &:hover {
-      background: var(--app-bg-sidebar-hover);
-      color: #fff;
+      background: var(--app-bg-sidebar-hover) !important;
     }
 
-    &--logout:hover {
-      color: var(--el-color-danger);
+    &.is-active {
+      background: var(--el-color-primary) !important;
+      color: #fff !important;
     }
+  }
+}
+
+.app-sidebar__menu__icon {
+  position: relative;
+  right: 8px;
+}
+
+.app-sidebar__footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--el-border-color-lighter);
+  padding: 8px;
+}
+
+.app-sidebar__action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all $transition-fast;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: var(--el-text-color-primary);
+  font-size: $font-size-sm;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--app-bg-sidebar-hover);
+    color: var(--el-text-color-primary);
+  }
+
+  &--logout:hover {
+    color: var(--el-color-danger);
   }
 }
 </style>
