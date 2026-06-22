@@ -85,8 +85,6 @@ function handleLogout() {
       <!-- 导航菜单 -->
       <el-menu
         :default-active="route.path"
-        :collapse="isCollapsed"
-        :collapse-transition="false"
         router
         class="app-sidebar__menu"
         background-color="transparent"
@@ -100,7 +98,9 @@ function handleLogout() {
           <el-icon class="app-sidebar__menu__icon">
             <component :is="item.icon" />
           </el-icon>
-          <template #title>{{ item.title }}</template>
+          <template #title>
+            <span v-show="!isCollapsed">{{ item.title }}</span>
+          </template>
         </el-menu-item>
       </el-menu>
 
@@ -142,6 +142,7 @@ function handleLogout() {
 .app-sidebar {
   padding: 12px;
   height: 100%;
+  transition: width $transition-normal;
 
   &--mobile {
     width: 100% !important;
