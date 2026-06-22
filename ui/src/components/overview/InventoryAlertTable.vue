@@ -43,16 +43,14 @@ defineProps<{
         </template>
       </el-table-column>
       <el-table-column
-        prop="stockStatusLabel"
         label="状态"
         width="90"
         align="center"
       >
         <template #default="{ row }">
           <el-tag
-            v-if="row.stockStatus"
             :type="
-              row.stockStatus === 'shortage'
+              row.stockStatus === 'shortage' || row.stockStatus === 'danger' || row.status === 'danger'
                 ? 'danger'
                 : row.stockStatus === 'warning' || row.stockStatus === 'overstock'
                   ? 'warning'
@@ -60,14 +58,7 @@ defineProps<{
             "
             size="small"
           >
-            {{ row.stockStatusLabel }}
-          </el-tag>
-          <el-tag
-            v-else
-            :type="row.stockStatusLabel?.includes('缺货') || row.stockStatusLabel?.includes('紧张') ? 'danger' : row.stockStatusLabel?.includes('预警') || row.stockStatusLabel?.includes('积压') ? 'warning' : 'info'"
-            size="small"
-          >
-            {{ row.stockStatusLabel }}
+            {{ row.stockStatusLabel || (row.stockStatus === 'shortage' || row.status === 'danger' ? '缺货' : row.stockStatus === 'warning' ? '预警' : row.stockStatus === 'overstock' ? '积压' : row.stockStatus === 'healthy' ? '正常' : row.status === 'danger' ? '缺货' : row.status || '-') }}
           </el-tag>
         </template>
       </el-table-column>

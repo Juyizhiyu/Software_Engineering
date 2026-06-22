@@ -6,10 +6,14 @@ const {
     costsRepo,
     risksRepo
 } = require('../repositories/jsonRepository');
+const fs = require('fs').promises;
+const path = require('path');
 
 // 严格对应组件的解构导入
 const { entityDefinitions } = require('../config/dataDefinitions');
 const db = require('../config/db');
+const { assessDataQuality } = require('./responseMeta');
+const aiService = require('./aiService');
 
 const repositoryMap = {
     orders: ordersRepo,
@@ -19,6 +23,11 @@ const repositoryMap = {
     costs: costsRepo,
     risks: risksRepo
 };
+
+const localSuppliersPath = path.join(__dirname, '..', 'data', 'suppliers.json');
+const decisionAnalysisCache = new Map();
+const riskCenterAnalysisCache = new Map();
+const DECISION_CACHE_LIMIT = 50;
 
 let _productNameMap = null;
 let _warehouseNameMap = null;
@@ -212,10 +221,13 @@ function normalizeShipment(item) {
     return {
         shipmentId: item.shipment_id,
         orderId: item.order_id,
+        productName: item.product_name,
+        categoryName: item.category_name,
         routeName: routeMap[routeKey] || `${item.origin} - ${item.destination}`,
         origin: item.origin,
         destination: item.destination,
         carrier: item.carrier,
+        shippedDate: item.shipped_date,
         expectedHours,
         actualHours,
         delayHours,
@@ -229,7 +241,8 @@ function normalizeCost(item) {
     return {
         date: item.date,
         productId: item.product_id,
-        productName: _productNameMap[item.product_id] || item.product_id,
+        productName: item.product_name || _productNameMap[item.product_id] || item.product_id,
+        categoryName: item.category_name,
         purchaseCost: toNumber(item.purchase_cost),
         storageCost: toNumber(item.storage_cost),
         transportCost: toNumber(item.transport_cost),
@@ -270,7 +283,299 @@ function normalizeOrder(item) {
     };
 }
 
+function average(values) {
+    const filtered = values.filter(value => Number.isFinite(value));
+    if (!filtered.length) return 0;
+    return round(filtered.reduce((sum, value) => sum + value, 0) / filtered.length, 1);
+}
+
+function buildDecisionSuggestion({ id, priority, category, title, problem, impact, action, evidence }) {
+    return { id, priority, category, title, problem, impact, action, evidence };
+}
+
+const decisionRegionKeywords = {
+    '华南': ['华南', '广州', '深圳', '广东'],
+    '华东': ['华东', '上海', '杭州', '南京', '苏州', '浙江', '江苏'],
+    '华北': ['华北', '北京', '天津', '太原', '济南'],
+    '西南': ['西南', '成都', '重庆', '四川'],
+    '华中': ['华中', '武汉', '长沙', '郑州', '湖北', '湖南', '河南']
+};
+
+const decisionCategoryKeywords = {
+    '服饰': ['服饰', '服装', '鞋', '箱包'],
+    '食品': ['食品', '食品酒水', '生鲜', '酒'],
+    '美妆': ['美妆', '个护', '个护化妆', '护肤', '洁面'],
+    '电子': ['电子', '数码', '手机', 'iPhone', 'Switch'],
+    '家居': ['家居', '家电', '厨具', '锅']
+};
+
+function compactText(value) {
+    return String(value || '').toLowerCase();
+}
+
+function formatDecisionDate(value) {
+    if (!value) return '';
+    if (value instanceof Date) return value.toISOString().slice(0, 10);
+    return String(value).slice(0, 10);
+}
+
+function matchesRegionText(value, region) {
+    if (!region) return true;
+    const text = compactText(value);
+    const keywords = decisionRegionKeywords[region] || [region];
+    return keywords.some(keyword => text.includes(compactText(keyword)));
+}
+
+function matchesCategoryText(value, category) {
+    if (!category) return true;
+    if (category === '综合') return true;
+    const text = compactText(value);
+    const keywords = decisionCategoryKeywords[category] || [category];
+    return keywords.some(keyword => text.includes(compactText(keyword)));
+}
+
+function salesCategoryValues(category) {
+    const map = {
+        '服饰': ['服装', '箱包饰品'],
+        '食品': ['食品酒水'],
+        '美妆': ['个护化妆'],
+        '电子': ['手机数码', '电脑办公'],
+        '家居': ['家居家装', '家用电器']
+    };
+    if (!category || category === '综合') return [];
+    return map[category] || [category];
+}
+
+function buildSalesWhere({ date, category } = {}) {
+    const clauses = [];
+    const params = [];
+    const categories = salesCategoryValues(category);
+
+    if (categories.length) {
+        clauses.push(`c1_name IN (${categories.map(() => '?').join(', ')})`);
+        params.push(...categories);
+    }
+    if (date) {
+        clauses.push('DATE(created_at) = ?');
+        params.push(date);
+    }
+
+    return {
+        whereSql: clauses.length ? `WHERE ${clauses.join(' AND ')}` : '',
+        params
+    };
+}
+
+function normalizeDecisionFilters(filters = {}) {
+    return {
+        region: filters.region || '',
+        date: filters.date || '',
+        category: filters.category || '',
+        riskLevel: filters.riskLevel || '',
+        dimension: filters.dimension || 'overview'
+    };
+}
+
+function buildDecisionCacheKey(filters = {}) {
+    return JSON.stringify(normalizeDecisionFilters(filters));
+}
+
+function normalizeRiskCenterFilters(filters = {}) {
+    return {
+        riskLevel: filters.riskLevel || '',
+        status: filters.status || 'open',
+        scope: filters.scope || 'all'
+    };
+}
+
+function buildRiskCenterCacheKey(filters = {}) {
+    return JSON.stringify(normalizeRiskCenterFilters(filters));
+}
+
+function cloneDecisionPayload(payload) {
+    return JSON.parse(JSON.stringify(payload));
+}
+
+function rememberDecisionCache(key, value) {
+    if (decisionAnalysisCache.size >= DECISION_CACHE_LIMIT && !decisionAnalysisCache.has(key)) {
+        const oldestKey = decisionAnalysisCache.keys().next().value;
+        decisionAnalysisCache.delete(oldestKey);
+    }
+    decisionAnalysisCache.set(key, value);
+}
+
+function rememberRiskCenterCache(key, value) {
+    if (riskCenterAnalysisCache.size >= DECISION_CACHE_LIMIT && !riskCenterAnalysisCache.has(key)) {
+        const oldestKey = riskCenterAnalysisCache.keys().next().value;
+        riskCenterAnalysisCache.delete(oldestKey);
+    }
+    riskCenterAnalysisCache.set(key, value);
+}
+
+async function querySignaturePart(name, sql) {
+    try {
+        const [rows] = await db.query(sql);
+        return { name, data: rows[0] || {} };
+    } catch (error) {
+        return { name, error: error.message };
+    }
+}
+
+async function getDecisionDataSignature() {
+    const parts = await Promise.all([
+        querySignaturePart('douyin_sales', `
+            SELECT COUNT(*) AS count, MAX(created_at) AS maxCreatedAt, ROUND(SUM(gmv), 2) AS totalGmv
+            FROM supply_chain_bi.douyin_sales
+        `),
+        querySignaturePart('fact_order', `
+            SELECT COUNT(*) AS count, MAX(date_key) AS maxDate, ROUND(SUM(sales_amount), 2) AS totalSales
+            FROM fact_order
+        `),
+        querySignaturePart('fact_inventory', `
+            SELECT COUNT(*) AS count, MAX(snapshot_date) AS maxDate, SUM(on_hand_qty) AS totalStock
+            FROM fact_inventory
+        `),
+        querySignaturePart('fact_logistics', `
+            SELECT COUNT(*) AS count, MAX(imported_at) AS maxImportedAt, SUM(normalized_status = 'delayed') AS delayedCount
+            FROM fact_logistics
+        `),
+        querySignaturePart('fact_costs', `
+            SELECT COUNT(*) AS count, MAX(imported_at) AS maxImportedAt, ROUND(SUM(total_cost), 2) AS totalCost
+            FROM fact_costs
+        `),
+        querySignaturePart('fact_risks', `
+            SELECT COUNT(*) AS count, MAX(imported_at) AS maxImportedAt, SUM(status = 'open') AS openCount
+            FROM fact_risks
+        `),
+        querySignaturePart('dim_supplier', `
+            SELECT COUNT(*) AS count, SUM(lead_time_days) AS leadTimeSum
+            FROM dim_supplier
+        `)
+    ]);
+
+    return JSON.stringify(parts);
+}
+
+function normalizeRiskFilter(value) {
+    const map = {
+        critical: 'critical',
+        high: 'high',
+        medium: 'medium',
+        low: 'low',
+        '严重风险': 'critical',
+        '高风险': 'high',
+        '中风险': 'medium',
+        '低风险': 'low',
+        Critical: 'critical',
+        High: 'high',
+        Medium: 'medium',
+        Low: 'low'
+    };
+    return map[value] || '';
+}
+
+function itemRiskLevel(value) {
+    const text = compactText(value);
+    if (text.includes('critical') || text.includes('严重')) return 'critical';
+    if (text.includes('high') || text.includes('高')) return 'high';
+    if (text.includes('medium') || text.includes('中')) return 'medium';
+    if (text.includes('low') || text.includes('低')) return 'low';
+    return text;
+}
+
+function filterDecisionCollections({ inventory, suppliers, logistics, costs, risks, salesTrend }, filters = {}) {
+    const region = filters.region;
+    const date = filters.date;
+    const category = filters.category;
+    const riskLevel = normalizeRiskFilter(filters.riskLevel);
+
+    return {
+        inventory: inventory.filter(item =>
+            matchesRegionText(`${item.warehouseName} ${item.warehouseId}`, region) &&
+            matchesCategoryText(`${item.categoryName || ''} ${item.productName || ''}`, category) &&
+            (!date || formatDecisionDate(item.lastUpdate) === date)
+        ),
+        suppliers: suppliers.filter(item =>
+            matchesRegionText(`${item.region} ${item.supplierName}`, region)
+        ),
+        logistics: logistics.filter(item =>
+            matchesRegionText(`${item.routeName} ${item.origin} ${item.destination}`, region) &&
+            matchesCategoryText(`${item.categoryName || ''} ${item.productName || ''}`, category) &&
+            (!date || formatDecisionDate(item.shippedDate || item.date) === date)
+        ),
+        costs: costs.filter(item =>
+            matchesCategoryText(`${item.categoryName || ''} ${item.productName || ''}`, category) &&
+            (!date || formatDecisionDate(item.date) === date)
+        ),
+        risks: risks.filter(item =>
+            (!riskLevel || itemRiskLevel(item.riskLevel) === riskLevel) &&
+            matchesRegionText(`${item.relatedObject} ${item.description}`, region) &&
+            matchesCategoryText(`${item.relatedObject} ${item.description}`, category) &&
+            (!date || formatDecisionDate(item.createdAt || item.created_at) === date)
+        ),
+        salesTrend: salesTrend.filter(item => !date || formatDecisionDate(item.date) === date)
+    };
+}
+
+function sortSuggestionsByDimension(suggestions, dimension) {
+    const categoryMap = {
+        inventory: 'inventory',
+        supplier: 'supplier',
+        logistics: 'logistics',
+        cost: 'cost',
+        risk: 'risk'
+    };
+    const focus = categoryMap[dimension];
+    const priorityWeight = { high: 0, medium: 1, low: 2 };
+    return suggestions.sort((a, b) => {
+        const focusDelta = (b.category === focus ? 1 : 0) - (a.category === focus ? 1 : 0);
+        if (focusDelta) return focusDelta;
+        return priorityWeight[a.priority] - priorityWeight[b.priority];
+    });
+}
+
+function aiSuggestionsToDecisionSuggestions(aiResult, fallbackSuggestions) {
+    const suggestions = Array.isArray(aiResult?.suggestions) ? aiResult.suggestions : [];
+    if (!suggestions.length) return fallbackSuggestions;
+
+    return suggestions.slice(0, 6).map((text, index) => {
+        const fallback = fallbackSuggestions[index] || fallbackSuggestions[0] || {};
+        return buildDecisionSuggestion({
+            id: `LLM-DEC-${String(index + 1).padStart(3, '0')}`,
+            priority: fallback.priority || (index === 0 ? 'high' : 'medium'),
+            category: fallback.category || 'risk',
+            title: `LLM 决策建议 ${index + 1}`,
+            problem: Array.isArray(aiResult.summary) ? (aiResult.summary[index] || 'LLM 基于当前筛选数据识别出需要关注的问题') : 'LLM 基于当前筛选数据识别出需要关注的问题',
+            impact: '由 LLM 结合当前筛选后的指标、风险、成本和物流数据生成',
+            action: String(text),
+            evidence: Array.isArray(aiResult.evidence)
+                ? aiResult.evidence.slice(0, 3).map(item => `${item.type || 'evidence'}:${item.object || ''}=${item.value ?? ''}`)
+                : (fallback.evidence || [])
+        });
+    });
+}
+
+async function loadLocalSuppliers() {
+    try {
+        const content = await fs.readFile(localSuppliersPath, 'utf8');
+        const rows = JSON.parse(content);
+        return rows.map(normalizeSupplier);
+    } catch (error) {
+        console.error('Local suppliers fallback failed:', error.message);
+        return [];
+    }
+}
+
 class DataService {
+    async checkDatabaseHealth() {
+        try {
+            await db.query('SELECT 1 AS ok');
+            return { online: true, source: 'mysql' };
+        } catch (error) {
+            return { online: false, source: 'json', error: error.message };
+        }
+    }
+
     async getRawData() {
         const [orders, inventory, suppliers, logistics, costs, risks] = await Promise.all([
             ordersRepo.findAll(),
@@ -282,6 +587,11 @@ class DataService {
         ]);
 
         return { orders, inventory, suppliers, logistics, costs, risks };
+    }
+
+    async getDataQualitySummary() {
+        const raw = await this.getRawData();
+        return assessDataQuality(raw);
     }
 
     async loadAll() {
@@ -300,13 +610,15 @@ class DataService {
     // 核心大屏总览指标
     async getDashboardSummary({ region, date, category } = {}) {
         try {
+            const salesWhere = buildSalesWhere({ date, category });
             const [orderRows] = await db.query(`
                 SELECT 
                     SUM(unit_sold) AS totalOrders,          
                     SUM(gmv) AS totalSales,                
                     AVG(price_per_unit) AS averageOrderAmount 
                 FROM supply_chain_bi.douyin_sales
-            `);
+                ${salesWhere.whereSql}
+            `, salesWhere.params);
 
             const realData = orderRows[0];
             const fallback = await this.getDashboardSummaryFallback({ region, date, category });
@@ -315,7 +627,8 @@ class DataService {
             const [dynamicStockRows] = await db.query(`
                 SELECT SUM(CASE WHEN unit_sold > 1000 THEN 850 ELSE 4500 END) as totalStock 
                 FROM supply_chain_bi.douyin_sales
-            `);
+                ${salesWhere.whereSql}
+            `, salesWhere.params);
             const realTotalStock = dynamicStockRows[0]?.totalStock ? parseInt(dynamicStockRows[0].totalStock) : fallback.totalStock;
 
             return {
@@ -485,8 +798,37 @@ class DataService {
 
         } catch (error) {
             console.error(' [核心报警] 首页大屏纯真连聚合失败:', error.message);
-            return { salesTrend: [], inventoryAlerts: [], topSuppliers: [], riskDistribution: [], recentOrders: [] };
+            return this.getDashboardOverviewFallback();
         }
+    }
+
+    async getDashboardOverviewFallback() {
+        const data = await this.loadAll();
+        const salesByDate = new Map();
+        data.orders.forEach(order => {
+            const current = salesByDate.get(order.date) || { date: order.date, amount: 0, quantity: 0 };
+            current.amount += order.amount;
+            current.quantity += order.quantity;
+            salesByDate.set(order.date, current);
+        });
+
+        const riskCounts = data.risks.reduce((acc, item) => {
+            acc[item.riskLevel] = (acc[item.riskLevel] || 0) + 1;
+            return acc;
+        }, {});
+
+        return {
+            salesTrend: Array.from(salesByDate.values()).sort((a, b) => a.date.localeCompare(b.date)).slice(-7),
+            inventoryAlerts: data.inventory
+                .filter(item => item.stockStatus === 'shortage' || item.stockStatus === 'warning')
+                .slice(0, 5),
+            topSuppliers: data.suppliers.sort((a, b) => b.compositeScore - a.compositeScore).slice(0, 5),
+            riskDistribution: ['Critical', 'High', 'Medium', 'Low'].map(level => ({
+                level,
+                count: riskCounts[level] || 0
+            })),
+            recentOrders: data.orders.slice(-5).reverse()
+        };
     }
 
 
@@ -581,8 +923,9 @@ class DataService {
                 const score = parseFloat(item.realCompositeScore);
           
                 return {
-                    id: `SUP-${index}`,
-                    supplierId: `S${String(index + 1).padStart(3, '0')}`,
+                    id: `BR-${index}`,
+                    supplierId: `BR${String(index + 1).padStart(3, '0')}`,
+                    brandName: item.supplierName,
                     supplierName: `${item.supplierName}官方托管履约中心`,
                     region: index % 2 === 0 ? '华东仓' : '华南仓',
                     onTimeRate: parseFloat((95.0 + (score - 90) * 0.5).toFixed(1)), 
@@ -599,11 +942,28 @@ class DataService {
                 };
             });
 
-            return result.sort((a, b) => b.compositeScore - a.compositeScore);
+            const localSuppliers = await loadLocalSuppliers();
+            const merged = [...result];
+
+            localSuppliers.forEach(localSupplier => {
+                const localName = String(localSupplier.supplierName || '');
+                const exists = merged.some(item =>
+                    String(item.supplierName || '').includes(localName) ||
+                    localName.includes(String(item.supplierName || '').replace('官方托管履约中心', '').replace('官方供应链', ''))
+                );
+                if (!exists) {
+                    merged.push({
+                        ...localSupplier,
+                        id: localSupplier.id || localSupplier.supplierId
+                    });
+                }
+            });
+
+            return merged.sort((a, b) => b.compositeScore - a.compositeScore);
 
         } catch (e) {
             console.error('SuppliersPerformance 真实数据闭环计算失败：', e.message);
-            const { suppliers } = await this.loadAll();
+            const suppliers = await loadLocalSuppliers();
             return suppliers.sort((a, b) => b.compositeScore - a.compositeScore);
         }
     }
@@ -621,6 +981,11 @@ class DataService {
     // 成本趋势分析页面
     async getCostsAnalysis() {
         try {
+            const importedCosts = await costsRepo.findAll();
+            if (importedCosts.length) {
+                return importedCosts.slice(0, 30).map(normalizeCost);
+            }
+
             const [rows] = await db.query(`
                 SELECT 
                     '2026-06-14' AS date,
@@ -665,6 +1030,11 @@ class DataService {
     // 智能风险扫描 
     async getRisks() {
         try {
+            const importedRisks = await risksRepo.findAll();
+            if (importedRisks.length && importedRisks[0].risk_id && importedRisks[0].risk_type) {
+                return importedRisks.map(normalizeRisk);
+            }
+
             const [rows] = await db.query(`
                 SELECT spu_id, spu_name_clean, price_per_unit, unit_sold
                 FROM supply_chain_bi.douyin_sales
@@ -723,11 +1093,473 @@ class DataService {
             inventory: inventory.slice(0, 8),
             suppliers: suppliers.slice(0, 8),
             logistics: logistics.slice(0, 8),
-            costs: costs.slice(0, 8)
+            costs: costs.slice(0, 8),
+            metrics: {
+                shortageItems: inventory.filter(item => item.stockStatus === 'shortage').length,
+                warningItems: inventory.filter(item => item.stockStatus === 'warning').length,
+                highRiskSuppliers: suppliers.filter(item => item.riskLevel === 'high').length,
+                delayedRoutes: logistics.length,
+                highCostItems: costs.filter(item => item.totalCost > 0).length
+            },
+            suggestions: [
+                '优先处理低于安全库存的高销量商品，避免影响订单履约。',
+                '对评分波动供应商设置复核周期，并准备备选供应商。',
+                '将延迟路线纳入每日监控，必要时切换承运商或调整发货仓。'
+            ]
         };
     }
 
     // 后台表单基础 CRUD 與 Schema 工具链
+    async getRiskCenterAnalysis(filters = {}, options = {}) {
+        const cacheKey = buildRiskCenterCacheKey(filters);
+        const signature = await getDecisionDataSignature();
+        const cached = riskCenterAnalysisCache.get(cacheKey);
+        if (!options.forceRefresh && cached && cached.signature === signature) {
+            const payload = cloneDecisionPayload(cached.payload);
+            payload.metadata = {
+                ...(payload.metadata || {}),
+                cache: {
+                    hit: true,
+                    key: cacheKey,
+                    createdAt: cached.createdAt,
+                    signature
+                }
+            };
+            return payload;
+        }
+
+        const [risks, operations] = await Promise.all([
+            this.getRisks(),
+            this.getOperationsSnapshot()
+        ]);
+
+        const normalizedFilters = normalizeRiskCenterFilters(filters);
+        const selectedRisks = risks.filter(item => {
+            const statusMatched = !normalizedFilters.status || normalizedFilters.status === 'all' || item.status === normalizedFilters.status;
+            const levelMatched = !normalizedFilters.riskLevel || itemRiskLevel(item.riskLevel) === itemRiskLevel(normalizedFilters.riskLevel);
+            return statusMatched && levelMatched;
+        });
+        const openRisks = selectedRisks.filter(item => item.status === 'open' || item.status === 'monitoring');
+        const riskStats = ['Critical', 'High', 'Medium', 'Low'].reduce((acc, level) => {
+            acc[level] = openRisks.filter(item => item.riskLevel === level).length;
+            return acc;
+        }, {});
+
+        const anomalyData = [
+            ...(operations.inventory || []).map(item => ({ ...item, sourceType: 'inventory' })),
+            ...(operations.logistics || []).map(item => ({ ...item, sourceType: 'logistics' })),
+            ...(operations.costs || []).map(item => ({ ...item, sourceType: 'cost' })),
+            ...openRisks.map(item => ({ ...item, sourceType: 'risk' }))
+        ];
+
+        const anomalyResult = await aiService.detectAnomalies('risk-center', anomalyData);
+        const supplierCandidates = (operations.suppliers || [])
+            .filter(() => normalizedFilters.scope === 'all' || normalizedFilters.scope === 'supplier')
+            .slice(0, 5);
+        const supplierRiskScores = await Promise.all(supplierCandidates.map(item => aiService.scoreRisk(
+            item.supplierId,
+            item.supplierName,
+            {
+                on_time_rate: item.onTimeRate,
+                quality_rate: item.qualityRate ?? item.qualityScore,
+                price_stability: item.priceStability ?? item.costScore,
+                response_score: item.responseScore,
+                compositeScore: item.compositeScore
+            }
+        )));
+
+        const highSupplierScores = supplierRiskScores.filter(item => ['High', 'Critical'].includes(item.risk_level));
+        const result = {
+            filters: normalizedFilters,
+            risks: selectedRisks,
+            openRisks,
+            riskStats,
+            anomaly: anomalyResult,
+            supplierRiskScores,
+            summary: {
+                openRisks: openRisks.length,
+                anomalyCount: Array.isArray(anomalyResult.anomalies) ? anomalyResult.anomalies.length : 0,
+                scoredSuppliers: supplierRiskScores.length,
+                highRiskSuppliers: highSupplierScores.length
+            },
+            metadata: {
+                source: anomalyResult.metadata?.mode === 'llm' || supplierRiskScores.some(item => item.metadata?.mode === 'llm') ? 'llm' : 'mixed',
+                updatedAt: new Date().toISOString(),
+                filters: normalizedFilters,
+                ai: {
+                    anomalyMode: anomalyResult.metadata?.mode || 'unknown',
+                    riskScoreModes: Array.from(new Set(supplierRiskScores.map(item => item.metadata?.mode || 'unknown')))
+                },
+                cache: {
+                    hit: false,
+                    key: cacheKey,
+                    createdAt: new Date().toISOString(),
+                    signature
+                }
+            }
+        };
+
+        rememberRiskCenterCache(cacheKey, {
+            signature,
+            createdAt: result.metadata.cache.createdAt,
+            payload: cloneDecisionPayload(result)
+        });
+
+        return result;
+    }
+
+    async getDecisionAnalysis(filters = {}, options = {}) {
+        const cacheKey = buildDecisionCacheKey(filters);
+        const signature = await getDecisionDataSignature();
+        const cached = decisionAnalysisCache.get(cacheKey);
+        if (!options.forceRefresh && cached && cached.signature === signature) {
+            const payload = cloneDecisionPayload(cached.payload);
+            payload.metadata = {
+                ...(payload.metadata || {}),
+                cache: {
+                    hit: true,
+                    key: cacheKey,
+                    createdAt: cached.createdAt,
+                    signature
+                }
+            };
+            return payload;
+        }
+
+        const [summary, overview, operations, risks] = await Promise.all([
+            this.getDashboardSummary(filters),
+            this.getDashboardOverview(),
+            this.getOperationsSnapshot(),
+            this.getRisks()
+        ]);
+
+        const filtered = filterDecisionCollections({
+            inventory: operations.inventory || [],
+            suppliers: operations.suppliers || [],
+            logistics: operations.logistics || [],
+            costs: operations.costs || [],
+            risks,
+            salesTrend: overview.salesTrend || []
+        }, filters);
+
+        const inventory = filtered.inventory;
+        const suppliers = filtered.suppliers;
+        const logistics = filtered.logistics;
+        const costs = filtered.costs;
+        const openRisks = filtered.risks.filter(item => item.status === 'open' || item.status === 'monitoring');
+        const highRiskSuppliers = suppliers.filter(item => item.riskLevel === 'high');
+        const shortageItems = inventory.filter(item => item.stockStatus === 'shortage');
+        const warningItems = inventory.filter(item => item.stockStatus === 'warning');
+        const delayedRoutes = logistics.filter(item => item.delayHours > 0 || item.status === 'delayed');
+        const totalCost = costs.reduce((sum, item) => sum + toNumber(item.totalCost), 0);
+        const averageSupplierScore = average(suppliers.map(item => Number(item.compositeScore)));
+        const riskScore =
+            shortageItems.length * 25 +
+            warningItems.length * 10 +
+            highRiskSuppliers.length * 20 +
+            delayedRoutes.length * 15 +
+            openRisks.filter(item => item.riskLevel === 'Critical' || item.riskLevel === 'High').length * 20;
+        const riskLevel = riskScore >= 90 ? 'critical' : riskScore >= 55 ? 'high' : riskScore >= 25 ? 'medium' : 'low';
+
+        const ruleSuggestions = [];
+        if (shortageItems.length) {
+            const target = shortageItems[0];
+            ruleSuggestions.push(buildDecisionSuggestion({
+                id: 'DEC-STOCK-001',
+                priority: 'high',
+                category: 'inventory',
+                title: '优先处理缺货商品',
+                problem: `${shortageItems.length} 个商品低于安全库存`,
+                impact: '可能影响订单履约和销售转化',
+                action: `优先补货 ${target.productName || target.productId}，并检查同仓库相近品类库存`,
+                evidence: [`当前库存 ${target.currentStock || 0}`, `安全库存 ${target.safetyStock || 0}`]
+            }));
+        }
+        if (delayedRoutes.length) {
+            const target = delayedRoutes[0];
+            ruleSuggestions.push(buildDecisionSuggestion({
+                id: 'DEC-LOG-001',
+                priority: delayedRoutes.length > 3 ? 'high' : 'medium',
+                category: 'logistics',
+                title: '切换延迟物流路线',
+                problem: `${delayedRoutes.length} 条物流路线存在延迟`,
+                impact: '可能造成交付延期和客户投诉',
+                action: `复核 ${target.routeName || target.shipmentId}，必要时切换承运商或调整发货仓`,
+                evidence: [`延迟 ${target.delayHours || 0} 小时`, target.carrier ? `承运商 ${target.carrier}` : '承运商待确认']
+            }));
+        }
+        if (highRiskSuppliers.length) {
+            const target = highRiskSuppliers[0];
+            ruleSuggestions.push(buildDecisionSuggestion({
+                id: 'DEC-SUP-001',
+                priority: 'high',
+                category: 'supplier',
+                title: '启动高风险供应商复核',
+                problem: `${highRiskSuppliers.length} 家供应商处于高风险状态`,
+                impact: '可能影响供货稳定性、质量和采购价格',
+                action: `对 ${target.supplierName || target.supplierId} 建立复核周期，并准备备选供应商`,
+                evidence: [`综合评分 ${target.compositeScore || 0}`, `风险等级 ${target.riskLabel || target.riskLevel}`]
+            }));
+        }
+        if (totalCost > 0) {
+            const topCost = [...costs].sort((a, b) => toNumber(b.totalCost) - toNumber(a.totalCost))[0];
+            if (topCost) {
+                ruleSuggestions.push(buildDecisionSuggestion({
+                    id: 'DEC-COST-001',
+                    priority: topCost.totalCost > totalCost / Math.max(costs.length, 1) * 1.5 ? 'medium' : 'low',
+                    category: 'cost',
+                    title: '跟踪高成本商品',
+                    problem: `${topCost.productName || topCost.productId} 成本占比较高`,
+                    impact: '可能压缩毛利并影响补货优先级',
+                    action: '拆分采购、仓储、运输和退货成本，优先优化最高成本项',
+                    evidence: [`总成本 ${round(topCost.totalCost, 2)}`, `样本总成本 ${round(totalCost, 2)}`]
+                }));
+            }
+        }
+        if (openRisks.length) {
+            const critical = openRisks.find(item => item.riskLevel === 'Critical' || item.riskLevel === 'High') || openRisks[0];
+            ruleSuggestions.push(buildDecisionSuggestion({
+                id: 'DEC-RISK-001',
+                priority: critical.riskLevel === 'Critical' ? 'high' : 'medium',
+                category: 'risk',
+                title: '闭环处理开放风险',
+                problem: `${openRisks.length} 个风险事件仍未关闭`,
+                impact: '风险持续暴露会影响供应链稳定性',
+                action: critical.suggestion || '建立责任人、截止时间和复盘记录',
+                evidence: [critical.relatedObject || '关联对象待确认', critical.riskLevelLabel || critical.riskLevel]
+            }));
+        }
+
+        const orderedRuleSuggestions = sortSuggestionsByDimension(ruleSuggestions, filters.dimension);
+        const aiContext = {
+            filters,
+            summary: {
+                riskLevel,
+                shortageItems: shortageItems.length,
+                warningItems: warningItems.length,
+                highRiskSuppliers: highRiskSuppliers.length,
+                delayedRoutes: delayedRoutes.length,
+                openRisks: openRisks.length,
+                totalCost: round(totalCost, 2)
+            },
+            datasets: {
+                inventory: inventory.slice(0, 8),
+                suppliers: suppliers.slice(0, 8),
+                logistics: logistics.slice(0, 8),
+                costs: costs.slice(0, 8),
+                risks: openRisks.slice(0, 8),
+                ruleSuggestions: orderedRuleSuggestions
+            }
+        };
+        const aiResult = await aiService.analyzeWithAgent(
+            `请基于当前筛选条件生成智能决策建议。筛选条件：${JSON.stringify(filters)}。分析维度：${filters.dimension || 'overview'}。`,
+            aiContext
+        );
+        const suggestions = aiSuggestionsToDecisionSuggestions(aiResult, orderedRuleSuggestions);
+
+        const result = {
+            filters,
+            metrics: [
+                { key: 'totalSales', label: '销售额', value: round(summary.totalSales, 2), unit: '元', trend: 'stable', status: 'normal' },
+                { key: 'shortageItems', label: '缺货商品', value: shortageItems.length, unit: '项', trend: 'up', status: shortageItems.length ? 'danger' : 'normal' },
+                { key: 'delayedRoutes', label: '延迟路线', value: delayedRoutes.length, unit: '条', trend: 'up', status: delayedRoutes.length ? 'warning' : 'normal' },
+                { key: 'supplierScore', label: '供应商均分', value: averageSupplierScore, unit: '分', trend: 'stable', status: averageSupplierScore < 85 ? 'warning' : 'normal' }
+            ],
+            charts: {
+                salesTrend: filtered.salesTrend.length ? filtered.salesTrend : overview.salesTrend || [],
+                riskMatrix: [
+                    { name: '库存', value: shortageItems.length + warningItems.length, level: shortageItems.length ? 'high' : 'medium' },
+                    { name: '供应商', value: highRiskSuppliers.length, level: highRiskSuppliers.length ? 'high' : 'low' },
+                    { name: '物流', value: delayedRoutes.length, level: delayedRoutes.length > 3 ? 'high' : 'medium' },
+                    { name: '风险事件', value: openRisks.length, level: openRisks.length ? 'high' : 'low' }
+                ],
+                costBreakdown: costs.slice(0, 6).map(item => ({
+                    name: String(item.productName || item.productId).length > 18
+                        ? `${String(item.productName || item.productId).slice(0, 18)}...`
+                        : String(item.productName || item.productId),
+                    value: round(item.totalCost, 2)
+                }))
+            },
+            suggestions,
+            riskLevel,
+            summary: {
+                shortageItems: shortageItems.length,
+                warningItems: warningItems.length,
+                highRiskSuppliers: highRiskSuppliers.length,
+                delayedRoutes: delayedRoutes.length,
+                openRisks: openRisks.length,
+                totalCost: round(totalCost, 2)
+            },
+            metadata: {
+                source: aiResult.metadata?.mode === 'llm' || aiResult.metadata?.mode === 'chat_completions' ? 'llm' : 'mixed',
+                updatedAt: new Date().toISOString(),
+                filters,
+                ai: aiResult.metadata || { mode: 'unknown' },
+                filteredCounts: {
+                    inventory: inventory.length,
+                    suppliers: suppliers.length,
+                    logistics: logistics.length,
+                    costs: costs.length,
+                    risks: filtered.risks.length
+                },
+                cache: {
+                    hit: false,
+                    key: cacheKey,
+                    createdAt: new Date().toISOString(),
+                    signature
+                }
+            }
+        };
+
+        rememberDecisionCache(cacheKey, {
+            signature,
+            createdAt: result.metadata.cache.createdAt,
+            payload: cloneDecisionPayload(result)
+        });
+
+        return result;
+    }
+
+    async getDecisionAnalysisLegacy(filters = {}) {
+        const [summary, overview, operations, risks] = await Promise.all([
+            this.getDashboardSummary(filters),
+            this.getDashboardOverview(),
+            this.getOperationsSnapshot(),
+            this.getRisks()
+        ]);
+
+        const inventory = operations.inventory || [];
+        const suppliers = operations.suppliers || [];
+        const logistics = operations.logistics || [];
+        const costs = operations.costs || [];
+        const openRisks = risks.filter(item => item.status === 'open' || item.status === 'monitoring');
+        const highRiskSuppliers = suppliers.filter(item => item.riskLevel === 'high');
+        const shortageItems = inventory.filter(item => item.stockStatus === 'shortage');
+        const warningItems = inventory.filter(item => item.stockStatus === 'warning');
+        const delayedRoutes = logistics.filter(item => item.delayHours > 0 || item.status === 'delayed');
+        const totalCost = costs.reduce((sum, item) => sum + toNumber(item.totalCost), 0);
+        const averageSupplierScore = average(suppliers.map(item => Number(item.compositeScore)));
+        const riskScore =
+            shortageItems.length * 25 +
+            warningItems.length * 10 +
+            highRiskSuppliers.length * 20 +
+            delayedRoutes.length * 15 +
+            openRisks.filter(item => item.riskLevel === 'Critical' || item.riskLevel === 'High').length * 20;
+        const riskLevel = riskScore >= 90 ? 'critical' : riskScore >= 55 ? 'high' : riskScore >= 25 ? 'medium' : 'low';
+
+        const suggestions = [];
+        if (shortageItems.length) {
+            const target = shortageItems[0];
+            suggestions.push(buildDecisionSuggestion({
+                id: 'DEC-STOCK-001',
+                priority: 'high',
+                category: 'inventory',
+                title: '优先处理缺货商品',
+                problem: `${shortageItems.length} 个商品低于安全库存`,
+                impact: '可能影响订单履约和销售转化',
+                action: `优先补货 ${target.productName || target.productId}，并检查同仓库相近品类库存`,
+                evidence: [`当前库存 ${target.currentStock || 0}`, `安全库存 ${target.safetyStock || 0}`]
+            }));
+        }
+        if (delayedRoutes.length) {
+            const target = delayedRoutes[0];
+            suggestions.push(buildDecisionSuggestion({
+                id: 'DEC-LOG-001',
+                priority: delayedRoutes.length > 3 ? 'high' : 'medium',
+                category: 'logistics',
+                title: '切换延迟物流路线',
+                problem: `${delayedRoutes.length} 条物流路线存在延迟`,
+                impact: '可能造成交付延期和客户投诉',
+                action: `复核 ${target.routeName || target.shipmentId}，必要时切换承运商或调整发货仓`,
+                evidence: [`延迟 ${target.delayHours || 0} 小时`, target.carrier ? `承运商 ${target.carrier}` : '承运商待确认']
+            }));
+        }
+        if (highRiskSuppliers.length) {
+            const target = highRiskSuppliers[0];
+            suggestions.push(buildDecisionSuggestion({
+                id: 'DEC-SUP-001',
+                priority: 'high',
+                category: 'supplier',
+                title: '启动高风险供应商复核',
+                problem: `${highRiskSuppliers.length} 家供应商处于高风险状态`,
+                impact: '可能影响供货稳定性、质量和采购价格',
+                action: `对 ${target.supplierName || target.supplierId} 建立复核周期，并准备备选供应商`,
+                evidence: [`综合评分 ${target.compositeScore || 0}`, `风险等级 ${target.riskLabel || target.riskLevel}`]
+            }));
+        }
+        if (totalCost > 0) {
+            const topCost = [...costs].sort((a, b) => toNumber(b.totalCost) - toNumber(a.totalCost))[0];
+            if (topCost) {
+                suggestions.push(buildDecisionSuggestion({
+                    id: 'DEC-COST-001',
+                    priority: topCost.totalCost > totalCost / Math.max(costs.length, 1) * 1.5 ? 'medium' : 'low',
+                    category: 'cost',
+                    title: '跟踪高成本商品',
+                    problem: `${topCost.productName || topCost.productId} 成本占比较高`,
+                    impact: '可能压缩毛利并影响补货优先级',
+                    action: '拆分采购、仓储、运输和退货成本，优先优化最高成本项',
+                    evidence: [`总成本 ${round(topCost.totalCost, 2)}`, `样本总成本 ${round(totalCost, 2)}`]
+                }));
+            }
+        }
+        if (openRisks.length) {
+            const critical = openRisks.find(item => item.riskLevel === 'Critical' || item.riskLevel === 'High') || openRisks[0];
+            suggestions.push(buildDecisionSuggestion({
+                id: 'DEC-RISK-001',
+                priority: critical.riskLevel === 'Critical' ? 'high' : 'medium',
+                category: 'risk',
+                title: '闭环处理开放风险',
+                problem: `${openRisks.length} 个风险事件仍未关闭`,
+                impact: '风险持续暴露会影响供应链稳定性',
+                action: critical.suggestion || '建立责任人、截止时间和复盘记录',
+                evidence: [critical.relatedObject || '关联对象待确认', critical.riskLevelLabel || critical.riskLevel]
+            }));
+        }
+
+        const priorityWeight = { high: 0, medium: 1, low: 2 };
+        suggestions.sort((a, b) => priorityWeight[a.priority] - priorityWeight[b.priority]);
+
+        return {
+            filters,
+            metrics: [
+                { key: 'totalSales', label: '销售额', value: round(summary.totalSales, 2), unit: '元', trend: 'stable', status: 'normal' },
+                { key: 'shortageItems', label: '缺货商品', value: shortageItems.length, unit: '项', trend: 'up', status: shortageItems.length ? 'danger' : 'normal' },
+                { key: 'delayedRoutes', label: '延迟路线', value: delayedRoutes.length, unit: '条', trend: 'up', status: delayedRoutes.length ? 'warning' : 'normal' },
+                { key: 'supplierScore', label: '供应商均分', value: averageSupplierScore, unit: '分', trend: 'stable', status: averageSupplierScore < 85 ? 'warning' : 'normal' }
+            ],
+            charts: {
+                salesTrend: overview.salesTrend || [],
+                riskMatrix: [
+                    { name: '库存', value: shortageItems.length + warningItems.length, level: shortageItems.length ? 'high' : 'medium' },
+                    { name: '供应商', value: highRiskSuppliers.length, level: highRiskSuppliers.length ? 'high' : 'low' },
+                    { name: '物流', value: delayedRoutes.length, level: delayedRoutes.length > 3 ? 'high' : 'medium' },
+                    { name: '风险事件', value: openRisks.length, level: openRisks.length ? 'high' : 'low' }
+                ],
+                costBreakdown: costs.slice(0, 6).map(item => ({
+                    name: String(item.productName || item.productId).length > 18
+                        ? `${String(item.productName || item.productId).slice(0, 18)}...`
+                        : String(item.productName || item.productId),
+                    value: round(item.totalCost, 2)
+                }))
+            },
+            suggestions,
+            riskLevel,
+            summary: {
+                shortageItems: shortageItems.length,
+                warningItems: warningItems.length,
+                highRiskSuppliers: highRiskSuppliers.length,
+                delayedRoutes: delayedRoutes.length,
+                openRisks: openRisks.length,
+                totalCost: round(totalCost, 2)
+            },
+            metadata: {
+                source: operations.metadata?.source || summary.metadata?.source || 'mixed',
+                updatedAt: new Date().toISOString(),
+                filters
+            }
+        };
+    }
+
     getRepository(entity) {
         const repository = repositoryMap[entity];
         if (!repository) throw new Error(`Unsupported entity: ${entity}`);

@@ -1,11 +1,98 @@
 const axios = require('axios');
 
+function numberValue(value, fallback = 0) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
+}
+
+function buildFallbackAnomalies(dataType, data = []) {
+    const anomalies = [];
+
+    data.forEach((item, index) => {
+        const sourceType = item.sourceType || dataType;
+        const currentStock = numberValue(item.currentStock);
+        const safetyStock = numberValue(item.safetyStock);
+        const delayHours = numberValue(item.delayHours);
+        const totalCost = numberValue(item.totalCost);
+        const compositeScore = numberValue(item.compositeScore);
+
+        if ((item.stockStatus === 'shortage' || (safetyStock > 0 && currentStock < safetyStock))) {
+            anomalies.push({
+                index,
+                field: 'currentStock',
+                severity: 'high',
+                expected: safetyStock,
+                actual: currentStock,
+                reason: 'low_stock',
+                description: `${item.productName || item.productId || item.relatedObject || '库存对象'} 当前库存低于安全库存`
+            });
+        }
+
+        if (item.status === 'delayed' || delayHours > 0) {
+            anomalies.push({
+                index,
+                field: 'delayHours',
+                severity: delayHours >= 24 ? 'high' : 'medium',
+                expected: 0,
+                actual: delayHours,
+                reason: 'logistics_delay',
+                description: `${item.routeName || item.shipmentId || item.relatedObject || '物流任务'} 存在履约延迟`
+            });
+        }
+
+        if (totalCost >= 5000) {
+            anomalies.push({
+                index,
+                field: 'totalCost',
+                severity: totalCost >= 10000 ? 'high' : 'medium',
+                expected: 5000,
+                actual: totalCost,
+                reason: 'high_cost',
+                description: `${item.productName || item.productId || '成本对象'} 总成本偏高`
+            });
+        }
+
+        if ((item.status === 'open' || item.status === 'monitoring') && ['Critical', 'High'].includes(item.riskLevel)) {
+            anomalies.push({
+                index,
+                field: 'riskLevel',
+                severity: item.riskLevel === 'Critical' ? 'high' : 'medium',
+                reason: 'open_high_risk',
+                description: `${item.relatedObject || item.riskId || '风险事件'} 仍处于${item.riskLevelLabel || item.riskLevel}未闭环状态`
+            });
+        }
+
+        if (sourceType === 'supplier' && compositeScore > 0 && compositeScore < 85) {
+            anomalies.push({
+                index,
+                field: 'compositeScore',
+                severity: compositeScore < 75 ? 'high' : 'medium',
+                expected: 85,
+                actual: compositeScore,
+                reason: 'weak_supplier',
+                description: `${item.supplierName || item.supplierId || '供应商'} 综合评分低于阈值`
+            });
+        }
+    });
+
+    if (!anomalies.length) {
+        anomalies.push({
+            index: 0,
+            field: 'service',
+            severity: 'low',
+            reason: 'fallback_rule',
+            description: '未发现明确业务异常，当前仅记录 Python 异常检测服务不可用'
+        });
+    }
+
+    return anomalies;
+}
+
 class AiService {
     constructor() {
         this.pythonBaseUrl = process.env.PYTHON_AI_BASE_URL || 'http://127.0.0.1:8000';
     }
 
-    // ── 智能问答（主入口） ──
     async analyzeWithAgent(question, contextData) {
         try {
             const response = await axios.post(`${this.pythonBaseUrl}/agent/analyze`, {
@@ -22,41 +109,39 @@ class AiService {
             const risks = datasets.risks || [];
             const suppliers = datasets.suppliers || [];
 
-            // 联动你注入的 18 亿真数据算出的指标进行智能评估
             const lowStockCount = inventory.filter(item => item.stockStatus === 'shortage' || item.currentStock < item.safetyStock).length;
             const delayedCount = logistics.filter(item => item.status === 'delayed').length;
             const openRiskCount = risks.filter(item => item.status === 'open').length;
             const weakSupplierCount = suppliers.filter(item => Number(item.compositeScore) < 92).length;
 
             return {
-                answer: `AI 大模型 Python 算力矩阵处于断网状态，已自动触发本地硬核规则引擎。围绕"${question}"，结合当前大盘突破 18.47 亿元的总体经营态势，系统扫描出当前的局部供应链瓶颈。`,
+                answer: `当前 Python AI 服务不可用，已启用 Node 规则分析。针对“${question}”，主要风险集中在库存偏低、物流延迟和供应商履约波动。`,
                 summary: [
-                    `大盘真实流水已通过 MySQL 实时多维聚合。当前低于安全库存的核心爆款记录数为 ${lowStockCount || 1} 条。`,
-                    `延迟运输干线任务数为 ${delayedCount} 条。`,
-                    `全网开放风险监控点 ${openRiskCount} 个，供应链综合评分处于高波动期的供应商共有 ${weakSupplierCount} 家。`
+                    `低于安全库存记录：${lowStockCount} 条`,
+                    `延迟物流任务：${delayedCount} 条`,
+                    `待处理风险：${openRiskCount} 项，弱绩效供应商：${weakSupplierCount} 家`
                 ],
                 suggestions: [
-                    '优先保障抖音核心仓的高周转 SKU 库存复盘，避免由于销售暴涨引发断货。',
-                    '针对千万级销量带来的物流干线压力，立刻评估并启动顺丰/邮政备选应急专线。',
-                    '对综合履约评分波动明显的第三方托管供应链大厂发起履约复盘。'
+                    '优先为低于安全库存的商品生成补货计划。',
+                    '将延迟路线纳入重点监控，并准备备用承运商。',
+                    '复核低评分供应商的交付、质量和响应指标。'
                 ],
                 evidence: [
-                    { type: 'inventory', object: 'low_stock_count', value: lowStockCount || 1 },
+                    { type: 'inventory', object: 'low_stock_count', value: lowStockCount },
                     { type: 'logistics', object: 'delayed_shipments', value: delayedCount },
                     { type: 'risk', object: 'open_risks', value: openRiskCount },
                     { type: 'supplier', object: 'weak_suppliers', value: weakSupplierCount }
                 ],
                 charts: [],
                 metadata: {
-                    mode: 'node-fallback-with-real-mysql-context',
-                    reason: `Python 链路不可用 (${error.message})，Node.js 基于 18 亿真数据上下文完成本地推演`,
+                    mode: 'node-fallback',
+                    reason: error.message,
                     model: null
                 }
             };
         }
     }
 
-    // ── 需求预测 ──
     async forecastDemand(productId, productName, historyData) {
         try {
             const response = await axios.post(`${this.pythonBaseUrl}/ai/forecast/demand`, {
@@ -64,65 +149,61 @@ class AiService {
                 product_name: productName,
                 history_data: historyData
             }, { timeout: 60000 });
-            return { success: true, data: response.data };
+            return response.data;
         } catch (error) {
             console.error('Forecast error:', error.message);
             return {
-                success: false,
-                data: {
-                    product_id: productId,
-                    forecast_demand_7d: Math.round(5000 + Math.random() * 2000), // 保底逻辑给出一个符合真实销量的高大上预测数
-                    confidence: 'medium',
-                    trend: 'upward',
-                    analysis: `Python 预测引擎断开(${error.message})。Node.js 依据当前单品历史真实流水，推估未来 7 日全渠道销售将持续处于高位增长形态。`
-                }
+                product_id: productId,
+                product_name: productName,
+                forecast_demand_7d: Math.round(5000 + Math.random() * 2000),
+                confidence: 'medium',
+                trend: 'upward',
+                analysis: `Python 预测服务不可用，已基于 Node 规则返回演示预测：${error.message}`,
+                metadata: { mode: 'node-fallback', reason: error.message }
             };
         }
     }
 
-    // ── 异常检测 ──
-    async detectAnomalies(dataType, data) {
+    async detectAnomalies(dataType, data = []) {
         try {
             const response = await axios.post(`${this.pythonBaseUrl}/ai/anomaly/detect`, {
                 data_type: dataType,
                 data
             }, { timeout: 60000 });
-            return { success: true, data: response.data };
+            return response.data;
         } catch (error) {
             console.error('Anomaly detection error:', error.message);
+            const anomalies = buildFallbackAnomalies(dataType, data);
             return {
-                success: false,
-                data: {
-                    data_type: dataType,
-                    total_records: data.length,
-                    anomalies: [
-                        { field: 'gmv', reason: '异常突增峰值', desc: '检测到部分周期内销售数据爆发式增长，客单价超出历史均值。' }
-                    ],
-                    summary: `Python 算法矩阵离线。Node.js 成功扫描当前 ${data.length} 条真实高维特征，部分品牌销售额存在显著的周期性结构异常（属于营销爆量）。`
-                }
+                data_type: dataType,
+                total_records: data.length,
+                anomalies: anomalies.slice(0, 10),
+                summary: `Node fallback 已扫描 ${data.length} 条记录，识别 ${anomalies.length} 个异常项。Python 异常检测服务不可用：${error.message}`,
+                metadata: { mode: 'node-fallback', reason: error.message }
             };
         }
     }
 
-    // ── 风险评分 ──
-    async scoreRisk(supplierId, supplierName, metrics) {
+    async scoreRisk(supplierId, supplierName, metrics = {}) {
         try {
             const response = await axios.post(`${this.pythonBaseUrl}/ai/risk/score`, {
                 supplier_id: supplierId,
                 supplier_name: supplierName,
                 metrics
             }, { timeout: 60000 });
-            return { success: true, data: response.data };
+            return response.data;
         } catch (error) {
             console.error('Risk scoring error:', error.message);
+            const score = Math.round(metrics.compositeScore || metrics.response_score || 93);
             return {
-                success: false,
-                data: {
-                    supplier_id: supplierId,
-                    score: Math.round(metrics.compositeScore || 93),
-                    risk_level: 'Low',
-                    recommendations: [`Python 链路离线。Node 规则引擎评估该核心托管中心目前处于低风险运行状态。`]
-                }
+                supplier_id: supplierId,
+                supplier_name: supplierName,
+                score,
+                risk_level: 'Low',
+                recommendations: [
+                    'Python 风险评分服务不可用，Node fallback 暂按低风险供应商处理。'
+                ],
+                metadata: { mode: 'node-fallback', reason: error.message }
             };
         }
     }

@@ -3,7 +3,6 @@ import { computed } from 'vue'
 import {
   themeColors,
   textColors,
-  borderColors,
   bgColors,
   riskLevelColors,
   riskLevelLabels,

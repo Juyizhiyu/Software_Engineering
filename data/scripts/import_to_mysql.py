@@ -25,7 +25,7 @@ CSV_PATH = ROOT / "data" / "processed" / "douyin_final_v2_reordered.csv"
 # fallback to v2 if reordered not available
 if not CSV_PATH.exists():
     CSV_PATH = ROOT / "data" / "processed" / "douyin_final_v2.csv"
-SQL_OUT = ROOT / "database_sql" / "build_database.sql"
+SQL_OUT = ROOT / "database" / "build_database.sql"
 
 # MySQL connection config (same as backend-node/config/db.js)
 MYSQL_CONFIG = {

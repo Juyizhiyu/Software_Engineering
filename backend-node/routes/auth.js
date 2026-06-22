@@ -33,23 +33,4 @@ router.post('/login', (req, res) => {
     }
 });
 
-router.get('/dashboard/summary', secureCheck, async (req, res) => {
-    try {
-        const { region, date, category } = req.query;
-
-        const summary = await dataService.getDashboardSummary({ region, date, category });
-        
-        return res.json({
-            success: true,
-            message: "数据获取成功",
-            data: summary
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: `服务器内部错误: ${error.message}`
-        });
-    }
-});
-
 module.exports = router;

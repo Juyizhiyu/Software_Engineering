@@ -35,14 +35,14 @@ const router = createRouter({
           component: () => import('@/views/OperationsHub.vue'),
         },
         {
+          path: 'decision-analysis',
+          name: 'DecisionAnalysis',
+          component: () => import('@/views/DecisionAnalysis.vue'),
+        },
+        {
           path: 'risk-center',
           name: 'RiskCenter',
           component: () => import('@/views/RiskCenter.vue'),
-        },
-        {
-          path: 'ai-studio',
-          name: 'AiStudio',
-          component: () => import('@/views/AiStudio.vue'),
         },
       ],
     },

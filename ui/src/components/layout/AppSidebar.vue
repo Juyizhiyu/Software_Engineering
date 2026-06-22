@@ -3,16 +3,16 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDark, useToggle } from '@vueuse/core'
 import {
-  Odometer,
-  DataBoard,
   DataAnalysis,
-  Warning,
-  MagicStick,
-  Sunny,
-  Moon,
+  DataBoard,
   Expand,
   Fold,
+  Moon,
+  Odometer,
+  Sunny,
   SwitchButton,
+  TrendCharts,
+  Warning,
 } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
@@ -25,6 +25,7 @@ const toggleDark = useToggle(isDark)
 
 const props = defineProps<{
   collapsed: boolean
+  mobile?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -40,8 +41,8 @@ const menuItems = [
   { path: '/overview', title: '全局总览', icon: Odometer },
   { path: '/data-center', title: '数据中心', icon: DataBoard },
   { path: '/operations', title: '业务分析', icon: DataAnalysis },
+  { path: '/decision-analysis', title: '决策分析', icon: TrendCharts },
   { path: '/risk-center', title: '风险中心', icon: Warning },
-  { path: '/ai-studio', title: 'AI 工作台', icon: MagicStick },
 ]
 
 function handleLogout() {
@@ -62,6 +63,7 @@ function handleLogout() {
   <el-aside
     :width="isCollapsed ? '90px' : '220px'"
     class="app-sidebar"
+    :class="{ 'app-sidebar--mobile': props.mobile }"
   >
     <el-card class="app-sidebar__card" :body-style="{ padding: 0 }">
       <!-- 品牌 -->
@@ -88,6 +90,7 @@ function handleLogout() {
         router
         class="app-sidebar__menu"
         background-color="transparent"
+        text-color="#374151"
         active-text-color="#ffffff"
       >
         <el-menu-item
@@ -140,6 +143,12 @@ function handleLogout() {
 .app-sidebar {
   padding: 12px;
   height: 100%;
+
+  &--mobile {
+    width: 100% !important;
+    height: 100%;
+    padding: 0;
+  }
 }
 
 .app-sidebar__card {
@@ -148,7 +157,7 @@ function handleLogout() {
   height: 100%;
   margin: 0;
   border-radius: 16px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   background: var(--app-bg-sidebar);
   border: none;
   overflow: hidden;
@@ -203,6 +212,13 @@ function handleLogout() {
       color: #fff !important;
     }
   }
+
+  &.el-menu--collapse {
+    :deep(.el-menu-item) {
+      justify-content: center;
+      padding: 0 !important;
+    }
+  }
 }
 
 .app-sidebar__menu__icon {
@@ -224,7 +240,7 @@ function handleLogout() {
   cursor: pointer;
   border-radius: 8px;
   padding: 10px 16px;
-  color: var(--el-text-color-primary);
+  color: var(--el-text-color-secondary);
   font-size: $font-size-sm;
   white-space: nowrap;
 

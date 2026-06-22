@@ -6,6 +6,10 @@ import { useUserStore } from '@/stores/user'
 import { login } from '@/api/auth'
 import { useDark } from '@vueuse/core'
 
+defineOptions({
+  name: 'LoginView',
+})
+
 const router = useRouter()
 const userStore = useUserStore()
 const isDark = useDark()

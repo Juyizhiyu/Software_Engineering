@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ElMessage } from 'element-plus'
 import { useAiChat } from '@/composables/useAiChat'
 
 const { loading, question, result, submit } = useAiChat()

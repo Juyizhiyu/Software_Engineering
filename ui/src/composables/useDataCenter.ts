@@ -1,7 +1,13 @@
 import { ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getSchemas, getEntityData, createEntityData } from '@/api/data'
-import type { EntityType, EntitySchema, SchemaField } from '@/types'
+import type {
+  EntityType,
+  EntitySchema,
+  SchemaField,
+  ResponseMetadata,
+  EntityDataResponse,
+} from '@/types'
 import { entityConfig, fallbackFormFields } from '@/config/dataForms'
 
 export function useDataCenter() {
@@ -11,57 +17,57 @@ export function useDataCenter() {
   const schemas = ref<EntitySchema>({})
   const records = ref<Record<string, unknown>[]>([])
   const form = ref<Record<string, string | number | null>>({})
-
-  // 当前实体的表单字段
   const formFields = ref<SchemaField[]>(fallbackFormFields.orders)
+  const metadata = ref<ResponseMetadata | null>(null)
+  const error = ref('')
 
-  // 实体配置
   const entityOptions = Object.entries(entityConfig).map(([key, val]) => ({
     value: key as EntityType,
     label: val.label,
     icon: val.icon,
   }))
 
-  // 加载 Schema
   async function fetchSchemas() {
     try {
       const { data } = await getSchemas()
       schemas.value = data
     } catch {
-      // 降级使用前端定义
+      schemas.value = {}
     }
     updateFormFields()
   }
 
-  // 加载实体数据
   async function fetchEntityData() {
     loading.value = true
+    error.value = ''
     try {
       const { data } = await getEntityData(activeEntity.value)
-      records.value = data
-    } catch {
+      if (Array.isArray(data)) {
+        records.value = data
+        metadata.value = null
+      } else {
+        const payload = data as EntityDataResponse
+        records.value = payload.items || []
+        metadata.value = payload.metadata || null
+      }
+    } catch (err: unknown) {
       records.value = []
+      error.value = err instanceof Error ? err.message : '数据加载失败'
     } finally {
       loading.value = false
     }
   }
 
-  // 更新表单字段
   function updateFormFields() {
     const entity = activeEntity.value
     const serverSchema = schemas.value[entity]
-    if (serverSchema?.fields?.length) {
-      formFields.value = serverSchema.fields
-    } else {
-      formFields.value = fallbackFormFields[entity] || []
-    }
-    // 重置表单
+    formFields.value = serverSchema?.fields?.length ? serverSchema.fields : fallbackFormFields[entity] || []
     form.value = {}
   }
 
-  // 提交数据
   async function submitData() {
     submitting.value = true
+    error.value = ''
     try {
       await createEntityData(activeEntity.value, form.value)
       ElMessage.success('数据提交成功')
@@ -69,18 +75,17 @@ export function useDataCenter() {
       await fetchEntityData()
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '提交失败'
+      error.value = message
       ElMessage.error(message)
     } finally {
       submitting.value = false
     }
   }
 
-  // 切换实体
   function switchEntity(entity: EntityType) {
     activeEntity.value = entity
   }
 
-  // 监听实体切换
   watch(activeEntity, () => {
     updateFormFields()
     fetchEntityData()
@@ -94,6 +99,8 @@ export function useDataCenter() {
     records,
     form,
     formFields,
+    metadata,
+    error,
     entityOptions,
     fetchSchemas,
     fetchEntityData,
