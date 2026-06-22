@@ -4,8 +4,8 @@
 
 // 应用级 CSS 变量（非 Element Plus 管理的部分）
 :root {
-  --app-bg-sidebar: #1d1e2c;
-  --app-bg-sidebar-hover: #2a2b3d;
+  --app-bg-sidebar: #ffffff;
+  --app-bg-sidebar-hover: rgba(0, 0, 0, 0.05);
   --app-sidebar-width: #{$sidebar-width};
   --app-sidebar-collapsed-width: #{$sidebar-collapsed-width};
   --app-header-height: #{$header-height};
