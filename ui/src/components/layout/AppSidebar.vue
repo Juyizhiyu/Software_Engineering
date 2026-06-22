@@ -90,7 +90,6 @@ function handleLogout() {
         router
         class="app-sidebar__menu"
         background-color="transparent"
-        text-color="#374151"
         active-text-color="#ffffff"
       >
         <el-menu-item
@@ -157,7 +156,7 @@ function handleLogout() {
   height: 100%;
   margin: 0;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   background: var(--app-bg-sidebar);
   border: none;
   overflow: hidden;
