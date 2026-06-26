@@ -122,6 +122,46 @@ test('getOperationsSnapshot returns operations collections with metrics and sugg
     }
 });
 
+test('getDashboardOverviewFallback returns configurable overview datasets', async () => {
+    const originalLoadAll = dataService.loadAll;
+    dataService.loadAll = async () => ({
+        orders: [
+            { orderId: 'O001', date: '2026-06-19', customerRegion: '华南', category: '服饰', productName: 'SKU A', quantity: 2, amount: 200 },
+            { orderId: 'O002', date: '2026-06-20', customerRegion: '华南', category: '服饰', productName: 'SKU B', quantity: 1, amount: 100 }
+        ],
+        inventory: [
+            { productId: 'P001', productName: 'SKU A', categoryName: '服饰', warehouseId: 'W001', warehouseName: '华南仓', currentStock: 20, safetyStock: 100, stockStatus: 'shortage', stockStatusLabel: '缺货' },
+            { productId: 'P002', productName: 'SKU B', categoryName: '服饰', warehouseId: 'W001', warehouseName: '华南仓', currentStock: 120, safetyStock: 100, stockStatus: 'healthy', stockStatusLabel: '健康' }
+        ],
+        suppliers: [
+            { supplierId: 'S001', supplierName: 'Supplier A', region: '华南', compositeScore: 96, riskLevel: 'low', riskLabel: '低风险' }
+        ],
+        logistics: [
+            { shipmentId: 'L001', orderId: 'O001', routeName: '华南干线', origin: '广州', destination: '深圳', categoryName: '服饰', carrier: 'Carrier A', status: 'delayed', delayHours: 8, transportCost: 30 }
+        ],
+        costs: [
+            { date: '2026-06-20', productId: 'P001', productName: 'SKU A', categoryName: '服饰', purchaseCost: 60, storageCost: 10, transportCost: 8, returnCost: 2, totalCost: 80 }
+        ],
+        risks: [
+            { riskId: 'R001', riskLevel: 'High', status: 'open' }
+        ]
+    });
+
+    try {
+        const result = await dataService.getDashboardOverviewFallback({ region: '华南', category: '服饰' });
+
+        assert.equal(result.salesTrend.length, 2);
+        assert.equal(result.inventoryAlerts.length, 1);
+        assert.equal(result.delayedRoutes.length, 1);
+        assert.equal(result.costTrend.length, 1);
+        assert.equal(result.inventoryStatus.find(item => item.status === 'shortage').count, 1);
+        assert.equal(result.supplierScores[0].compositeScore, 96);
+        assert.equal(result.costRanking[0].totalCost, 80);
+    } finally {
+        dataService.loadAll = originalLoadAll;
+    }
+});
+
 test('getRiskCenterAnalysis integrates anomaly detection and supplier risk score with cache', async () => {
     const originals = {
         getRisks: dataService.getRisks,

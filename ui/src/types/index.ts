@@ -124,16 +124,77 @@ export interface TopSupplierItem {
   riskLabel?: string
 }
 
+export interface InventoryStatusItem {
+  status: string
+  label: string
+  count: number
+}
+
+export interface SupplierScoreItem {
+  supplierId: string
+  supplierName: string
+  compositeScore: number
+  riskLevel?: 'low' | 'medium' | 'high'
+  riskLabel?: string
+}
+
+export interface CostRankingItem {
+  date: string
+  productId: string
+  productName: string
+  purchaseCost: number
+  storageCost: number
+  transportCost: number
+  returnCost: number
+  totalCost: number
+}
+
 export interface DashboardOverview {
   salesTrend: SalesTrendItem[]
   inventoryAlerts: InventoryAlertItem[]
   topSuppliers: TopSupplierItem[]
   delayedRoutes?: LogisticsItem[]
   costTrend?: CostTrendItem[]
+  inventoryStatus?: InventoryStatusItem[]
+  supplierScores?: SupplierScoreItem[]
+  costRanking?: CostRankingItem[]
   riskDistribution: RiskDistItem[]
   recentOrders: RecentOrder[]
   recordCounts?: RecordCounts
   metadata?: ResponseMetadata
+}
+
+export type OverviewMetricKey =
+  | 'totalOrders'
+  | 'totalSales'
+  | 'totalStock'
+  | 'openRisks'
+  | 'averageOrderAmount'
+  | 'shortageCount'
+  | 'delayedShipments'
+  | 'totalCost'
+  | 'supplierScoreAvg'
+
+export type OverviewChartKey =
+  | 'salesTrend'
+  | 'riskDistribution'
+  | 'costTrend'
+  | 'delayedRoutes'
+  | 'inventoryStatus'
+  | 'supplierScores'
+
+export type OverviewTableKey =
+  | 'inventoryAlerts'
+  | 'topSuppliers'
+  | 'recentOrders'
+  | 'delayedRoutes'
+  | 'costRanking'
+
+export interface OverviewDashboardConfig {
+  visibleMetrics: Record<OverviewMetricKey, boolean>
+  visibleCharts: Record<OverviewChartKey, boolean>
+  visibleTables: Record<OverviewTableKey, boolean>
+  compactMode: boolean
 }
 
 // --- 库存 ---

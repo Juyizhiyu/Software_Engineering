@@ -24,11 +24,13 @@ router.get('/summary', async (req, res) => {
 
 router.get('/overview', async (req, res) => {
     try {
-        const overview = await dataService.getDashboardOverview();
+        const { region, date, category } = req.query;
+        const overview = await dataService.getDashboardOverview({ region, date, category });
         res.json({
             success: true,
             data: withMetadata(overview, {
                 source: overview.metadata?.source || 'mixed',
+                filters: { region: region || null, date: date || null, category: category || null },
                 quality: await dataService.getDataQualitySummary()
             })
         });

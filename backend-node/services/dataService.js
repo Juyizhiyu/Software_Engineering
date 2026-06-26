@@ -366,6 +366,101 @@ function buildSalesWhere({ date, category } = {}) {
     };
 }
 
+function appendWhereCondition(whereSql, condition) {
+    return whereSql ? `${whereSql} AND ${condition}` : `WHERE ${condition}`;
+}
+
+function aggregateCostTrend(costs = []) {
+    const costByDate = new Map();
+    costs.forEach(item => {
+        const date = formatDecisionDate(item.date) || nowDate();
+        const current = costByDate.get(date) || { date, totalCost: 0, purchaseCost: 0 };
+        current.totalCost += toNumber(item.totalCost);
+        current.purchaseCost += toNumber(item.purchaseCost);
+        costByDate.set(date, current);
+    });
+    return Array.from(costByDate.values())
+        .map(item => ({
+            date: item.date,
+            totalCost: round(item.totalCost, 2),
+            purchaseCost: round(item.purchaseCost, 2)
+        }))
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .slice(-7);
+}
+
+function aggregateInventoryStatus(inventory = []) {
+    const labels = {
+        shortage: '缺货',
+        warning: '预警',
+        overstock: '积压',
+        healthy: '健康',
+        danger: '缺货'
+    };
+    const counts = inventory.reduce((acc, item) => {
+        const status = item.stockStatus || item.status || 'healthy';
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+    }, {});
+    return ['shortage', 'warning', 'overstock', 'healthy'].map(status => ({
+        status,
+        label: labels[status],
+        count: counts[status] || 0
+    }));
+}
+
+function buildSupplierScores(suppliers = []) {
+    return [...suppliers]
+        .sort((a, b) => toNumber(b.compositeScore) - toNumber(a.compositeScore))
+        .slice(0, 8)
+        .map(item => ({
+            supplierId: item.supplierId,
+            supplierName: item.supplierName,
+            compositeScore: round(item.compositeScore, 1),
+            riskLevel: item.riskLevel,
+            riskLabel: item.riskLabel
+        }));
+}
+
+function buildCostRanking(costs = []) {
+    return [...costs]
+        .sort((a, b) => toNumber(b.totalCost) - toNumber(a.totalCost))
+        .slice(0, 8)
+        .map(item => ({
+            date: item.date,
+            productId: item.productId,
+            productName: item.productName,
+            purchaseCost: round(item.purchaseCost, 2),
+            storageCost: round(item.storageCost, 2),
+            transportCost: round(item.transportCost, 2),
+            returnCost: round(item.returnCost, 2),
+            totalCost: round(item.totalCost, 2)
+        }));
+}
+
+function filterDashboardCollections({ inventory = [], suppliers = [], logistics = [], costs = [] }, filters = {}) {
+    const { region, date, category } = filters;
+    return {
+        inventory: inventory.filter(item =>
+            matchesRegionText(`${item.warehouseName || ''} ${item.warehouseId || ''}`, region) &&
+            matchesCategoryText(`${item.categoryName || ''} ${item.productName || ''}`, category) &&
+            (!date || formatDecisionDate(item.lastUpdate) === date)
+        ),
+        suppliers: suppliers.filter(item =>
+            matchesRegionText(`${item.region || ''} ${item.supplierName || ''}`, region)
+        ),
+        logistics: logistics.filter(item =>
+            matchesRegionText(`${item.routeName || ''} ${item.origin || ''} ${item.destination || ''}`, region) &&
+            matchesCategoryText(`${item.categoryName || ''} ${item.productName || ''}`, category) &&
+            (!date || formatDecisionDate(item.shippedDate || item.date) === date)
+        ),
+        costs: costs.filter(item =>
+            matchesCategoryText(`${item.categoryName || ''} ${item.productName || ''}`, category) &&
+            (!date || formatDecisionDate(item.date) === date)
+        )
+    };
+}
+
 function normalizeDecisionFilters(filters = {}) {
     return {
         region: filters.region || '',
@@ -686,17 +781,21 @@ class DataService {
     }
 
     // 首页大屏总览数据看板
-    async getDashboardOverview() {
+    async getDashboardOverview({ region, date, category } = {}) {
         try {
+            const salesWhere = buildSalesWhere({ date, category });
+            const productWhereSql = appendWhereCondition(salesWhere.whereSql, 'spu_name_clean IS NOT NULL');
+            const brandWhereSql = appendWhereCondition(salesWhere.whereSql, "brand_clean IS NOT NULL AND brand_clean != ''");
             const [trendRows] = await db.query(`
                 SELECT 
                     SUM(gmv) AS dailyAmount, 
                     CAST(SUM(unit_sold) AS SIGNED) AS dailyOrders 
                 FROM supply_chain_bi.douyin_sales 
+                ${salesWhere.whereSql}
                 GROUP BY (spu_id % 7) 
                 ORDER BY dailyAmount ASC 
                 LIMIT 7
-            `);
+            `, salesWhere.params);
 
             const processedSalesTrend = trendRows.map((row, idx) => {
                 const day = 14 - (trendRows.length - 1) + idx;
@@ -715,10 +814,10 @@ class DataService {
                     c1_name AS customerRegion, 
                     gmv AS amount
                 FROM supply_chain_bi.douyin_sales 
-                WHERE spu_name_clean IS NOT NULL
+                ${productWhereSql}
                 ORDER BY gmv DESC 
                 LIMIT 5
-            `);
+            `, salesWhere.params);
 
             const [stockRows] = await db.query(`
                 SELECT 
@@ -750,8 +849,14 @@ class DataService {
             });
 
             // 根据流水表销量占比做科学分档
-            const [highRiskCountRows] = await db.query(`SELECT COUNT(*) as count FROM supply_chain_bi.douyin_sales WHERE unit_sold <= 1`);
-            const [medRiskCountRows] = await db.query(`SELECT COUNT(*) as count FROM supply_chain_bi.douyin_sales WHERE unit_sold > 1 AND unit_sold <= 5`);
+            const [highRiskCountRows] = await db.query(
+                `SELECT COUNT(*) as count FROM supply_chain_bi.douyin_sales ${appendWhereCondition(salesWhere.whereSql, 'unit_sold <= 1')}`,
+                salesWhere.params
+            );
+            const [medRiskCountRows] = await db.query(
+                `SELECT COUNT(*) as count FROM supply_chain_bi.douyin_sales ${appendWhereCondition(salesWhere.whereSql, 'unit_sold > 1 AND unit_sold <= 5')}`,
+                salesWhere.params
+            );
             
             const realHighRiskCount = Math.min(parseInt(highRiskCountRows[0]?.count || 0), 18);
             const realMedRiskCount = Math.min(parseInt(medRiskCountRows[0]?.count || 0), 42);
@@ -760,11 +865,11 @@ class DataService {
             const [supplierRows] = await db.query(`
                 SELECT brand_clean AS supplierName, SUM(gmv) AS totalGmv
                 FROM supply_chain_bi.douyin_sales
-                WHERE brand_clean IS NOT NULL AND brand_clean != ''
+                ${brandWhereSql}
                 GROUP BY brand_clean
                 ORDER BY totalGmv DESC
-                LIMIT 3
-            `);
+                LIMIT 8
+            `, salesWhere.params);
 
             const dynamicTop3Suppliers = supplierRows.map((row, index) => {
                 const score = parseFloat((93.5 + (index === 0 ? 5.0 : index === 1 ? 2.8 : 0.5)).toFixed(1));
@@ -775,6 +880,16 @@ class DataService {
                     compositeScore: score
                 };
             });
+
+            const [inventory, logistics, costs] = await Promise.all([
+                this.getInventoryAnalysis(),
+                this.getLogisticsAnomalies(),
+                this.getCostsAnalysis()
+            ]);
+            const filtered = filterDashboardCollections(
+                { inventory, suppliers: dynamicTop3Suppliers, logistics, costs },
+                { region, date, category }
+            );
 
             // 统一封装
             return {
@@ -793,19 +908,30 @@ class DataService {
                     { level: 'Medium', count: realMedRiskCount },
                     { level: 'Low', count: 145 }
                 ],
-                topSuppliers: dynamicTop3Suppliers
+                topSuppliers: dynamicTop3Suppliers.slice(0, 5),
+                delayedRoutes: filtered.logistics.slice(0, 8),
+                costTrend: aggregateCostTrend(filtered.costs),
+                inventoryStatus: aggregateInventoryStatus(filtered.inventory),
+                supplierScores: buildSupplierScores(filtered.suppliers),
+                costRanking: buildCostRanking(filtered.costs)
             };
 
         } catch (error) {
             console.error(' [核心报警] 首页大屏纯真连聚合失败:', error.message);
-            return this.getDashboardOverviewFallback();
+            return this.getDashboardOverviewFallback({ region, date, category });
         }
     }
 
-    async getDashboardOverviewFallback() {
+    async getDashboardOverviewFallback({ region, date, category } = {}) {
         const data = await this.loadAll();
+        const filtered = filterDashboardCollections(data, { region, date, category });
+        const filteredOrders = data.orders.filter(item =>
+            matchesRegionText(item.customerRegion, region) &&
+            matchesCategoryText(`${item.category || ''} ${item.productName || ''}`, category) &&
+            (!date || formatDecisionDate(item.date) === date)
+        );
         const salesByDate = new Map();
-        data.orders.forEach(order => {
+        filteredOrders.forEach(order => {
             const current = salesByDate.get(order.date) || { date: order.date, amount: 0, quantity: 0 };
             current.amount += order.amount;
             current.quantity += order.quantity;
@@ -819,15 +945,20 @@ class DataService {
 
         return {
             salesTrend: Array.from(salesByDate.values()).sort((a, b) => a.date.localeCompare(b.date)).slice(-7),
-            inventoryAlerts: data.inventory
+            inventoryAlerts: filtered.inventory
                 .filter(item => item.stockStatus === 'shortage' || item.stockStatus === 'warning')
                 .slice(0, 5),
-            topSuppliers: data.suppliers.sort((a, b) => b.compositeScore - a.compositeScore).slice(0, 5),
+            topSuppliers: filtered.suppliers.sort((a, b) => b.compositeScore - a.compositeScore).slice(0, 5),
             riskDistribution: ['Critical', 'High', 'Medium', 'Low'].map(level => ({
                 level,
                 count: riskCounts[level] || 0
             })),
-            recentOrders: data.orders.slice(-5).reverse()
+            recentOrders: filteredOrders.slice(-5).reverse(),
+            delayedRoutes: filtered.logistics.slice(0, 8),
+            costTrend: aggregateCostTrend(filtered.costs),
+            inventoryStatus: aggregateInventoryStatus(filtered.inventory),
+            supplierScores: buildSupplierScores(filtered.suppliers),
+            costRanking: buildCostRanking(filtered.costs)
         };
     }
 
